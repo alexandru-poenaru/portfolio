@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { FaDownload, FaGraduationCap, FaBriefcase, FaCode } from 'react-icons/fa';
 import resumePdf from '../assets/pdf/CV_Alexandru_Poenaru.pdf';
 
@@ -259,31 +259,6 @@ const ResumePage = () => {
     </ResumeContainer>
   );
 };
-
-// Animations
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const matrix = keyframes`
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 100% 100%;
-  }
-`;
-
-const typewriter = keyframes`
-  from { width: 0; }
-  to { width: 100%; }
-`;
-
-const cursorBlink = keyframes`
-  from, to { border-color: transparent; }
-  50% { border-color: ${props => props.theme.primary}; }
-`;
 
 const dataFlow = keyframes`
   0% {
@@ -574,52 +549,6 @@ const SkillProgress = styled.div`
   border-radius: 4px;
   background-size: 200% 200%;
   animation: ${dataFlow} 3s linear infinite;
-`;
-
-const CodeAnimation = styled.div`
-  margin-top: 50px;
-  padding: 30px;
-  border-radius: 10px;
-  position: relative;
-  overflow: hidden;
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-`;
-
-const MatrixBackground = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, ${props => props.theme.background} 25%, ${props => props.theme.cardBackground} 25%, ${props => props.theme.cardBackground} 50%, ${props => props.theme.background} 50%, ${props => props.theme.background} 75%, ${props => props.theme.cardBackground} 75%, ${props => props.theme.cardBackground});
-  background-size: 10px 10px;
-  opacity: 0.2;
-  animation: ${matrix} 20s linear infinite;
-  z-index: 1;
-`;
-
-const AnimatedCode = styled.div`
-  font-family: 'Courier New', monospace;
-  color: ${props => props.theme.text};
-  font-size: 1.1rem;
-  z-index: 2;
-  width: 100%;
-  max-width: 500px;
-`;
-
-const CodeLine = styled.div`
-  white-space: pre;
-  overflow: hidden;
-  border-right: 3px solid ${props => props.theme.primary};
-  animation: ${typewriter} 1s steps(40) ${props => props.delay}s forwards,
-             ${cursorBlink} 0.75s step-end infinite;
-  width: 0;
-  margin-bottom: 8px;
-  color: ${props => props.theme.primary};
 `;
 
 export default ResumePage;

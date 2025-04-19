@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import emailjs from 'emailjs-com';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaServer, FaDatabase, FaLaptop, FaGithub, FaLinkedin } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaServer, FaDatabase, FaLaptop } from 'react-icons/fa';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({

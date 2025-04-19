@@ -20,7 +20,6 @@ const HomePage = () => {
   const serverRef = useRef(null);
   const databaseRef = useRef(null);
   const codeBlockRef = useRef(null);
-  const aboutSectionRef = useRef(null);
 
   // Animation for server-client communication simulation
   useEffect(() => {
@@ -301,13 +300,6 @@ const serverPulseAnimation = keyframes`
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
-`;
-
-// Create a pulsing animation for the data flow
-const flowAnimation = keyframes`
-  0% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(1); opacity: 0.7; }
 `;
 
 // Create a data flow animation for the dots with correct positioning
@@ -733,10 +725,6 @@ const CodeLine = styled.div`
   &:nth-child(8) { animation-delay: 0.8s; }
   &:nth-child(9) { animation-delay: 0.9s; }
   &:nth-child(10) { animation-delay: 1s; }
-`;
-
-const HighlightCode = styled.span`
-  color: ${props => props.theme.primary};
 `;
 
 const SkillsContainer = styled.div`
