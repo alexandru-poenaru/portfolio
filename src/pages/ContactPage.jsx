@@ -364,6 +364,15 @@ const ContactContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 100px 20px;
+  
+  @media (max-width: 768px) {
+    padding: 60px 15px;
+    width: 100%;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 40px 10px;
+  }
 `;
 
 const PageTitle = styled.h1`
@@ -406,6 +415,18 @@ const ContactInfo = styled.div`
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 40px ${props => props.theme.shadowHover};
+  }
+  
+  @media (max-width: 768px) {
+    padding: 30px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 25px 20px;
+    width: 100%;
+    max-width: 100%;
   }
 `;
 
@@ -468,12 +489,17 @@ const ContactInfoLabel = styled.h3`
 
 const ContactInfoValue = styled.p`
   margin: 0;
+  word-wrap: break-word;
+  max-width: 100%;
 `;
 
 const ContactLink = styled.a`
   color: white;
   text-decoration: none;
   transition: color 0.3s ease;
+  word-wrap: break-word;
+  display: inline-block;
+  max-width: 100%;
   
   &:hover {
     color: ${props => props.theme.secondary};
@@ -490,6 +516,18 @@ const ContactFormWrapper = styled.div`
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 40px ${props => props.theme.shadowHover};
+  }
+  
+  @media (max-width: 768px) {
+    padding: 30px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 25px 20px;
+    width: 100%;
+    max-width: 100%;
   }
 `;
 
