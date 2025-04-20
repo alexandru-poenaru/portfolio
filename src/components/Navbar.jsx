@@ -26,9 +26,8 @@ const Navbar = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
   return (
-    <NavbarContainer scrolled={scrolled}>
+    <NavbarContainer $scrolled={scrolled}>
       <NavbarWrapper>
         <Logo to="/">
           <LogoText>Alex P.</LogoText>
@@ -38,7 +37,7 @@ const Navbar = () => {
           {isOpen ? <FaTimes /> : <FaBars />}
         </MenuButton>
 
-        <NavMenu isOpen={isOpen}>
+        <NavMenu $isOpen={isOpen}>
           <NavItem>
             <NavLink to="/" onClick={() => setIsOpen(false)}>Home</NavLink>
           </NavItem>
@@ -69,11 +68,11 @@ const NavbarContainer = styled.nav`
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: ${props => props.scrolled ? props.theme.navbar : 'transparent'};
-  box-shadow: ${props => props.scrolled ? `0 2px 10px ${props.theme.shadow}` : 'none'};
-  padding: ${props => props.scrolled ? '15px 0' : '20px 0'};
+  background-color: ${props => props.$scrolled ? props.theme.navbar : 'transparent'};
+  box-shadow: ${props => props.$scrolled ? `0 2px 10px ${props.theme.shadow}` : 'none'};
+  padding: ${props => props.$scrolled ? '15px 0' : '20px 0'};
   transition: all 0.3s ease-in-out;
-  backdrop-filter: ${props => props.scrolled ? 'blur(10px)' : 'none'};
+  backdrop-filter: ${props => props.$scrolled ? 'blur(10px)' : 'none'};
 `;
 
 const NavbarWrapper = styled.div`
@@ -111,6 +110,8 @@ const NavMenu = styled.ul`
   display: flex;
   align-items: center;
   list-style: none;
+  margin: 0;
+  padding: 0;
   
   @media (max-width: 768px) {
     flex-direction: column;
@@ -122,10 +123,11 @@ const NavMenu = styled.ul`
     padding: 20px 0;
     box-shadow: 0 5px 10px ${props => props.theme.shadow};
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    transform: ${props => props.isOpen ? 'translateY(0)' : 'translateY(-100%)'};
-    opacity: ${props => props.isOpen ? '1' : '0'};
-    pointer-events: ${props => props.isOpen ? 'all' : 'none'};
+    transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-20px)'};
+    opacity: ${props => props.$isOpen ? '1' : '0'};
+    pointer-events: ${props => props.$isOpen ? 'all' : 'none'};
     backdrop-filter: blur(10px);
+    z-index: 999;
   }
 `;
 

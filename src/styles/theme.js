@@ -1,10 +1,9 @@
 // Theme configuration for light and dark mode
-export const lightTheme = {
-  body: '#f9f9f9',
+export const lightTheme = {  body: '#f9f9f9',
   text: '#333',
   textSecondary: '#666',
-  primary: '#0078FF',
-  primaryDark: '#0059b3',
+  primary: '#5be584',
+  primaryDark: '#3bc468',
   background: '#ffffff',
   card: '#ffffff',
   cardBackground: '#f9f9f9',
@@ -17,12 +16,11 @@ export const lightTheme = {
   footerText: '#aaa',
 };
 
-export const darkTheme = {
-  body: '#121212',
+export const darkTheme = {  body: '#121212',
   text: '#e4e4e4',
   textSecondary: '#b0b0b0',
-  primary: '#0095ff',
-  primaryDark: '#0077cc',
+  primary: '#5be584',
+  primaryDark: '#3bc468',
   background: '#1e1e1e',
   card: '#2a2a2a',
   cardBackground: '#252525',

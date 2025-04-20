@@ -12,7 +12,7 @@ const Footer = () => {
         <FooterSection>
           <FooterLogo>Alex P.</FooterLogo>
           <FooterText>
-          Applied Computer Science student with a passion for web and especially backend development.
+          Applied Information of Technology student with a passion for web- and especially back-end development.
           </FooterText>
         </FooterSection>
         

@@ -4,6 +4,11 @@ import { FaDownload, FaGraduationCap, FaBriefcase, FaCode } from 'react-icons/fa
 import resumePdf from '../assets/pdf/CV_Alexandru_Poenaru.pdf';
 
 const ResumePage = () => {
+  // Reset scroll position when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Add animation for each timeline item when it comes into view
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {

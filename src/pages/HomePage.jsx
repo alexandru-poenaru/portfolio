@@ -12,9 +12,6 @@ import kingdomino from '../assets/images/kingdomino.jpg';
 import kottask from '../assets/images/kottask.png';
 import dashboard from '../assets/images/dashboard.png';
 
-// You'll need to add a video to your assets folder
-// Example path: '../assets/videos/code-background.mp4'
-const videoPlaceholder = "#"; // Replace with actual video path when you have one
 
 const HomePage = () => {
   const serverRef = useRef(null);
@@ -41,218 +38,227 @@ const HomePage = () => {
     const targetId = e.currentTarget.getAttribute('href').substring(1);
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
+      const offsetTop = targetElement.getBoundingClientRect().top + window.pageYOffset;
       window.scrollTo({
-        top: targetElement.offsetTop, // Scroll so About Me is at the top
+        top: offsetTop, // Scroll precisely to the About Me section
         behavior: 'smooth'
       });
     }
   };
 
   return (
-    <HomeContainer>
-      <BackgroundVideo autoPlay muted loop>
-        <source src={videoPlaceholder} type="video/mp4" />
-      </BackgroundVideo>
-      <BackgroundOverlay />
+    <>
+      <FullWidthHeroContainer>
+        <HeroSection>
+          <video 
+            style={{ 
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: 1,
+              filter: 'brightness(0.5)',
+            }} 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+          >
+            <source src={require('../assets/videos/background-video.mp4')} type="video/mp4" />
+          </video>
+          <BackgroundOverlay />
+          <HeroContent>
+            <TypewriterContainer>
+              <h1>Hello, I'm <HighlightSpan>Alexandru Poenaru</HighlightSpan></h1>
+              <TypewriterText>Student IT-Dev@HoGent</TypewriterText>
+            </TypewriterContainer>
+            <AnimatedDescription>
+              I'm an Applied Information of Technology student with a passion for web- and especially back-end development. I specialize in creating efficient and scalable server-side applications.
+            </AnimatedDescription>
+            <SocialLinks>
+              <SocialLink href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer">
+                <FaGithub /> GitHub
+              </SocialLink>
+              <SocialLink href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer">
+                <FaLinkedin /> LinkedIn
+              </SocialLink>
+            </SocialLinks>
+            <ScrollDownButton href="#about" onClick={handleLearnMoreClick}>
+              <FaArrowDown /> Learn More
+            </ScrollDownButton>
+          </HeroContent>
+        </HeroSection>
+        <BlurryBarrier />
+      </FullWidthHeroContainer>
 
-      <HeroSection>
-        <HeroContent>
-          <TypewriterContainer>
-            <h1>Hello, I'm <HighlightSpan>Alexandru Poenaru</HighlightSpan></h1>
-            <TypewriterText>Student</TypewriterText>
-          </TypewriterContainer>
-          <AnimatedDescription>
-            I'm a Applied Computer Science student with a passion for web and especially backend development. I specialize in creating efficient and scalable server-side applications.
-          </AnimatedDescription>
-          <SocialLinks>
-            <SocialLink href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer">
-              <FaGithub /> GitHub
-            </SocialLink>
-            <SocialLink href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer">
-              <FaLinkedin /> LinkedIn
-            </SocialLink>
-          </SocialLinks>
-          <ScrollDownButton href="#about" onClick={handleLearnMoreClick}>
-            <FaArrowDown /> Learn More
-          </ScrollDownButton>
-        </HeroContent>
-      </HeroSection>
+      <HomeContainer>
+        <Section id="about">
+          <SectionTitle>About Me</SectionTitle>
+          <AboutContent>
+            <p>
+            Hi! I’m Alex, an enthusiastic IT student with a passion for web and backend development. 
+            I’ve been fascinated by code since I was 12, amazed by how just the right characters in the right order can create something truly special. 
+            That early curiosity turned into a love for logic, problem-solving, and building things that actually work.
+            </p>
+            <p>
+            I enjoy working on API development, scalable architecture, real-time data, and everything that makes development more efficient, elegant, or clever.
+            I’m always experimenting, learning fast, and looking for challenges that push me to grow.
+            </p>
+            <p>
+            Open to opportunities where I can keep learning, building cool stuff,
+            and collaborate with people who love tech as much as I do.
+            </p>
+          </AboutContent>
+          
+          {/* Backend Developer Animation */}
+          <BackendVisualization>
+            <ServerContainer ref={serverRef}>
+              <ServerIcon>
+                <FaServer />
+              </ServerIcon>
+              <ServerLabel>Server</ServerLabel>
+            </ServerContainer>
+            
+            <ConnectionLine>
+              <DataDot className="dot1" />
+              <DataDot className="dot2" />
+              <DataDot className="dot3" />
+            </ConnectionLine>
+            
+            <DatabaseContainer ref={databaseRef}>
+              <DatabaseIcon>
+                <FaDatabase />
+              </DatabaseIcon>
+              <DatabaseLabel>Database</DatabaseLabel>
+            </DatabaseContainer>
+            
+            <CodeBlockContainer ref={codeBlockRef}>
+              <StandaloneCodeIcon>
+                <FaCode />
+              </StandaloneCodeIcon>
+              <CodeSnippet>
+              <CodeLine>export default function Data() &#123;</CodeLine>
+              <CodeLine>  const &#123; data, error, isLoading &#125; </CodeLine>
+              <CodeLine>    = useSWR('/api/data', fetcher);</CodeLine>
+              <CodeLine>  if (isLoading) return &lt;p&gt;Loading...&lt;/p&gt;;</CodeLine>
+              <CodeLine>  if (error) return &lt;p&gt;Error fetching data&lt;/p&gt;;</CodeLine>
+              <CodeLine></CodeLine>
+              <CodeLine>  return (</CodeLine>
+              <CodeLine>   &lt;div&gt;</CodeLine>
+              <CodeLine>    &lt;h2&gt;Data&lt;/h2&gt;</CodeLine>
+              <CodeLine>    &lt;pre&gt;&#123;JSON.stringify(data, null, 2)&#125;&lt;/pre&gt;</CodeLine>
+              <CodeLine>   &lt;/div&gt;</CodeLine>
+              <CodeLine>  );</CodeLine>
+              <CodeLine>&#125;</CodeLine>
+              </CodeSnippet>
+            </CodeBlockContainer>
+          </BackendVisualization>
+        </Section>
 
-      <Section id="about">
-        <SectionTitle>About Me</SectionTitle>
-        <AboutContent>
-          <p>
-          Hi! I’m Alex, an enthusiastic IT student with a passion for web and backend development. 
-          I’ve been fascinated by code since I was 12, amazed by how just the right characters in the right order can create something truly special. 
-          That early curiosity turned into a love for logic, problem-solving, and building things that actually work.
-          </p>
-          <p>
-          I enjoy working on API development, scalable architecture, real-time data, and everything that makes development more efficient, elegant, or clever.
-          I’m always experimenting, learning fast, and looking for challenges that push me to grow.
-          </p>
-          <p>
-          Open to opportunities where I can keep learning, building cool stuff,
-          and collaborate with people who love tech as much as I do.
-          </p>
-        </AboutContent>
-        
-        {/* Backend Developer Animation */}
-        <BackendVisualization>
-          <ServerContainer ref={serverRef}>
-            <ServerIcon>
-              <FaServer />
-            </ServerIcon>
-            <ServerLabel>Server</ServerLabel>
-          </ServerContainer>
-          
-          <ConnectionLine>
-            <DataDot className="dot1" />
-            <DataDot className="dot2" />
-            <DataDot className="dot3" />
-          </ConnectionLine>
-          
-          <DatabaseContainer ref={databaseRef}>
-            <DatabaseIcon>
-              <FaDatabase />
-            </DatabaseIcon>
-            <DatabaseLabel>Database</DatabaseLabel>
-          </DatabaseContainer>
-          
-          <CodeBlockContainer ref={codeBlockRef}>
-            <StandaloneCodeIcon>
-              <FaCode />
-            </StandaloneCodeIcon>
-            <CodeSnippet>
-            <CodeLine>export default function Data() &#123;</CodeLine>
-            <CodeLine>  const &#123; data, err, isL &#125; </CodeLine>
-            <CodeLine>    = useSWR('/api/data', fetcher);</CodeLine>
-            <CodeLine>  if (isL) return &lt;p&gt;Loading...&lt;/p&gt;;</CodeLine>
-            <CodeLine>  if (err) return &lt;p&gt;Error fetching data&lt;/p&gt;;</CodeLine>
-            <CodeLine></CodeLine>
-            <CodeLine>  return (</CodeLine>
-            <CodeLine>   &lt;div&gt;</CodeLine>
-            <CodeLine>    &lt;h2&gt;Data&lt;/h2&gt;</CodeLine>
-            <CodeLine>    &lt;pre&gt;&#123;JSON.stringify(data, null, 2)&#125;&lt;/pre&gt;</CodeLine>
-            <CodeLine>   &lt;/div&gt;</CodeLine>
-            <CodeLine>  );</CodeLine>
-            <CodeLine>&#125;</CodeLine>
-            </CodeSnippet>
-          </CodeBlockContainer>
-        </BackendVisualization>
-      </Section>
+        <Section id="skills">
+          <SectionTitle>Technical Skills</SectionTitle>
+          <SkillsContainer>
+            <SkillCategory>
+              <SkillCategoryTitle>Languages</SkillCategoryTitle>
+              <SkillsList>
+                <SkillItem><FaJsSquare /> JavaScript</SkillItem>
+                <SkillItem><SiTypescript /> TypeScript</SkillItem>
+                <SkillItem><FaPython /> Python</SkillItem>
+                <SkillItem><FaJava /> Java</SkillItem>
+                <SkillItem><TbBrandCSharp /> C#</SkillItem>
+                <SkillItem><FaHtml5 /> HTML</SkillItem>
+                <SkillItem><FaCss3Alt /> CSS</SkillItem>
+              </SkillsList>
+            </SkillCategory>
+            
+            <SkillCategory>
+              <SkillCategoryTitle>Frameworks & Libraries</SkillCategoryTitle>
+              <SkillsList>
+                <SkillItem><SiNodedotjs /> Node.js</SkillItem>
+                <SkillItem><SiSpringboot /> Spring Boot</SkillItem>
+                <SkillItem><FaReact /> React</SkillItem>
+                <SkillItem><PiFileJsxDuotone /> JSX</SkillItem>
+                <SkillItem><RiTailwindCssFill /> Tailwind CSS</SkillItem>
+              </SkillsList>
+            </SkillCategory>
+            
+            <SkillCategory>
+              <SkillCategoryTitle>Databases</SkillCategoryTitle>
+              <SkillsList>
+                <SkillItem><SiMysql /> MySQL</SkillItem>
+                <SkillItem><DiMsqlServer /> MS SQL Server</SkillItem>
+              </SkillsList>
+            </SkillCategory>
+            
+            <SkillCategory>
+              <SkillCategoryTitle>DevOps & Tools</SkillCategoryTitle>
+              <SkillsList>
+                <SkillItem><FaGitAlt /> Git</SkillItem>
+                <SkillItem><FaDocker /> Docker</SkillItem>
+                <SkillItem><SiYarn /> Yarn</SkillItem>
+              </SkillsList>
+            </SkillCategory>
+          </SkillsContainer>
+        </Section>
 
-      <Section id="skills">
-        <SectionTitle>Technical Skills</SectionTitle>
-        <SkillsContainer>
-          <SkillCategory>
-            <SkillCategoryTitle>Languages</SkillCategoryTitle>
-            <SkillsList>
-              <SkillItem><FaJsSquare /> JavaScript</SkillItem>
-              <SkillItem><SiTypescript /> TypeScript</SkillItem>
-              <SkillItem><FaPython /> Python</SkillItem>
-              <SkillItem><FaJava /> Java</SkillItem>
-              <SkillItem><TbBrandCSharp /> C#</SkillItem>
-              <SkillItem><FaHtml5 /> HTML</SkillItem>
-              <SkillItem><FaCss3Alt /> CSS</SkillItem>
-            </SkillsList>
-          </SkillCategory>
-          
-          <SkillCategory>
-            <SkillCategoryTitle>Frameworks & Libraries</SkillCategoryTitle>
-            <SkillsList>
-              <SkillItem><SiNodedotjs /> Node.js</SkillItem>
-              <SkillItem><SiSpringboot /> Spring Boot</SkillItem>
-              <SkillItem><FaReact /> React</SkillItem>
-              <SkillItem><PiFileJsxDuotone /> JSX</SkillItem>
-              <SkillItem><RiTailwindCssFill /> Tailwind CSS</SkillItem>
-            </SkillsList>
-          </SkillCategory>
-          
-          <SkillCategory>
-            <SkillCategoryTitle>Databases</SkillCategoryTitle>
-            <SkillsList>
-              <SkillItem><SiMysql /> MySQL</SkillItem>
-              <SkillItem><DiMsqlServer /> MS SQL Server</SkillItem>
-            </SkillsList>
-          </SkillCategory>
-          
-          <SkillCategory>
-            <SkillCategoryTitle>DevOps & Tools</SkillCategoryTitle>
-            <SkillsList>
-              <SkillItem><FaGitAlt /> Git</SkillItem>
-              <SkillItem><FaDocker /> Docker</SkillItem>
-              <SkillItem><SiYarn /> Yarn</SkillItem>
-            </SkillsList>
-          </SkillCategory>
-        </SkillsContainer>
-      </Section>
-
-      <Section id="projects">
-        <SectionTitle>Projects</SectionTitle>
-        <ProjectsGrid>
-          <ProjectCard>
-            <ProjectImage src={helpdesk} alt="Helpdesk Project" />
-            <ProjectContent>
-              <ProjectDescription>
-                A ticket system for for the helpdesk of my internship company in 2023 written in C#. 
-              </ProjectDescription>
-              <ProjectButton href="https://github.com/alexandru-poenaru/helpdesk-sintandries" target="_blank" rel="noopener noreferrer">
-                GitHub Repo
-              </ProjectButton>
-            </ProjectContent>
-          </ProjectCard>
-          
-          <ProjectCard>
-            <ProjectImage src={kingdomino} alt="Kingdomino Project" />
-            <ProjectContent>
-              <ProjectDescription>
-                The game KingDomino that can be played by 2-4 players written in Java.
-              </ProjectDescription>
-              <ProjectButton href="https://github.com/alexandru-poenaru/kingdomino" target="_blank" rel="noopener noreferrer">
-                GitHub Repo
-              </ProjectButton>
-            </ProjectContent>
-          </ProjectCard>
-          
-          <ProjectCard>
-            <ProjectImage src={kottask} alt="KotTask Project" />
-            <ProjectContent>
-              <ProjectDescription>
-                A TODO-app with an integrated calendar in which you can assign tasks to yourself and other people. Written with React, Node.js, TypeScript and JSX.
-              </ProjectDescription>
-              <ProjectButton href="https://github.com/alexandru-poenaru/kottask" target="_blank" rel="noopener noreferrer">
-                GitHub Repo
-              </ProjectButton>
-            </ProjectContent>
-          </ProjectCard>
-          
-          <ProjectCard>
-            <ProjectImage src={dashboard} alt="Dashboard Project" />
-            <ProjectContent>
-              <ProjectDescription>
-                An app for the production of a company, with a KPI Dashboard, Overview maintenances, machines, ... Written in React, Node.js, TypeScript and JSX + Java (WIP).
-              </ProjectDescription>
-              <ProjectButton href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer" style={{pointerEvents: 'none'}}>
-                WIP
-              </ProjectButton>
-            </ProjectContent>
-          </ProjectCard>
-        </ProjectsGrid>
-      </Section>
-    </HomeContainer>
+        <Section id="projects">
+          <SectionTitle>Projects</SectionTitle>
+          <ProjectsGrid>
+            <ProjectCard>
+              <ProjectImage src={helpdesk} alt="Helpdesk Project" />
+              <ProjectContent>
+                <ProjectDescription>
+                  A ticket system for for the helpdesk of my internship company in 2023 written in C#. 
+                </ProjectDescription>
+                <ProjectButton href="https://github.com/alexandru-poenaru/helpdesk-sintandries" target="_blank" rel="noopener noreferrer">
+                  GitHub Repo
+                </ProjectButton>
+              </ProjectContent>
+            </ProjectCard>
+            
+            <ProjectCard>
+              <ProjectImage src={kingdomino} alt="Kingdomino Project" />
+              <ProjectContent>
+                <ProjectDescription>
+                  The game KingDomino that can be played by 2-4 players written in Java.
+                </ProjectDescription>
+                <ProjectButton href="https://github.com/alexandru-poenaru/kingdomino" target="_blank" rel="noopener noreferrer">
+                  GitHub Repo
+                </ProjectButton>
+              </ProjectContent>
+            </ProjectCard>
+            
+            <ProjectCard>
+              <ProjectImage src={kottask} alt="KotTask Project" />
+              <ProjectContent>
+                <ProjectDescription>
+                  A TODO-app with an integrated calendar in which you can assign tasks to yourself and other people. Written in React, Node.js, TypeScript and JSX.
+                </ProjectDescription>
+                <ProjectButton href="https://github.com/alexandru-poenaru/kottask" target="_blank" rel="noopener noreferrer">
+                  GitHub Repo
+                </ProjectButton>
+              </ProjectContent>
+            </ProjectCard>
+            
+            <ProjectCard>
+              <ProjectImage src={dashboard} alt="Dashboard Project" />
+              <ProjectContent>
+                <ProjectDescription>
+                  An app for the production of a company, with a KPI Dashboard, Overview maintenances, machines, ... Written in React, Node.js, TypeScript and JSX + Java (WIP).
+                </ProjectDescription>
+                <ProjectButton href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer" style={{pointerEvents: 'none'}}>
+                  WIP
+                </ProjectButton>
+              </ProjectContent>
+            </ProjectCard>
+          </ProjectsGrid>
+        </Section>
+      </HomeContainer>
+    </>
   );
 };
-
-// Full-screen video background
-const BackgroundVideo = styled.video`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  object-fit: cover;
-  z-index: -2;
-`;
 
 const BackgroundOverlay = styled.div`
   position: absolute;
@@ -346,9 +352,23 @@ const mobileDotAnimation3 = keyframes`
   100% { top: 95%; opacity: 0; }
 `;
 
-const HomeContainer = styled.div`
+// Add this new typing animation keyframe with the other animations
+const typingAnimation = keyframes`
+  0% { width: 0; }
+  100% { width: 100%; }
+`;
+
+const FullWidthHeroContainer = styled.div`
   width: 100%;
-  max-width: 1200px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+`;
+
+const HomeContainer = styled.div` 
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 20px;
   position: relative;
@@ -360,6 +380,9 @@ const HeroSection = styled.section`
   align-items: center;
   justify-content: center;
   position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 `;
 
 const HeroContent = styled.div`
@@ -370,7 +393,7 @@ const HeroContent = styled.div`
   h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
-    color: ${props => props.theme.text};
+    color: #fff;
   }
 `;
 
@@ -386,10 +409,14 @@ const TypewriterText = styled.h2`
   overflow: hidden;
   white-space: nowrap;
   border-right: 3px solid ${props => props.theme.primary};
-  color: ${props => props.theme.text};
+  color: #fff;
   animation: ${typewriter} 2s steps(20, end) 0.5s forwards, 
              ${cursorBlink} 1s step-end infinite;
   width: 0;
+  padding: 0 20px;
+  @media (max-width: 576px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const HighlightSpan = styled.span`
@@ -400,9 +427,10 @@ const AnimatedDescription = styled.p`
   font-size: 1.2rem;
   max-width: 600px;
   margin: 0 auto 2rem;
-  color: ${props => props.theme.textSecondary};
+  color: #fff; /* Changed from theme-based to white */
   opacity: 0;
   animation: ${fadeIn} 1s ease-out 2s forwards;
+  padding: 0 20px;
 `;
 
 const SocialLinks = styled.div`
@@ -532,7 +560,7 @@ const ServerIcon = styled.div`
   width: 80px;
   height: 80px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #0078FF, #00C6FF);
+  background: linear-gradient(135deg, #136f63, #00C6FF);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -594,7 +622,7 @@ const ConnectionLine = styled.div`
   position: relative;
   width: 60%;
   height: 3px;
-  background: linear-gradient(to right, #0078FF, #FF7200);
+  background: linear-gradient(to right, #136f63, #FF7200);
   margin: 10px 0;
   z-index: 5;
   overflow: visible;
@@ -611,7 +639,7 @@ const ConnectionLine = styled.div`
   @media (max-width: 768px) {
     width: 3px;
     height: 80px;
-    background: linear-gradient(to bottom, #0078FF, #FF7200);
+    background: linear-gradient(to bottom, #136f63, #FF7200);
     margin: 5px auto;
   }
 `;
@@ -707,24 +735,41 @@ const CodeSnippet = styled.div`
   font-size: 0.8rem;
   line-height: 1.5;
   color: ${props => props.theme.text};
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const CodeLine = styled.div`
   white-space: pre;
   color: ${props => props.theme.textSecondary};
-  opacity: 0;
-  animation: ${fadeIn} 0.5s forwards;
+  overflow: hidden;
+  width: 0;
+  border-right: 2px solid transparent;
+  animation: ${typingAnimation} 1.8s forwards;
   
-  &:nth-child(1) { animation-delay: 0.1s; }
-  &:nth-child(2) { animation-delay: 0.2s; }
-  &:nth-child(3) { animation-delay: 0.3s; }
-  &:nth-child(4) { animation-delay: 0.4s; }
-  &:nth-child(5) { animation-delay: 0.5s; }
-  &:nth-child(6) { animation-delay: 0.6s; }
-  &:nth-child(7) { animation-delay: 0.7s; }
-  &:nth-child(8) { animation-delay: 0.8s; }
-  &:nth-child(9) { animation-delay: 0.9s; }
-  &:nth-child(10) { animation-delay: 1s; }
+  @media (max-width: 576px) {
+    font-size: 0.65rem;
+  }
+  
+  &:nth-child(1) { animation-delay: 0.3s; }
+  &:nth-child(2) { animation-delay: 1.2s; }
+  &:nth-child(3) { animation-delay: 2.1s; }
+  &:nth-child(4) { animation-delay: 3.0s; }
+  &:nth-child(5) { animation-delay: 3.9s; }
+  &:nth-child(6) { animation-delay: 4.8s; }
+  &:nth-child(7) { animation-delay: 5.7s; }
+  &:nth-child(8) { animation-delay: 6.6s; }
+  &:nth-child(9) { animation-delay: 7.5s; }
+  &:nth-child(10) { animation-delay: 8.4s; }
+  &:nth-child(11) { animation-delay: 9.3s; }
+  &:nth-child(12) { animation-delay: 10.2s; }
+  &:nth-child(13) { animation-delay: 11.1s; }
+  
+  &:last-child {
+    border-right-color: transparent;
+  }
 `;
 
 const SkillsContainer = styled.div`
@@ -845,6 +890,17 @@ const ProjectButton = styled.a`
   &:hover {
     background-color: ${props => props.theme.primaryHover};
   }
+`;
+
+const BlurryBarrier = styled.div`
+  position: absolute;
+  bottom: -50px;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, ${props => props.theme.background});
+  backdrop-filter: blur(10px);
+  z-index: 5;
 `;
 
 export default HomePage;

@@ -1,7 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import emailjs from 'emailjs-com';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaServer, FaDatabase, FaLaptop } from 'react-icons/fa';
+
+// Define the fade-in animation
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +30,11 @@ const ContactPage = () => {
   });
   
   const [loading, setLoading] = useState(false);
+  
+  // Reset scroll position when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -76,11 +93,12 @@ const ContactPage = () => {
         <ContactInfo>
           <ContactInfoTitle>Contact Information</ContactInfoTitle>
           <ContactInfoText>Feel free to reach out with any questions or opportunities. I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.</ContactInfoText>
-          
-          <ContactInfoItem>
-            <IconWrapper>
-              <FaEnvelope />
-            </IconWrapper>
+            <ContactInfoItem>
+            <a href="mailto:alexandru.george.poenaru@gmail.com" style={{ textDecoration: 'none' }}>
+              <IconWrapper>
+                <FaEnvelope />
+              </IconWrapper>
+            </a>
             <div>
               <ContactInfoLabel>Email</ContactInfoLabel>
               <ContactInfoValue>
@@ -90,11 +108,12 @@ const ContactPage = () => {
               </ContactInfoValue>
             </div>
           </ContactInfoItem>
-          
-          <ContactInfoItem>
-            <IconWrapper>
-              <FaPhone />
-            </IconWrapper>
+            <ContactInfoItem>
+            <a href="tel:+32468301411" style={{ textDecoration: 'none' }}>
+              <IconWrapper>
+                <FaPhone />
+              </IconWrapper>
+            </a>
             <div>
               <ContactInfoLabel>Phone</ContactInfoLabel>
               <ContactInfoValue>
@@ -103,16 +122,18 @@ const ContactPage = () => {
                 </ContactLink>
               </ContactInfoValue>
             </div>
-          </ContactInfoItem>
-          
-          <ContactInfoItem>
-            <IconWrapper>
-              <FaMapMarkerAlt />
-            </IconWrapper>
+          </ContactInfoItem>            <ContactInfoItem>
+            <a href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <IconWrapper>
+                <FaMapMarkerAlt />
+              </IconWrapper>
+            </a>
             <div>
               <ContactInfoLabel>Location</ContactInfoLabel>
               <ContactInfoValue>
-                <span style={{ color: 'white' }}>Tielt, Belgium</span>
+                <ContactLink href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer">
+                  Tielt, Belgium
+                </ContactLink>
               </ContactInfoValue>
             </div>
           </ContactInfoItem>
@@ -411,6 +432,7 @@ const ContactInfo = styled.div`
   border-radius: 10px;
   box-shadow: 0 10px 30px ${props => props.theme.shadow};
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: ${fadeIn} 0.8s ease forwards;
   
   &:hover {
     transform: translateY(-5px);
@@ -433,6 +455,7 @@ const ContactInfo = styled.div`
 const ContactInfoTitle = styled.h2`
   font-size: 1.8rem;
   margin-bottom: 20px;
+  color: white;
 `;
 
 const ContactInfoText = styled.p`
@@ -458,7 +481,7 @@ const ContactInfoItem = styled.div`
 const IconWrapper = styled.div`
   width: 50px;
   height: 50px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.7);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -485,6 +508,7 @@ const ContactInfoLabel = styled.h3`
   font-size: 1rem;
   margin: 0 0 5px;
   font-weight: 600;
+  color:white;
 `;
 
 const ContactInfoValue = styled.p`
@@ -500,6 +524,7 @@ const ContactLink = styled.a`
   word-wrap: break-word;
   display: inline-block;
   max-width: 100%;
+  text-decoration: underline;
   
   &:hover {
     color: ${props => props.theme.secondary};
@@ -512,6 +537,9 @@ const ContactFormWrapper = styled.div`
   border-radius: 10px;
   box-shadow: 0 5px 20px ${props => props.theme.shadow};
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: ${fadeIn} 0.8s ease forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
   
   &:hover {
     transform: translateY(-5px);
@@ -649,6 +677,9 @@ const BackendAnimation = styled.div`
   background-color: ${props => props.theme.cardBackground || '#1a1a1a'};
   border-radius: 10px;
   box-shadow: 0 5px 20px ${props => props.theme.shadow || 'rgba(0,0,0,0.3)'};
+  animation: ${fadeIn} 0.8s ease forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
   
   @media (max-width: 768px) {
     display: none;
