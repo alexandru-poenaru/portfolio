@@ -11,7 +11,7 @@ import helpdesk from '../assets/images/helpdesk.png'
 import kingdomino from '../assets/images/kingdomino.jpg';
 import kottask from '../assets/images/kottask.png';
 import dashboard from '../assets/images/dashboard.png';
-
+import alex from '../assets/images/alex.jpg';
 
 const HomePage = () => {
   const serverRef = useRef(null);
@@ -97,19 +97,24 @@ const HomePage = () => {
         <Section id="about">
           <SectionTitle>About Me</SectionTitle>
           <AboutContent>
-            <p>
-            Hi! I’m Alex, an enthusiastic IT student with a passion for web and backend development. 
-            I’ve been fascinated by code since I was 12, amazed by how just the right characters in the right order can create something truly special. 
-            That early curiosity turned into a love for logic, problem-solving, and building things that actually work.
-            </p>
-            <p>
-            I enjoy working on API development, scalable architecture, real-time data, and everything that makes development more efficient, elegant, or clever.
-            I’m always experimenting, learning fast, and looking for challenges that push me to grow.
-            </p>
-            <p>
-            Open to opportunities where I can keep learning, building cool stuff,
-            and collaborate with people who love tech as much as I do.
-            </p>
+            <ProfileImageContainer>
+              <ProfileImage src={alex} alt="Alexandru Poenaru"/>
+            </ProfileImageContainer>
+            <AboutTextContent>
+              <p>
+              Hi! I’m Alex, an enthusiastic IT student with a passion for web and backend development. 
+              I’ve been fascinated by code since I was 12, amazed by how just the right characters in the right order can create something truly special. 
+              That early curiosity turned into a love for logic, problem-solving, and building things that actually work.
+              </p>
+              <p>
+              I enjoy working on API development, scalable architecture, real-time data, and everything that makes development more efficient, elegant, or clever.
+              I’m always experimenting, learning fast, and looking for challenges that push me to grow.
+              </p>
+              <p>
+              Open to opportunities where I can keep learning, building cool stuff,
+              and collaborate with people who love tech as much as I do.
+              </p>
+            </AboutTextContent>
           </AboutContent>
           
           {/* Backend Developer Animation */}
@@ -122,9 +127,13 @@ const HomePage = () => {
             </ServerContainer>
             
             <ConnectionLine>
+              {/* Original dots: Server to Database */}
               <DataDot className="dot1" />
               <DataDot className="dot2" />
-              <DataDot className="dot3" />
+              
+              {/* New dots: Database to Server */}
+              <DataDot className="reverse-dot1" />
+              <DataDot className="reverse-dot2" />
             </ConnectionLine>
             
             <DatabaseContainer ref={databaseRef}>
@@ -323,13 +332,6 @@ const dotAnimation2 = keyframes`
   100% { left: 95%; opacity: 0; }
 `;
 
-const dotAnimation3 = keyframes`
-  0% { left: 5%; opacity: 0; }
-  10% { left: 10%; opacity: 1; }
-  90% { left: 90%; opacity: 1; }
-  100% { left: 95%; opacity: 0; }
-`;
-
 // Create vertical animation for dots on mobile
 const mobileDotAnimation1 = keyframes`
   0% { top: 5%; opacity: 0; }
@@ -345,17 +347,40 @@ const mobileDotAnimation2 = keyframes`
   100% { top: 95%; opacity: 0; }
 `;
 
-const mobileDotAnimation3 = keyframes`
-  0% { top: 5%; opacity: 0; }
-  10% { top: 10%; opacity: 1; }
-  90% { top: 90%; opacity: 1; }
-  100% { top: 95%; opacity: 0; }
-`;
-
 // Add this new typing animation keyframe with the other animations
 const typingAnimation = keyframes`
   0% { width: 0; }
   100% { width: 100%; }
+`;
+
+// Add new keyframes for reverse direction animations
+const reverseDotAnimation1 = keyframes`
+  0% { right: 5%; opacity: 0; }
+  10% { right: 10%; opacity: 1; }
+  90% { right: 90%; opacity: 1; }
+  100% { right: 95%; opacity: 0; }
+`;
+
+const reverseDotAnimation2 = keyframes`
+  0% { right: 5%; opacity: 0; }
+  10% { right: 10%; opacity: 1; }
+  90% { right: 90%; opacity: 1; }
+  100% { right: 95%; opacity: 0; }
+`;
+
+// Create vertical reverse animation for dots on mobile
+const mobileReverseDotAnimation1 = keyframes`
+  0% { bottom: 5%; opacity: 0; }
+  10% { bottom: 10%; opacity: 1; }
+  90% { bottom: 90%; opacity: 1; }
+  100% { bottom: 95%; opacity: 0; }
+`;
+
+const mobileReverseDotAnimation2 = keyframes`
+  0% { bottom: 5%; opacity: 0; }
+  10% { bottom: 10%; opacity: 1; }
+  90% { bottom: 90%; opacity: 1; }
+  100% { bottom: 95%; opacity: 0; }
 `;
 
 const FullWidthHeroContainer = styled.div`
@@ -537,7 +562,18 @@ const SectionTitle = styled.h2`
 const AboutContent = styled.div`
   max-width: 800px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 30px;
+  }
+`;
+
+const AboutTextContent = styled.div`
   p {
     margin-bottom: 1.5rem;
     font-size: 1.1rem;
@@ -546,12 +582,36 @@ const AboutContent = styled.div`
   }
 `;
 
+const ProfileImageContainer = styled.div`
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 3px solid #5be584;
+  padding: 3px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  
+  @media (min-width: 768px) {
+    margin-right: 30px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+`;
+
+const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: ${props => props.theme.cardBackground || '#f0f0f0'};
+`;
+
 // Backend visualization components
 const BackendVisualization = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 40px;
+  margin-top: 60px;
   position: relative;
   min-height: 400px;
   
@@ -566,7 +626,7 @@ const ServerContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 1;
+  z-index: 10;
   
   &.pulse {
     animation: ${serverPulseAnimation} 1s ease;
@@ -608,7 +668,7 @@ const DatabaseContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 1;
+  z-index: 10;
   
   @media (min-width: 768px) {
     position: absolute;
@@ -652,18 +712,18 @@ const ConnectionLine = styled.div`
   
   @media (min-width: 768px) {
     position: absolute;
-    top: 40px;
+    top: 60px;
     left: 50%;
     transform: translateX(-50%);
     margin: 0;
-    width: 56%;
+    width: 70%;
   }
   
   @media (max-width: 768px) {
     width: 3px;
-    height: 80px;
+    height: 120px;
     background: linear-gradient(to bottom, #136f63, #FF7200);
-    margin: 5px auto;
+    margin: 0 auto;
   }
 `;
 
@@ -673,10 +733,14 @@ const DataDot = styled.div`
   height: 8px;
   background-color: white;
   border-radius: 50%;
-  top: -1px;
-  left: 0;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.4);
   z-index: 20;
+  
+  /* Forward direction dots (server to database) */
+  &.dot1, &.dot2 {
+    top: -1px;
+    left: 0;
+  }
   
   &.dot1 {
     animation: ${dotAnimation1} 3s infinite;
@@ -699,15 +763,35 @@ const DataDot = styled.div`
       left: -2px;
     }
   }
+  }
   
-  &.dot3 {
-    animation: ${dotAnimation3} 3s infinite;
-    animation-delay: 2s;
+  /* Reverse direction dots (database to server) */
+  &.reverse-dot1, &.reverse-dot2 {
+    top: -1px;
+    right: 0;
+  }
+  
+  &.reverse-dot1 {
+    animation: ${reverseDotAnimation1} 3s infinite;
+    animation-delay: 0.5s;
     
     @media (max-width: 768px) {
-      animation: ${mobileDotAnimation3} 3s infinite;
-      animation-delay: 2s;
-      left: -2px;
+      animation: ${mobileReverseDotAnimation1} 3s infinite;
+      animation-delay: 0.5s;
+      right: -2px;
+      top: auto;
+    }
+  }
+  
+  &.reverse-dot2 {
+    animation: ${reverseDotAnimation2} 3s infinite;
+    animation-delay: 1.5s;
+    
+    @media (max-width: 768px) {
+      animation: ${mobileReverseDotAnimation2} 3s infinite;
+      animation-delay: 1.5s;
+      right: -2px;
+      top: auto;
     }
   }
 `;
