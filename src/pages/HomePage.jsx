@@ -383,12 +383,22 @@ const HeroSection = styled.section`
   width: 100%;
   margin: 0;
   padding: 0;
+  
+  @media (max-width: 768px) {
+    align-items: flex-start;
+    padding-top: 25vh;
+  }
+  
+  @media (max-width: 480px) {
+    padding-top: 20vh;
+  }
 `;
 
 const HeroContent = styled.div`
   text-align: center;
   z-index: 2;
   animation: ${fadeIn} 1s ease-out;
+  margin-top: 0;
   
   h1 {
     font-size: 3rem;
@@ -397,11 +407,11 @@ const HeroContent = styled.div`
   }
   
   @media (max-width: 768px) {
-    transform: translateY(-10vh); /* Move content up on mobile */
+    margin-top: -10vh; /* Position content higher on mobile from the start */
   }
   
   @media (max-width: 480px) {
-    transform: translateY(-15vh); /* Move content up even more on smaller screens */
+    margin-top: -15vh; /* Position content even higher on smaller screens from the start */
     
     h1 {
       font-size: 2.5rem;
