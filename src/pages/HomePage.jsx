@@ -33,6 +33,28 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, []);
   
+  // Add animation for skill cards when they come into view
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+        }
+      });
+    }, { threshold: 0.2 });
+    
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach(el => {
+      observer.observe(el);
+    });
+    
+    return () => {
+      elements.forEach(el => {
+        observer.unobserve(el);
+      });
+    };
+  }, []);
+  
   // Handle smooth scrolling for the Learn More button
   const handleLearnMoreClick = (e) => {
     e.preventDefault();
@@ -124,20 +146,16 @@ const HomePage = () => {
         <Section id="about">
           <SectionTitle>About Me</SectionTitle>
           <AboutContent>
-            <ProfileImageContainer>
+            <ProfileImageContainer className="animate-on-scroll">
               <ProfileImage src={alex} alt="Alexandru Poenaru"/>
             </ProfileImageContainer>
             <AboutTextContent>
               <p>
               Hi! I’m Alex, an enthusiastic IT student with a passion for web and backend development. 
               I’ve been fascinated by code since I was 12, amazed by how just the right characters in the right order can create something truly special. 
-              That early curiosity turned into a love for logic, problem-solving, and building things that actually work.
-              </p>
-              <p>
+              That early curiosity turned into a love for logic, problem-solving, and building things that actually work. <br /> <br />
               I enjoy working on API development, scalable architecture, real-time data, and everything that makes development more efficient, elegant, or clever.
-              I’m always experimenting, learning fast, and looking for challenges that push me to grow.
-              </p>
-              <p>
+              I’m always experimenting, learning fast, and looking for challenges that push me to grow. <br /> <br />
               Open to opportunities where I can keep learning, building cool stuff,
               and collaborate with people who love tech as much as I do.
               </p>
@@ -173,21 +191,20 @@ const HomePage = () => {
             <CodeBlockContainer ref={codeBlockRef}>
               <StandaloneCodeIcon>
                 <FaCode />
-              </StandaloneCodeIcon>
-              <CodeSnippet>
-              <CodeLine visible={codeVisible}>export default function Data() &#123;</CodeLine>
-              <CodeLine visible={codeVisible}>  const &#123; data, error, isLoading &#125; </CodeLine>
-              <CodeLine visible={codeVisible}>    = useSWR('/api/data', fetcher);</CodeLine>
-              <CodeLine visible={codeVisible}>  if (isLoading) return &lt;p&gt;Loading...&lt;/p&gt;;</CodeLine>
-              <CodeLine visible={codeVisible}>  if (error) return &lt;p&gt;Error fetching data&lt;/p&gt;;</CodeLine>
-              <CodeLine visible={codeVisible}></CodeLine>
-              <CodeLine visible={codeVisible}>  return (</CodeLine>
-              <CodeLine visible={codeVisible}>   &lt;div&gt;</CodeLine>
-              <CodeLine visible={codeVisible}>    &lt;h2&gt;Data&lt;/h2&gt;</CodeLine>
-              <CodeLine visible={codeVisible}>    &lt;pre&gt;&#123;JSON.stringify(data, null, 2)&#125;&lt;/pre&gt;</CodeLine>
-              <CodeLine visible={codeVisible}>   &lt;/div&gt;</CodeLine>
-              <CodeLine visible={codeVisible}>  );</CodeLine>
-              <CodeLine visible={codeVisible}>&#125;</CodeLine>
+              </StandaloneCodeIcon>              <CodeSnippet>
+              <CodeLine $visible={codeVisible}>export default function Data() &#123;</CodeLine>
+              <CodeLine $visible={codeVisible}>  const &#123; data, error, isLoading &#125; </CodeLine>
+              <CodeLine $visible={codeVisible}>    = useSWR('/api/data', fetcher);</CodeLine>
+              <CodeLine $visible={codeVisible}>  if (isLoading) return &lt;p&gt;Loading...&lt;/p&gt;;</CodeLine>
+              <CodeLine $visible={codeVisible}>  if (error) return &lt;p&gt;Error fetching data&lt;/p&gt;;</CodeLine>
+              <CodeLine $visible={codeVisible}></CodeLine>
+              <CodeLine $visible={codeVisible}>  return (</CodeLine>
+              <CodeLine $visible={codeVisible}>   &lt;div&gt;</CodeLine>
+              <CodeLine $visible={codeVisible}>    &lt;h2&gt;Data&lt;/h2&gt;</CodeLine>
+              <CodeLine $visible={codeVisible}>    &lt;pre&gt;&#123;JSON.stringify(data, null, 2)&#125;&lt;/pre&gt;</CodeLine>
+              <CodeLine $visible={codeVisible}>   &lt;/div&gt;</CodeLine>
+              <CodeLine $visible={codeVisible}>  );</CodeLine>
+              <CodeLine $visible={codeVisible}>&#125;</CodeLine>
               </CodeSnippet>
             </CodeBlockContainer>
           </BackendVisualization>
@@ -196,7 +213,7 @@ const HomePage = () => {
         <Section id="skills">
           <SectionTitle>Technical Skills</SectionTitle>
           <SkillsContainer>
-            <SkillCategory>
+            <SkillCategory className="animate-on-scroll">
               <SkillCategoryTitle>Languages</SkillCategoryTitle>
               <SkillsList>
                 <SkillItem><FaJsSquare /> JavaScript</SkillItem>
@@ -209,7 +226,7 @@ const HomePage = () => {
               </SkillsList>
             </SkillCategory>
             
-            <SkillCategory>
+            <SkillCategory className="animate-on-scroll">
               <SkillCategoryTitle>Frameworks & Libraries</SkillCategoryTitle>
               <SkillsList>
                 <SkillItem><SiNodedotjs /> Node.js</SkillItem>
@@ -220,7 +237,7 @@ const HomePage = () => {
               </SkillsList>
             </SkillCategory>
             
-            <SkillCategory>
+            <SkillCategory className="animate-on-scroll">
               <SkillCategoryTitle>Databases</SkillCategoryTitle>
               <SkillsList>
                 <SkillItem><SiMysql /> MySQL</SkillItem>
@@ -228,7 +245,7 @@ const HomePage = () => {
               </SkillsList>
             </SkillCategory>
             
-            <SkillCategory>
+            <SkillCategory className="animate-on-scroll">
               <SkillCategoryTitle>DevOps & Tools</SkillCategoryTitle>
               <SkillsList>
                 <SkillItem><FaGitAlt /> Git</SkillItem>
@@ -237,12 +254,10 @@ const HomePage = () => {
               </SkillsList>
             </SkillCategory>
           </SkillsContainer>
-        </Section>
-
-        <Section id="projects">
+        </Section>        <Section id="projects">
           <SectionTitle>Projects</SectionTitle>
           <ProjectsGrid>
-            <ProjectCard>
+            <ProjectCard className="animate-on-scroll">
               <ProjectImage src={helpdesk} alt="Helpdesk Project" />
               <ProjectContent>
                 <ProjectDescription>
@@ -254,7 +269,7 @@ const HomePage = () => {
               </ProjectContent>
             </ProjectCard>
             
-            <ProjectCard>
+            <ProjectCard className="animate-on-scroll">
               <ProjectImage src={kingdomino} alt="Kingdomino Project" />
               <ProjectContent>
                 <ProjectDescription>
@@ -266,7 +281,7 @@ const HomePage = () => {
               </ProjectContent>
             </ProjectCard>
             
-            <ProjectCard>
+            <ProjectCard className="animate-on-scroll">
               <ProjectImage src={kottask} alt="KotTask Project" />
               <ProjectContent>
                 <ProjectDescription>
@@ -278,7 +293,7 @@ const HomePage = () => {
               </ProjectContent>
             </ProjectCard>
             
-            <ProjectCard>
+            <ProjectCard className="animate-on-scroll">
               <ProjectImage src={dashboard} alt="Dashboard Project" />
               <ProjectContent>
                 <ProjectDescription>
@@ -617,6 +632,14 @@ const ProfileImageContainer = styled.div`
   padding: 3px;
   margin-bottom: 20px;
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease;
+  
+  &.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
   
   @media (min-width: 768px) {
     margin-right: 30px;
@@ -738,7 +761,7 @@ const ConnectionLine = styled.div`
   overflow: visible;
   
   @media (min-width: 768px) {
-    position: absolute;
+    position: absolute; 
     top: 60px;
     left: 50%;
     transform: translateX(-50%);
@@ -881,26 +904,26 @@ const CodeLine = styled.div`
   overflow: hidden;
   width: 0;
   border-right: 2px solid transparent;
-  animation: ${props => props.visible ? typingAnimation : 'none'} 1.8s forwards;
-  animation-play-state: ${props => props.visible ? 'running' : 'paused'};
+  animation: ${props => props.$visible ? typingAnimation : 'none'} 1.8s forwards;
+  animation-play-state: ${props => props.$visible ? 'running' : 'paused'};
   
   @media (max-width: 576px) {
     font-size: 0.65rem;
   }
   
-  &:nth-child(1) { animation-delay: ${props => props.visible ? '0.3s' : '0s'}; }
-  &:nth-child(2) { animation-delay: ${props => props.visible ? '1.2s' : '0s'}; }
-  &:nth-child(3) { animation-delay: ${props => props.visible ? '2.1s' : '0s'}; }
-  &:nth-child(4) { animation-delay: ${props => props.visible ? '3.0s' : '0s'}; }
-  &:nth-child(5) { animation-delay: ${props => props.visible ? '3.9s' : '0s'}; }
-  &:nth-child(6) { animation-delay: ${props => props.visible ? '4.8s' : '0s'}; }
-  &:nth-child(7) { animation-delay: ${props => props.visible ? '5.7s' : '0s'}; }
-  &:nth-child(8) { animation-delay: ${props => props.visible ? '6.6s' : '0s'}; }
-  &:nth-child(9) { animation-delay: ${props => props.visible ? '7.5s' : '0s'}; }
-  &:nth-child(10) { animation-delay: ${props => props.visible ? '8.4s' : '0s'}; }
-  &:nth-child(11) { animation-delay: ${props => props.visible ? '9.3s' : '0s'}; }
-  &:nth-child(12) { animation-delay: ${props => props.visible ? '10.2s' : '0s'}; }
-  &:nth-child(13) { animation-delay: ${props => props.visible ? '11.1s' : '0s'}; }
+  &:nth-child(1) { animation-delay: ${props => props.$visible ? '0.3s' : '0s'}; }
+  &:nth-child(2) { animation-delay: ${props => props.$visible ? '1.2s' : '0s'}; }
+  &:nth-child(3) { animation-delay: ${props => props.$visible ? '2.1s' : '0s'}; }
+  &:nth-child(4) { animation-delay: ${props => props.$visible ? '3.0s' : '0s'}; }
+  &:nth-child(5) { animation-delay: ${props => props.$visible ? '3.9s' : '0s'}; }
+  &:nth-child(6) { animation-delay: ${props => props.$visible ? '4.8s' : '0s'}; }
+  &:nth-child(7) { animation-delay: ${props => props.$visible ? '5.7s' : '0s'}; }
+  &:nth-child(8) { animation-delay: ${props => props.$visible ? '6.6s' : '0s'}; }
+  &:nth-child(9) { animation-delay: ${props => props.$visible ? '7.5s' : '0s'}; }
+  &:nth-child(10) { animation-delay: ${props => props.$visible ? '8.4s' : '0s'}; }
+  &:nth-child(11) { animation-delay: ${props => props.$visible ? '9.3s' : '0s'}; }
+  &:nth-child(12) { animation-delay: ${props => props.$visible ? '10.2s' : '0s'}; }
+  &:nth-child(13) { animation-delay: ${props => props.$visible ? '11.1s' : '0s'}; }
   
   &:last-child {
     border-right-color: transparent;
@@ -920,7 +943,14 @@ const SkillCategory = styled.div`
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 5px 15px ${props => props.theme.shadow};
-  transition: transform 0.3s, box-shadow 0.3s;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease;
+  
+  &.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
   
   &:hover {
     transform: translateY(-5px);
@@ -978,10 +1008,17 @@ const ProjectCard = styled.div`
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 20px ${props => props.theme.shadow};
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: all 0.5s ease;
   height: 100%;
   display: flex;
   flex-direction: column;
+  opacity: 0;
+  transform: translateY(20px);
+  
+  &.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
   
   &:hover {
     transform: translateY(-8px);

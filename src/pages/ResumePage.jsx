@@ -335,7 +335,7 @@ const ResumeContent = styled.div`
   background-color: ${props => props.theme.card};
   border-radius: 8px;
   box-shadow: 0 5px 25px ${props => props.theme.shadow};
-  padding: 40px;
+  padding: 20px;
   margin-top: 40px;
 `;
 
