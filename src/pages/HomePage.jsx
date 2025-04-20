@@ -395,11 +395,24 @@ const HeroContent = styled.div`
     margin-bottom: 1rem;
     color: #fff;
   }
+  
+  @media (max-width: 768px) {
+    transform: translateY(-10vh); /* Move content up on mobile */
+  }
+  
+  @media (max-width: 480px) {
+    transform: translateY(-15vh); /* Move content up even more on smaller screens */
+    
+    h1 {
+      font-size: 2.5rem;
+    }
+  }
 `;
 
 const TypewriterContainer = styled.div`
   overflow: hidden;
   margin-bottom: 1rem;
+  padding: 0 5px;
 `;
 
 const TypewriterText = styled.h2`
