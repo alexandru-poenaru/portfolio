@@ -14,11 +14,10 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
   }
-  
-  body {
+    body {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
       sans-serif;
     -webkit-font-smoothing: antialiased;

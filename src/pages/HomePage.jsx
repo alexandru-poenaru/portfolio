@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FaGithub, FaLinkedin, FaArrowDown, FaServer, FaDatabase, FaCode, FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact } from 'react-icons/fa';
 import { SiTypescript, SiNodedotjs, SiMysql, SiYarn, SiSpringboot } from 'react-icons/si';
@@ -17,6 +17,7 @@ const HomePage = () => {
   const serverRef = useRef(null);
   const databaseRef = useRef(null);
   const codeBlockRef = useRef(null);
+  const [codeVisible, setCodeVisible] = useState(false);
 
   // Animation for server-client communication simulation
   useEffect(() => {
@@ -46,6 +47,32 @@ const HomePage = () => {
     }
   };
 
+  // Set up intersection observer for code block
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCodeVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.3 } // Trigger when 30% of the element is visible
+    );
+    
+    // Store the ref value in a variable inside the effect
+    const currentCodeBlockRef = codeBlockRef.current;
+    
+    if (currentCodeBlockRef) {
+      observer.observe(currentCodeBlockRef);
+    }
+    
+    return () => {
+      if (currentCodeBlockRef) {
+        observer.unobserve(currentCodeBlockRef);
+      }
+    };
+  }, []);
+
   return (
     <>
       <FullWidthHeroContainer>
@@ -72,7 +99,7 @@ const HomePage = () => {
           <HeroContent>
             <TypewriterContainer>
               <h1>Hello, I'm <HighlightSpan>Alexandru Poenaru</HighlightSpan></h1>
-              <TypewriterText>Student IT-Dev@HoGent</TypewriterText>
+              <TypewriterText>Student IT-Dev@HOGENT</TypewriterText>
             </TypewriterContainer>
             <AnimatedDescription>
               I'm an Applied Information of Technology student with a passion for web- and especially back-end development. I specialize in creating efficient and scalable server-side applications.
@@ -148,19 +175,19 @@ const HomePage = () => {
                 <FaCode />
               </StandaloneCodeIcon>
               <CodeSnippet>
-              <CodeLine>export default function Data() &#123;</CodeLine>
-              <CodeLine>  const &#123; data, error, isLoading &#125; </CodeLine>
-              <CodeLine>    = useSWR('/api/data', fetcher);</CodeLine>
-              <CodeLine>  if (isLoading) return &lt;p&gt;Loading...&lt;/p&gt;;</CodeLine>
-              <CodeLine>  if (error) return &lt;p&gt;Error fetching data&lt;/p&gt;;</CodeLine>
-              <CodeLine></CodeLine>
-              <CodeLine>  return (</CodeLine>
-              <CodeLine>   &lt;div&gt;</CodeLine>
-              <CodeLine>    &lt;h2&gt;Data&lt;/h2&gt;</CodeLine>
-              <CodeLine>    &lt;pre&gt;&#123;JSON.stringify(data, null, 2)&#125;&lt;/pre&gt;</CodeLine>
-              <CodeLine>   &lt;/div&gt;</CodeLine>
-              <CodeLine>  );</CodeLine>
-              <CodeLine>&#125;</CodeLine>
+              <CodeLine visible={codeVisible}>export default function Data() &#123;</CodeLine>
+              <CodeLine visible={codeVisible}>  const &#123; data, error, isLoading &#125; </CodeLine>
+              <CodeLine visible={codeVisible}>    = useSWR('/api/data', fetcher);</CodeLine>
+              <CodeLine visible={codeVisible}>  if (isLoading) return &lt;p&gt;Loading...&lt;/p&gt;;</CodeLine>
+              <CodeLine visible={codeVisible}>  if (error) return &lt;p&gt;Error fetching data&lt;/p&gt;;</CodeLine>
+              <CodeLine visible={codeVisible}></CodeLine>
+              <CodeLine visible={codeVisible}>  return (</CodeLine>
+              <CodeLine visible={codeVisible}>   &lt;div&gt;</CodeLine>
+              <CodeLine visible={codeVisible}>    &lt;h2&gt;Data&lt;/h2&gt;</CodeLine>
+              <CodeLine visible={codeVisible}>    &lt;pre&gt;&#123;JSON.stringify(data, null, 2)&#125;&lt;/pre&gt;</CodeLine>
+              <CodeLine visible={codeVisible}>   &lt;/div&gt;</CodeLine>
+              <CodeLine visible={codeVisible}>  );</CodeLine>
+              <CodeLine visible={codeVisible}>&#125;</CodeLine>
               </CodeSnippet>
             </CodeBlockContainer>
           </BackendVisualization>
@@ -854,25 +881,26 @@ const CodeLine = styled.div`
   overflow: hidden;
   width: 0;
   border-right: 2px solid transparent;
-  animation: ${typingAnimation} 1.8s forwards;
+  animation: ${props => props.visible ? typingAnimation : 'none'} 1.8s forwards;
+  animation-play-state: ${props => props.visible ? 'running' : 'paused'};
   
   @media (max-width: 576px) {
     font-size: 0.65rem;
   }
   
-  &:nth-child(1) { animation-delay: 0.3s; }
-  &:nth-child(2) { animation-delay: 1.2s; }
-  &:nth-child(3) { animation-delay: 2.1s; }
-  &:nth-child(4) { animation-delay: 3.0s; }
-  &:nth-child(5) { animation-delay: 3.9s; }
-  &:nth-child(6) { animation-delay: 4.8s; }
-  &:nth-child(7) { animation-delay: 5.7s; }
-  &:nth-child(8) { animation-delay: 6.6s; }
-  &:nth-child(9) { animation-delay: 7.5s; }
-  &:nth-child(10) { animation-delay: 8.4s; }
-  &:nth-child(11) { animation-delay: 9.3s; }
-  &:nth-child(12) { animation-delay: 10.2s; }
-  &:nth-child(13) { animation-delay: 11.1s; }
+  &:nth-child(1) { animation-delay: ${props => props.visible ? '0.3s' : '0s'}; }
+  &:nth-child(2) { animation-delay: ${props => props.visible ? '1.2s' : '0s'}; }
+  &:nth-child(3) { animation-delay: ${props => props.visible ? '2.1s' : '0s'}; }
+  &:nth-child(4) { animation-delay: ${props => props.visible ? '3.0s' : '0s'}; }
+  &:nth-child(5) { animation-delay: ${props => props.visible ? '3.9s' : '0s'}; }
+  &:nth-child(6) { animation-delay: ${props => props.visible ? '4.8s' : '0s'}; }
+  &:nth-child(7) { animation-delay: ${props => props.visible ? '5.7s' : '0s'}; }
+  &:nth-child(8) { animation-delay: ${props => props.visible ? '6.6s' : '0s'}; }
+  &:nth-child(9) { animation-delay: ${props => props.visible ? '7.5s' : '0s'}; }
+  &:nth-child(10) { animation-delay: ${props => props.visible ? '8.4s' : '0s'}; }
+  &:nth-child(11) { animation-delay: ${props => props.visible ? '9.3s' : '0s'}; }
+  &:nth-child(12) { animation-delay: ${props => props.visible ? '10.2s' : '0s'}; }
+  &:nth-child(13) { animation-delay: ${props => props.visible ? '11.1s' : '0s'}; }
   
   &:last-child {
     border-right-color: transparent;
