@@ -1,15 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FaDownload, FaGraduationCap, FaBriefcase, FaCode } from 'react-icons/fa';
 import resumePdf from '../assets/pdf/CV_Alexandru_Poenaru.pdf';
+import { ThemeContext } from '../styles/ThemeContext';
 
 const ResumePage = () => {
+  const { darkMode } = useContext(ThemeContext);
+
   // Reset scroll position when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Add animation for each timeline item when it comes into view
+  // Observer to add 'animate' when elements come into view
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -30,6 +33,17 @@ const ResumePage = () => {
       });
     };
   }, []);
+
+  // Reapply 'animate' class on theme changes so it is never removed once added
+  useEffect(() => {
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach(el => {
+      // If the element is visible in the viewport, ensure it has the animate class
+      if (el.getBoundingClientRect().top < window.innerHeight) {
+        el.classList.add('animate');
+      }
+    });
+  }, [darkMode]);
   
   return (
     <ResumeContainer>

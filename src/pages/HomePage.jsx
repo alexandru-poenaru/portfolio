@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useContext } from 'react';
+import { ThemeContext } from '../styles/ThemeContext';
 import styled, { keyframes } from 'styled-components';
 import { FaGithub, FaLinkedin, FaArrowDown, FaServer, FaDatabase, FaCode, FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact } from 'react-icons/fa';
 import { SiTypescript, SiNodedotjs, SiMysql, SiYarn, SiSpringboot } from 'react-icons/si';
@@ -18,6 +19,9 @@ const HomePage = () => {
   const databaseRef = useRef(null);
   const codeBlockRef = useRef(null);
   const [codeVisible, setCodeVisible] = useState(false);
+
+  // Access darkMode from ThemeContext
+  const { darkMode } = useContext(ThemeContext);
 
   // Animation for server-client communication simulation
   useEffect(() => {
@@ -54,6 +58,16 @@ const HomePage = () => {
       });
     };
   }, []);
+  
+  // Reapply 'animate' class on theme changes so it persists
+  useEffect(() => {
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight) {
+        el.classList.add('animate');
+      }
+    });
+  }, [darkMode]);
   
   // Handle smooth scrolling for the Learn More button
   const handleLearnMoreClick = (e) => {
