@@ -4,48 +4,21 @@ import styled, { ThemeProvider } from 'styled-components';
 import { ThemeContext, ThemeProvider as CustomThemeProvider } from './styles/ThemeContext';
 import { lightTheme, darkTheme } from './styles/theme';
 import GlobalStyles from './styles/GlobalStyles';
+import { FaSun, FaMoon } from 'react-icons/fa';
 import './App.css';
 
-// Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 
-// Pages
 import HomePage from './pages/HomePage';
 import ContactPage from './pages/ContactPage';
 import ResumePage from './pages/ResumePage';
 
-// Theme toggle component
-const ThemeToggle = styled.button`
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: ${props => props.theme.primary};
-  color: white;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  box-shadow: 0 2px 10px ${props => props.theme.shadow};
-  z-index: 1000;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-    background-color: ${props => props.theme.primaryDark};
-  }
-`;
-
 const AppWithTheme = () => {
   const { darkMode, toggleDarkMode } = useContext(ThemeContext);
   const theme = darkMode ? darkTheme : lightTheme;
-  
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
@@ -61,8 +34,8 @@ const AppWithTheme = () => {
             </Routes>
           </MainContent>
           <Footer />
-          <ThemeToggle onClick={toggleDarkMode}>
-            {darkMode ? '☀️' : '🌙'}
+          <ThemeToggle onClick={toggleDarkMode} aria-label="Toggle theme">
+            {darkMode ? <FaSun /> : <FaMoon />}
           </ThemeToggle>
         </AppContainer>
       </Router>
@@ -88,7 +61,38 @@ const AppContainer = styled.div`
 
 const MainContent = styled.main`
   flex: 1;
-  padding-top: 80px; /* Space for fixed navbar */
+  padding-top: 72px;
+`;
+
+const ThemeToggle = styled.button`
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: ${props => props.theme.card};
+  border: 1px solid ${props => props.theme.border};
+  color: ${props => props.theme.primary};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 4px 20px ${props => props.theme.shadow};
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease, background 0.35s ease;
+
+  &:hover {
+    border-color: ${props => props.theme.primary};
+    box-shadow: 0 4px 20px ${props => props.theme.glow};
+    transform: scale(1.08);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 export default App;

@@ -1,119 +1,55 @@
-// Theme configuration for light and dark mode
-export const lightTheme = {  body: '#f9f9f9',
-  text: '#333',
-  textSecondary: '#666',
-  primary: '#5be584',
-  primaryDark: '#3bc468',
-  background: '#ffffff',
-  card: '#ffffff',
-  cardBackground: '#f9f9f9',
-  border: '#eee',
-  shadow: 'rgba(0, 0, 0, 0.1)',
-  shadowHover: 'rgba(0, 0, 0, 0.15)',
-  timeline: '#eee',
-  navbar: 'rgba(255, 255, 255, 0.95)',
-  footer: '#1e1e1e',
-  footerText: '#aaa',
+export const lightTheme = {
+  body: '#F8F4EE',
+  surface: '#FFFFFF',
+  text: '#0A0A14',
+  textSecondary: '#56566E',
+  primary: '#5C3FFF',
+  primaryDark: '#4A2EE0',
+  primaryLight: '#8A80FF',
+  glow: 'rgba(92, 63, 255, 0.2)',
+  glowStrong: 'rgba(92, 63, 255, 0.4)',
+  card: '#FFFFFF',
+  cardBackground: '#F0EBE2',
+  border: 'rgba(92, 63, 255, 0.14)',
+  borderStrong: 'rgba(92, 63, 255, 0.4)',
+  shadow: 'rgba(10, 10, 20, 0.07)',
+  shadowHover: 'rgba(92, 63, 255, 0.18)',
+  timeline: 'rgba(92, 63, 255, 0.22)',
+  navbar: 'rgba(248, 244, 238, 0.82)',
+  footer: '#0A0A14',
+  footerText: '#88889A',
 };
 
-export const darkTheme = {  body: '#121212',
-  text: '#e4e4e4',
-  textSecondary: '#b0b0b0',
-  primary: '#5be584',
-  primaryDark: '#3bc468',
-  background: '#1e1e1e',
-  card: '#2a2a2a',
-  cardBackground: '#252525',
-  border: '#333',
-  shadow: 'rgba(0, 0, 0, 0.3)',
-  shadowHover: 'rgba(0, 0, 0, 0.4)',
-  timeline: '#444',
-  navbar: 'rgba(25, 25, 25, 0.95)',
-  footer: '#121212',
-  footerText: '#999',
+export const darkTheme = {
+  body: '#07070F',
+  surface: '#0C0C1C',
+  text: '#E4E4F2',
+  textSecondary: '#7878A0',
+  primary: '#7C74FF',
+  primaryDark: '#6C63FF',
+  primaryLight: '#A09AFF',
+  glow: 'rgba(124, 116, 255, 0.26)',
+  glowStrong: 'rgba(124, 116, 255, 0.48)',
+  card: '#0C0C1C',
+  cardBackground: '#111124',
+  border: 'rgba(124, 116, 255, 0.16)',
+  borderStrong: 'rgba(124, 116, 255, 0.44)',
+  shadow: 'rgba(0, 0, 0, 0.5)',
+  shadowHover: 'rgba(124, 116, 255, 0.24)',
+  timeline: 'rgba(124, 116, 255, 0.28)',
+  navbar: 'rgba(7, 7, 15, 0.82)',
+  footer: '#07070F',
+  footerText: '#5C5C80',
 };
 
-// Global animations
 export const animations = {
   keyframes: {
-    float: `
-      @keyframes float {
-        0% {
-          transform: translateY(0px);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-        100% {
-          transform: translateY(0px);
-        }
-      }
-    `,
-    pulse: `
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-    `,
-    fadeIn: `
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-    `,
-    typing: `
-      @keyframes typing {
-        from {
-          width: 0
-        }
-        to {
-          width: 100%
-        }
-      }
-    `,
-    blink: `
-      @keyframes blink {
-        50% {
-          border-color: transparent
-        }
-      }
-    `,
-    dataFlow: `
-      @keyframes dataFlow {
-        0% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
-        }
-        100% {
-          background-position: 0% 50%;
-        }
-      }
-    `,
-    serverPulse: `
-      @keyframes serverPulse {
-        0% {
-          box-shadow: 0 0 0 0 rgba(0, 149, 255, 0.7);
-        }
-        70% {
-          box-shadow: 0 0 0 10px rgba(0, 149, 255, 0);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(0, 149, 255, 0);
-        }
-      }
-    `,
+    float: `@keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }`,
+    pulse: `@keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }`,
+    fadeIn: `@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }`,
+    typing: `@keyframes typing { from { width:0; } to { width:100%; } }`,
+    blink: `@keyframes blink { 50% { border-color:transparent; } }`,
+    dataFlow: `@keyframes dataFlow { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }`,
+    serverPulse: `@keyframes serverPulse { 0% { box-shadow:0 0 0 0 rgba(124,116,255,0.6); } 70% { box-shadow:0 0 0 12px rgba(124,116,255,0); } 100% { box-shadow:0 0 0 0 rgba(124,116,255,0); } }`,
   }
 };

@@ -1,14 +1,13 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import { ThemeContext } from '../styles/ThemeContext';
 import styled, { keyframes } from 'styled-components';
-import { FaGithub, FaLinkedin, FaArrowDown, FaServer, FaDatabase, FaCode, FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaArrowDown, FaServer, FaDatabase, FaCode, FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact, FaExternalLinkAlt } from 'react-icons/fa';
 import { SiTypescript, SiNodedotjs, SiMysql, SiYarn, SiSpringboot } from 'react-icons/si';
-import { TbBrandCSharp } from "react-icons/tb";
-import { DiMsqlServer } from "react-icons/di";
-import { PiFileJsxDuotone } from "react-icons/pi";
-import { RiTailwindCssFill } from "react-icons/ri";
-// Import project images
-import helpdesk from '../assets/images/helpdesk.png'
+import { TbBrandCSharp } from 'react-icons/tb';
+import { DiMsqlServer } from 'react-icons/di';
+import { PiFileJsxDuotone } from 'react-icons/pi';
+import { RiTailwindCssFill } from 'react-icons/ri';
+import helpdesk from '../assets/images/helpdesk.png';
 import kingdomino from '../assets/images/kingdomino.jpg';
 import kottask from '../assets/images/kottask.png';
 import dashboard from '../assets/images/dashboard.png';
@@ -16,144 +15,84 @@ import alex from '../assets/images/alex.jpg';
 
 const HomePage = () => {
   const serverRef = useRef(null);
-  const databaseRef = useRef(null);
   const codeBlockRef = useRef(null);
   const [codeVisible, setCodeVisible] = useState(false);
-
-  // Access darkMode from ThemeContext
   const { darkMode } = useContext(ThemeContext);
 
-  // Animation for server-client communication simulation
   useEffect(() => {
     const interval = setInterval(() => {
       if (serverRef.current) {
         serverRef.current.classList.add('pulse');
-        setTimeout(() => {
-          serverRef.current?.classList.remove('pulse');
-        }, 1000);
+        setTimeout(() => serverRef.current?.classList.remove('pulse'), 1000);
       }
     }, 3000);
-
     return () => clearInterval(interval);
   }, []);
-  
-  // Add animation for skill cards when they come into view
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate');
-        }
-      });
-    }, { threshold: 0.2 });
-    
-    const elements = document.querySelectorAll('.animate-on-scroll');
-    elements.forEach(el => {
-      observer.observe(el);
-    });
-    
-    return () => {
-      elements.forEach(el => {
-        observer.unobserve(el);
-      });
-    };
-  }, []);
-  
-  // Reapply 'animate' class on theme changes so it persists
-  useEffect(() => {
-    const elements = document.querySelectorAll('.animate-on-scroll');
-    elements.forEach(el => {
-      if (el.getBoundingClientRect().top < window.innerHeight) {
-        el.classList.add('animate');
-      }
-    });
-  }, [darkMode]);
-  
-  // Handle smooth scrolling for the Learn More button
-  const handleLearnMoreClick = (e) => {
-    e.preventDefault();
-    const targetId = e.currentTarget.getAttribute('href').substring(1);
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      const offsetTop = targetElement.getBoundingClientRect().top + window.pageYOffset;
-      window.scrollTo({
-        top: offsetTop, // Scroll precisely to the About Me section
-        behavior: 'smooth'
-      });
-    }
-  };
 
-  // Set up intersection observer for code block
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setCodeVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.3 } // Trigger when 30% of the element is visible
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('animate'); }),
+      { threshold: 0.15 }
     );
-    
-    // Store the ref value in a variable inside the effect
-    const currentCodeBlockRef = codeBlockRef.current;
-    
-    if (currentCodeBlockRef) {
-      observer.observe(currentCodeBlockRef);
-    }
-    
-    return () => {
-      if (currentCodeBlockRef) {
-        observer.unobserve(currentCodeBlockRef);
-      }
-    };
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach(el => observer.observe(el));
+    return () => elements.forEach(el => observer.unobserve(el));
   }, []);
+
+  useEffect(() => {
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('animate');
+    });
+  }, [darkMode]);
+
+  useEffect(() => {
+    const currentRef = codeBlockRef.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setCodeVisible(true); observer.unobserve(entry.target); } },
+      { threshold: 0.3 }
+    );
+    if (currentRef) observer.observe(currentRef);
+    return () => { if (currentRef) observer.unobserve(currentRef); };
+  }, []);
+
+  const handleLearnMoreClick = (e) => {
+    e.preventDefault();
+    const id = e.currentTarget.getAttribute('href').substring(1);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <>
       <FullWidthHeroContainer>
         <HeroSection>
-          <video 
-            style={{ 
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              zIndex: 1,
-              filter: 'brightness(0.5)',
-            }} 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-          >
+          <VideoBackground autoPlay loop muted playsInline>
             <source src={require('../assets/videos/background-video.mp4')} type="video/mp4" />
-          </video>
-          <BackgroundOverlay />
+          </VideoBackground>
+          <HeroOverlay />
           <HeroContent>
             <TypewriterContainer>
-              <h1>Hello, I'm <HighlightSpan>Alexandru Poenaru</HighlightSpan></h1>
-              <TypewriterText>Student IT-Dev@HOGENT</TypewriterText>
+              <HeroTitle>Hello, I'm <HighlightSpan>Alexandru Poenaru</HighlightSpan></HeroTitle>
+              <TypewriterText>Student IT-Dev @ HOGENT</TypewriterText>
             </TypewriterContainer>
             <AnimatedDescription>
-              I'm an Applied Information of Technology student with a passion for web- and especially back-end development. I specialize in creating efficient and scalable server-side applications.
+              Applied IT student with a passion for web and back-end development.
+              I build efficient, scalable server-side applications and clean front-end experiences.
             </AnimatedDescription>
-            <SocialLinks>
+            <HeroActions>
               <SocialLink href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer">
                 <FaGithub /> GitHub
               </SocialLink>
               <SocialLink href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer">
                 <FaLinkedin /> LinkedIn
               </SocialLink>
-            </SocialLinks>
+            </HeroActions>
             <ScrollDownButton href="#about" onClick={handleLearnMoreClick}>
-              <FaArrowDown /> Learn More
+              <FaArrowDown />
+              <span>Scroll</span>
             </ScrollDownButton>
           </HeroContent>
         </HeroSection>
-        <BlurryBarrier />
+        <HeroBottomFade />
       </FullWidthHeroContainer>
 
       <HomeContainer>
@@ -161,64 +100,60 @@ const HomePage = () => {
           <SectionTitle>About Me</SectionTitle>
           <AboutContent>
             <ProfileImageContainer className="animate-on-scroll">
-              <ProfileImage src={alex} alt="Alexandru Poenaru"/>
+              <ProfileImage src={alex} alt="Alexandru Poenaru" />
             </ProfileImageContainer>
             <AboutTextContent>
               <p>
-              Hi! I’m Alex, an enthusiastic IT student with a passion for web and backend development. 
-              I’ve been fascinated by code since I was 12, amazed by how just the right characters in the right order can create something truly special. 
-              That early curiosity turned into a love for logic, problem-solving, and building things that actually work. <br /> <br />
-              I enjoy working on API development, scalable architecture, real-time data, and everything that makes development more efficient, elegant, or clever.
-              I’m always experimenting, learning fast, and looking for challenges that push me to grow. <br /> <br />
-              Open to opportunities where I can keep learning, building cool stuff,
-              and collaborate with people who love tech as much as I do.
+                Hi! I'm Alex, an enthusiastic IT student with a passion for web and backend development.
+                I've been fascinated by code since I was 12 — amazed by how just the right characters in the
+                right order can create something truly special. That early curiosity turned into a love for
+                logic, problem-solving, and building things that actually work.
+              </p>
+              <p>
+                I enjoy working on API development, scalable architecture, real-time data, and everything
+                that makes development more efficient, elegant, or clever. Always experimenting, learning
+                fast, and looking for challenges that push me to grow.
+              </p>
+              <p>
+                Open to opportunities where I can keep learning, building cool stuff, and collaborating
+                with people who love tech as much as I do.
               </p>
             </AboutTextContent>
           </AboutContent>
-          
-          {/* Backend Developer Animation */}
+
           <BackendVisualization>
             <ServerContainer ref={serverRef}>
-              <ServerIcon>
-                <FaServer />
-              </ServerIcon>
-              <ServerLabel>Server</ServerLabel>
+              <ServerIcon><FaServer /></ServerIcon>
+              <NodeLabel>Server</NodeLabel>
             </ServerContainer>
-            
+
             <ConnectionLine>
-              {/* Original dots: Server to Database */}
               <DataDot className="dot1" />
               <DataDot className="dot2" />
-              
-              {/* New dots: Database to Server */}
               <DataDot className="reverse-dot1" />
               <DataDot className="reverse-dot2" />
             </ConnectionLine>
-            
-            <DatabaseContainer ref={databaseRef}>
-              <DatabaseIcon>
-                <FaDatabase />
-              </DatabaseIcon>
-              <DatabaseLabel>Database</DatabaseLabel>
+
+            <DatabaseContainer>
+              <DatabaseIcon><FaDatabase /></DatabaseIcon>
+              <NodeLabel>Database</NodeLabel>
             </DatabaseContainer>
-            
+
             <CodeBlockContainer ref={codeBlockRef}>
-              <StandaloneCodeIcon>
-                <FaCode />
-              </StandaloneCodeIcon>              <CodeSnippet>
-              <CodeLine $visible={codeVisible}>export default function Data() &#123;</CodeLine>
-              <CodeLine $visible={codeVisible}>  const &#123; data, error, isLoading &#125; </CodeLine>
-              <CodeLine $visible={codeVisible}>    = useSWR('/api/data', fetcher);</CodeLine>
-              <CodeLine $visible={codeVisible}>  if (isLoading) return &lt;p&gt;Loading...&lt;/p&gt;;</CodeLine>
-              <CodeLine $visible={codeVisible}>  if (error) return &lt;p&gt;Error fetching data&lt;/p&gt;;</CodeLine>
-              <CodeLine $visible={codeVisible}></CodeLine>
-              <CodeLine $visible={codeVisible}>  return (</CodeLine>
-              <CodeLine $visible={codeVisible}>   &lt;div&gt;</CodeLine>
-              <CodeLine $visible={codeVisible}>    &lt;h2&gt;Data&lt;/h2&gt;</CodeLine>
-              <CodeLine $visible={codeVisible}>    &lt;pre&gt;&#123;JSON.stringify(data, null, 2)&#125;&lt;/pre&gt;</CodeLine>
-              <CodeLine $visible={codeVisible}>   &lt;/div&gt;</CodeLine>
-              <CodeLine $visible={codeVisible}>  );</CodeLine>
-              <CodeLine $visible={codeVisible}>&#125;</CodeLine>
+              <StandaloneCodeIcon><FaCode /></StandaloneCodeIcon>
+              <CodeSnippet>
+                <CodeLine $visible={codeVisible}>export default function Data() &#123;</CodeLine>
+                <CodeLine $visible={codeVisible}>  const &#123; data, error, isLoading &#125;</CodeLine>
+                <CodeLine $visible={codeVisible}>    = useSWR('/api/data', fetcher);</CodeLine>
+                <CodeLine $visible={codeVisible}>  if (isLoading) return &lt;p&gt;Loading...&lt;/p&gt;;</CodeLine>
+                <CodeLine $visible={codeVisible}>  if (error) return &lt;p&gt;Error&lt;/p&gt;;</CodeLine>
+                <CodeLine $visible={codeVisible}></CodeLine>
+                <CodeLine $visible={codeVisible}>  return (</CodeLine>
+                <CodeLine $visible={codeVisible}>   &lt;div&gt;</CodeLine>
+                <CodeLine $visible={codeVisible}>    &lt;pre&gt;&#123;JSON.stringify(data)&#125;&lt;/pre&gt;</CodeLine>
+                <CodeLine $visible={codeVisible}>   &lt;/div&gt;</CodeLine>
+                <CodeLine $visible={codeVisible}>  );</CodeLine>
+                <CodeLine $visible={codeVisible}>&#125;</CodeLine>
               </CodeSnippet>
             </CodeBlockContainer>
           </BackendVisualization>
@@ -239,7 +174,7 @@ const HomePage = () => {
                 <SkillItem><FaCss3Alt /> CSS</SkillItem>
               </SkillsList>
             </SkillCategory>
-            
+
             <SkillCategory className="animate-on-scroll">
               <SkillCategoryTitle>Frameworks & Libraries</SkillCategoryTitle>
               <SkillsList>
@@ -250,7 +185,7 @@ const HomePage = () => {
                 <SkillItem><RiTailwindCssFill /> Tailwind CSS</SkillItem>
               </SkillsList>
             </SkillCategory>
-            
+
             <SkillCategory className="animate-on-scroll">
               <SkillCategoryTitle>Databases</SkillCategoryTitle>
               <SkillsList>
@@ -258,7 +193,7 @@ const HomePage = () => {
                 <SkillItem><DiMsqlServer /> MS SQL Server</SkillItem>
               </SkillsList>
             </SkillCategory>
-            
+
             <SkillCategory className="animate-on-scroll">
               <SkillCategoryTitle>DevOps & Tools</SkillCategoryTitle>
               <SkillsList>
@@ -268,52 +203,62 @@ const HomePage = () => {
               </SkillsList>
             </SkillCategory>
           </SkillsContainer>
-        </Section>        <Section id="projects">
+        </Section>
+
+        <Section id="projects">
           <SectionTitle>Projects</SectionTitle>
           <ProjectsGrid>
             <ProjectCard className="animate-on-scroll">
-              <ProjectImage src={helpdesk} alt="Helpdesk Project" />
+              <ProjectImageWrapper>
+                <ProjectImage src={helpdesk} alt="Helpdesk Project" />
+              </ProjectImageWrapper>
               <ProjectContent>
                 <ProjectDescription>
-                  A ticket system for for the helpdesk of my internship company in 2023 written in C#. 
+                  A ticket system for the helpdesk of my internship company (2023), written in C#.
                 </ProjectDescription>
                 <ProjectButton href="https://github.com/alexandru-poenaru/helpdesk-sintandries" target="_blank" rel="noopener noreferrer">
-                  GitHub Repo
+                  <FaGithub /> GitHub Repo
                 </ProjectButton>
               </ProjectContent>
             </ProjectCard>
-            
+
             <ProjectCard className="animate-on-scroll">
-              <ProjectImage src={kingdomino} alt="Kingdomino Project" />
+              <ProjectImageWrapper>
+                <ProjectImage src={kingdomino} alt="Kingdomino Project" />
+              </ProjectImageWrapper>
               <ProjectContent>
                 <ProjectDescription>
-                  The game KingDomino that can be played by 2-4 players written in Java.
+                  The board game KingDomino playable by 2–4 players, written in Java.
                 </ProjectDescription>
                 <ProjectButton href="https://github.com/alexandru-poenaru/kingdomino" target="_blank" rel="noopener noreferrer">
-                  GitHub Repo
+                  <FaGithub /> GitHub Repo
                 </ProjectButton>
               </ProjectContent>
             </ProjectCard>
-            
+
             <ProjectCard className="animate-on-scroll">
-              <ProjectImage src={kottask} alt="KotTask Project" />
+              <ProjectImageWrapper>
+                <ProjectImage src={kottask} alt="KotTask Project" />
+              </ProjectImageWrapper>
               <ProjectContent>
                 <ProjectDescription>
-                  A TODO-app with an integrated calendar in which you can assign tasks to yourself and other people. Written in React, Node.js, TypeScript and JSX.
+                  A TODO-app with integrated calendar — assign tasks to yourself and others. Built with React, Node.js, TypeScript.
                 </ProjectDescription>
                 <ProjectButton href="https://github.com/alexandru-poenaru/kottask" target="_blank" rel="noopener noreferrer">
-                  GitHub Repo
+                  <FaGithub /> GitHub Repo
                 </ProjectButton>
               </ProjectContent>
             </ProjectCard>
-            
+
             <ProjectCard className="animate-on-scroll">
-              <ProjectImage src={dashboard} alt="Dashboard Project" />
+              <ProjectImageWrapper>
+                <ProjectImage src={dashboard} alt="Dashboard Project" />
+              </ProjectImageWrapper>
               <ProjectContent>
                 <ProjectDescription>
-                  An app for the production of a company, with a KPI Dashboard, Overview maintenances, machines, ... Written in React, Node.js, TypeScript and JSX + Java (WIP).
+                  Production KPI Dashboard with machine maintenance overview. React + Node.js + TypeScript + Java (WIP).
                 </ProjectDescription>
-                <ProjectButton href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer" style={{pointerEvents: 'none'}}>
+                <ProjectButton as="span" $disabled>
                   WIP
                 </ProjectButton>
               </ProjectContent>
@@ -325,133 +270,96 @@ const HomePage = () => {
   );
 };
 
-const BackgroundOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background: linear-gradient(
-    to bottom,
-    ${props => props.theme.background}99,
-    ${props => props.theme.background}
-  );
-  z-index: -1;
-`;
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
 
-// Animations
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 `;
 
 const typewriter = keyframes`
   from { width: 0; }
-  to { width: 100%; }
+  to   { width: 100%; }
 `;
 
 const cursorBlink = keyframes`
   from, to { border-color: transparent; }
-  50% { border-color: ${props => props.theme.primary}; }
+  50%       { border-color: currentColor; }
 `;
 
-const floatAnimation = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+const floatAnim = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
 `;
 
-const pulseAnimation = keyframes`
-  0% { box-shadow: 0 0 0 0 rgba(0, 120, 255, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(0, 120, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 120, 255, 0); }
+const pulseAnim = keyframes`
+  0%   { box-shadow: 0 0 0 0 rgba(124, 116, 255, 0.6); }
+  70%  { box-shadow: 0 0 0 12px rgba(124, 116, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(124, 116, 255, 0); }
 `;
 
-const serverPulseAnimation = keyframes`
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+const serverPulseAnim = keyframes`
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
 `;
 
-// Create a data flow animation for the dots with correct positioning
-const dotAnimation1 = keyframes`
-  0% { left: 5%; opacity: 0; }
-  10% { left: 10%; opacity: 1; }
-  90% { left: 90%; opacity: 1; }
+const dotFwd1 = keyframes`
+  0%   { left: 5%;  opacity: 0; }
+  10%  { left: 10%; opacity: 1; }
+  90%  { left: 90%; opacity: 1; }
   100% { left: 95%; opacity: 0; }
 `;
-
-const dotAnimation2 = keyframes`
-  0% { left: 5%; opacity: 0; }
-  10% { left: 10%; opacity: 1; }
-  90% { left: 90%; opacity: 1; }
+const dotFwd2 = keyframes`
+  0%   { left: 5%;  opacity: 0; }
+  10%  { left: 10%; opacity: 1; }
+  90%  { left: 90%; opacity: 1; }
   100% { left: 95%; opacity: 0; }
 `;
-
-// Create vertical animation for dots on mobile
-const mobileDotAnimation1 = keyframes`
-  0% { top: 5%; opacity: 0; }
-  10% { top: 10%; opacity: 1; }
-  90% { top: 90%; opacity: 1; }
-  100% { top: 95%; opacity: 0; }
-`;
-
-const mobileDotAnimation2 = keyframes`
-  0% { top: 5%; opacity: 0; }
-  10% { top: 10%; opacity: 1; }
-  90% { top: 90%; opacity: 1; }
-  100% { top: 95%; opacity: 0; }
-`;
-
-// Add this new typing animation keyframe with the other animations
-const typingAnimation = keyframes`
-  0% { width: 0; }
-  100% { width: 100%; }
-`;
-
-// Add new keyframes for reverse direction animations
-const reverseDotAnimation1 = keyframes`
-  0% { right: 5%; opacity: 0; }
-  10% { right: 10%; opacity: 1; }
-  90% { right: 90%; opacity: 1; }
+const dotRev1 = keyframes`
+  0%   { right: 5%;  opacity: 0; }
+  10%  { right: 10%; opacity: 1; }
+  90%  { right: 90%; opacity: 1; }
   100% { right: 95%; opacity: 0; }
 `;
-
-const reverseDotAnimation2 = keyframes`
-  0% { right: 5%; opacity: 0; }
-  10% { right: 10%; opacity: 1; }
-  90% { right: 90%; opacity: 1; }
+const dotRev2 = keyframes`
+  0%   { right: 5%;  opacity: 0; }
+  10%  { right: 10%; opacity: 1; }
+  90%  { right: 90%; opacity: 1; }
   100% { right: 95%; opacity: 0; }
 `;
-
-// Create vertical reverse animation for dots on mobile
-const mobileReverseDotAnimation1 = keyframes`
-  0% { bottom: 5%; opacity: 0; }
-  10% { bottom: 10%; opacity: 1; }
-  90% { bottom: 90%; opacity: 1; }
+const mobDotFwd1 = keyframes`
+  0%   { top: 5%;  opacity: 0; }
+  10%  { top: 10%; opacity: 1; }
+  90%  { top: 90%; opacity: 1; }
+  100% { top: 95%; opacity: 0; }
+`;
+const mobDotFwd2 = keyframes`
+  0%   { top: 5%;  opacity: 0; }
+  10%  { top: 10%; opacity: 1; }
+  90%  { top: 90%; opacity: 1; }
+  100% { top: 95%; opacity: 0; }
+`;
+const mobDotRev1 = keyframes`
+  0%   { bottom: 5%;  opacity: 0; }
+  10%  { bottom: 10%; opacity: 1; }
+  90%  { bottom: 90%; opacity: 1; }
   100% { bottom: 95%; opacity: 0; }
 `;
-
-const mobileReverseDotAnimation2 = keyframes`
-  0% { bottom: 5%; opacity: 0; }
-  10% { bottom: 10%; opacity: 1; }
-  90% { bottom: 90%; opacity: 1; }
+const mobDotRev2 = keyframes`
+  0%   { bottom: 5%;  opacity: 0; }
+  10%  { bottom: 10%; opacity: 1; }
+  90%  { bottom: 90%; opacity: 1; }
   100% { bottom: 95%; opacity: 0; }
 `;
+const typingAnim = keyframes`
+  from { width: 0; }
+  to   { width: 100%; }
+`;
+
+/* ─── Hero ───────────────────────────────────────────────────────────────────── */
 
 const FullWidthHeroContainer = styled.div`
   width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
-  position: relative;
-`;
-
-const HomeContainer = styled.div` 
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 20px;
   position: relative;
 `;
 
@@ -461,159 +369,196 @@ const HeroSection = styled.section`
   align-items: center;
   justify-content: center;
   position: relative;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  
+  overflow: hidden;
+
   @media (max-width: 768px) {
     align-items: flex-start;
-    padding-top: 25vh;
+    padding-top: 22vh;
   }
-  
-  @media (max-width: 480px) {
-    padding-top: 20vh;
-  }
+`;
+
+const VideoBackground = styled.video`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.35) saturate(0.7);
+  z-index: 0;
+`;
+
+const HeroOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    ${props => props.theme.body}55 55%,
+    ${props => props.theme.body} 100%
+  );
+  z-index: 1;
+`;
+
+const HeroBottomFade = styled.div`
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, ${props => props.theme.body});
+  z-index: 5;
+  pointer-events: none;
 `;
 
 const HeroContent = styled.div`
-  text-align: center;
+  position: relative;
   z-index: 2;
-  animation: ${fadeIn} 1s ease-out;
-  margin-top: 0;
-  
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #fff;
-  }
-  
-  @media (max-width: 768px) {
-    margin-top: -10vh; /* Position content higher on mobile from the start */
-  }
-  
-  @media (max-width: 480px) {
-    margin-top: -15vh; /* Position content even higher on smaller screens from the start */
-    
-    h1 {
-      font-size: 2.5rem;
-    }
-  }
+  text-align: center;
+  padding: 0 24px;
+  max-width: 820px;
+  animation: ${fadeIn} 0.8s ease-out both;
 `;
 
 const TypewriterContainer = styled.div`
-  overflow: hidden;
-  margin-bottom: 1rem;
-  padding: 0 5px;
+  margin-bottom: 1.2rem;
 `;
 
-const TypewriterText = styled.h2`
-  font-size: 2rem;
-  margin: 0;
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 3px solid ${props => props.theme.primary};
+const HeroTitle = styled.h1`
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
   color: #fff;
-  animation: ${typewriter} 2s steps(20, end) 0.5s forwards, 
-             ${cursorBlink} 1s step-end infinite;
-  width: 0;
-  padding: 0 20px;
-  @media (max-width: 576px) {
-    font-size: 1.5rem;
-  }
+  margin: 0 0 0.8rem;
+  line-height: 1.15;
 `;
 
 const HighlightSpan = styled.span`
   color: ${props => props.theme.primary};
+  text-shadow: 0 0 24px ${props => props.theme.glow};
+`;
+
+const TypewriterText = styled.h2`
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  font-weight: 500;
+  margin: 0;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid ${props => props.theme.primary};
+  color: ${props => props.theme.primary};
+  animation: ${typewriter} 1.8s steps(22, end) 0.6s forwards,
+             ${cursorBlink} 1s infinite;
+  width: 0;
+  padding-right: 4px;
 `;
 
 const AnimatedDescription = styled.p`
-  font-size: 1.2rem;
-  max-width: 600px;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  max-width: 580px;
   margin: 0 auto 2rem;
-  color: #fff; /* Changed from theme-based to white */
+  color: rgba(255, 255, 255, 0.75);
   opacity: 0;
-  animation: ${fadeIn} 1s ease-out 2s forwards;
-  padding: 0 20px;
+  animation: ${fadeIn} 0.8s ease-out 2.2s forwards;
+  line-height: 1.7;
 `;
 
-const SocialLinks = styled.div`
+const HeroActions = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 2rem;
-  gap: 1rem;
+  gap: 12px;
+  margin-bottom: 2.5rem;
   opacity: 0;
-  animation: ${fadeIn} 1s ease-out 2.5s forwards;
+  animation: ${fadeIn} 0.8s ease-out 2.8s forwards;
+  flex-wrap: wrap;
 `;
 
 const SocialLink = styled.a`
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  background-color: ${props => props.theme.card};
-  color: ${props => props.theme.text};
-  border-radius: 4px;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  color: #fff;
   text-decoration: none;
-  transition: all 0.3s;
-  box-shadow: 0 2px 10px ${props => props.theme.shadow};
-  
-  svg {
-    margin-right: 8px;
-  }
-  
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+
   &:hover {
-    background-color: ${props => props.theme.primary};
-    color: white;
+    background: ${props => props.theme.primary};
+    border-color: ${props => props.theme.primary};
+    box-shadow: 0 8px 28px ${props => props.theme.glow};
     transform: translateY(-3px);
   }
 `;
 
 const ScrollDownButton = styled.a`
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  padding: 0.5rem 1rem;
-  background-color: transparent;
-  color: ${props => props.theme.primary};
-  border: 1px solid ${props => props.theme.primary};
-  border-radius: 4px;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.55);
   text-decoration: none;
-  transition: all 0.3s;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
   opacity: 0;
-  animation: ${fadeIn} 1s ease-out 3s forwards, ${floatAnimation} 3s ease-in-out infinite 3s;
-  
+  animation: ${fadeIn} 0.8s ease-out 3.4s forwards;
+  transition: color 0.3s;
+
   svg {
-    margin-right: 8px;
+    font-size: 1.1rem;
+    animation: ${floatAnim} 2.5s ease-in-out infinite;
   }
-  
+
   &:hover {
-    background-color: ${props => props.theme.primary};
-    color: white;
+    color: ${props => props.theme.primary};
   }
 `;
 
+/* ─── Sections ───────────────────────────────────────────────────────────────── */
+
+const HomeContainer = styled.div`
+  width: 100%;
+  max-width: 100%;
+  padding: 0 24px;
+`;
+
 const Section = styled.section`
-  padding: 80px 0;
+  padding: 96px 0;
+  max-width: 1200px;
+  margin: 0 auto;
   position: relative;
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 2rem;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
   text-align: center;
-  margin-bottom: 40px;
-  position: relative;
+  margin-bottom: 64px;
   color: ${props => props.theme.text};
-  
-  &:after {
+  position: relative;
+
+  &::after {
     content: '';
     position: absolute;
-    width: 80px;
+    width: 48px;
     height: 3px;
-    background-color: ${props => props.theme.primary};
-    bottom: -10px;
+    background: ${props => props.theme.primary};
+    bottom: -18px;
     left: 50%;
     transform: translateX(-50%);
+    border-radius: 2px;
+    box-shadow: 0 0 14px ${props => props.theme.glow};
   }
 `;
+
+/* ─── About ──────────────────────────────────────────────────────────────────── */
 
 const AboutContent = styled.div`
   max-width: 800px;
@@ -621,44 +566,29 @@ const AboutContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+  gap: 32px;
+
   @media (min-width: 768px) {
     flex-direction: row;
     align-items: flex-start;
-    gap: 30px;
-  }
-`;
-
-const AboutTextContent = styled.div`
-  p {
-    margin-bottom: 1.5rem;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: ${props => props.theme.textSecondary};
   }
 `;
 
 const ProfileImageContainer = styled.div`
-  width: 180px;
-  height: 180px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
-  border: 3px solid #5be584;
+  flex-shrink: 0;
   padding: 3px;
-  margin-bottom: 20px;
-  overflow: hidden;
+  background: linear-gradient(135deg, ${props => props.theme.primary}, ${props => props.theme.primaryLight});
+  box-shadow: 0 0 28px ${props => props.theme.glow};
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.5s ease;
-  
+  transform: translateY(20px) scale(0.95);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+
   &.animate {
     opacity: 1;
-    transform: translateY(0);
-  }
-  
-  @media (min-width: 768px) {
-    margin-right: 30px;
-    margin-bottom: 0;
-    flex-shrink: 0;
+    transform: translateY(0) scale(1);
   }
 `;
 
@@ -667,22 +597,33 @@ const ProfileImage = styled.img`
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  background-color: ${props => props.theme.cardBackground || '#f0f0f0'};
+  display: block;
 `;
 
-// Backend visualization components
+const AboutTextContent = styled.div`
+  p {
+    font-size: 1rem;
+    line-height: 1.75;
+    margin: 0 0 1rem;
+    color: ${props => props.theme.textSecondary};
+
+    &:last-child { margin-bottom: 0; }
+  }
+`;
+
+/* ─── Backend Visualization ──────────────────────────────────────────────────── */
+
 const BackendVisualization = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 60px;
+  margin-top: 72px;
   position: relative;
-  min-height: 400px;
-  
+  min-height: 380px;
+
   @media (max-width: 768px) {
-    min-height: 500px;
-    justify-content: space-between;
-    gap: 10px;
+    min-height: 480px;
+    gap: 12px;
   }
 `;
 
@@ -691,41 +632,34 @@ const ServerContainer = styled.div`
   flex-direction: column;
   align-items: center;
   z-index: 10;
-  
+
   &.pulse {
-    animation: ${serverPulseAnimation} 1s ease;
+    animation: ${serverPulseAnim} 1s ease;
   }
-  
+
   @media (min-width: 768px) {
     position: absolute;
-    left: 15%;
-    top: 20px;
+    left: 12%;
+    top: 16px;
   }
 `;
 
 const ServerIcon = styled.div`
-  width: 80px;
-  height: 80px;
-  border-radius: 10px;
+  width: 76px;
+  height: 76px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #136f63, #00C6FF);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 2rem;
-  box-shadow: 0 10px 20px rgba(0, 120, 255, 0.3);
-  animation: ${pulseAnimation} 3s infinite;
+  font-size: 1.8rem;
+  box-shadow: 0 8px 28px rgba(0, 198, 255, 0.3);
+  animation: ${pulseAnim} 3s infinite;
   margin-bottom: 10px;
-  transition: all 0.3s;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
+  transition: transform 0.3s;
 
-const ServerLabel = styled.div`
-  font-weight: 500;
-  color: ${props => props.theme.text};
+  &:hover { transform: scale(1.06); }
 `;
 
 const DatabaseContainer = styled.div`
@@ -733,59 +667,59 @@ const DatabaseContainer = styled.div`
   flex-direction: column;
   align-items: center;
   z-index: 10;
-  
+
   @media (min-width: 768px) {
     position: absolute;
-    right: 15%;
-    top: 20px;
+    right: 12%;
+    top: 16px;
   }
 `;
 
 const DatabaseIcon = styled.div`
-  width: 80px;
-  height: 80px;
-  border-radius: 10px;
+  width: 76px;
+  height: 76px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #FF7200, #FF4B00);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 2rem;
-  box-shadow: 0 10px 20px rgba(255, 114, 0, 0.3);
+  font-size: 1.8rem;
+  box-shadow: 0 8px 28px rgba(255, 114, 0, 0.3);
   margin-bottom: 10px;
-  transition: all 0.3s;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
+  transition: transform 0.3s;
+
+  &:hover { transform: scale(1.06); }
 `;
 
-const DatabaseLabel = styled.div`
-  font-weight: 500;
-  color: ${props => props.theme.text};
+const NodeLabel = styled.div`
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: ${props => props.theme.textSecondary};
 `;
 
 const ConnectionLine = styled.div`
   position: relative;
   width: 60%;
-  height: 3px;
+  height: 2px;
   background: linear-gradient(to right, #136f63, #FF7200);
-  margin: 10px 0;
+  margin: 8px 0;
   z-index: 5;
   overflow: visible;
-  
+
   @media (min-width: 768px) {
-    position: absolute; 
-    top: 60px;
+    position: absolute;
+    top: 54px;
     left: 50%;
     transform: translateX(-50%);
     margin: 0;
-    width: 70%;
+    width: 76%;
   }
-  
+
   @media (max-width: 768px) {
-    width: 3px;
-    height: 120px;
+    width: 2px;
+    height: 100px;
     background: linear-gradient(to bottom, #136f63, #FF7200);
     margin: 0 auto;
   }
@@ -793,123 +727,73 @@ const ConnectionLine = styled.div`
 
 const DataDot = styled.div`
   position: absolute;
-  width: 8px;
-  height: 8px;
-  background-color: white;
+  width: 7px;
+  height: 7px;
+  background: white;
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 10px rgba(255,255,255,0.9), 0 0 20px ${props => props.theme.glow};
   z-index: 20;
-  
-  /* Forward direction dots (server to database) */
-  &.dot1, &.dot2 {
-    top: -1px;
-    left: 0;
-  }
-  
+
+  &.dot1, &.dot2 { top: -2px; left: 0; }
   &.dot1 {
-    animation: ${dotAnimation1} 3s infinite;
-    animation-delay: 0s;
-    
-    @media (max-width: 768px) {
-      animation: ${mobileDotAnimation1} 3s infinite;
-      animation-delay: 0s;
-      left: -2px;
-    }
+    animation: ${dotFwd1} 3s infinite;
+    @media (max-width: 768px) { animation: ${mobDotFwd1} 3s infinite; left: -2px; }
   }
-  
   &.dot2 {
-    animation: ${dotAnimation2} 3s infinite;
-    animation-delay: 1s;
-    
-    @media (max-width: 768px) {
-      animation: ${mobileDotAnimation2} 3s infinite;
-      animation-delay: 1s;
-      left: -2px;
-    }
+    animation: ${dotFwd2} 3s infinite 1s;
+    @media (max-width: 768px) { animation: ${mobDotFwd2} 3s infinite 1s; left: -2px; }
   }
-  }
-  
-  /* Reverse direction dots (database to server) */
-  &.reverse-dot1, &.reverse-dot2 {
-    top: -1px;
-    right: 0;
-  }
-  
+
+  &.reverse-dot1, &.reverse-dot2 { top: -2px; right: 0; }
   &.reverse-dot1 {
-    animation: ${reverseDotAnimation1} 3s infinite;
-    animation-delay: 0.5s;
-    
-    @media (max-width: 768px) {
-      animation: ${mobileReverseDotAnimation1} 3s infinite;
-      animation-delay: 0.5s;
-      right: -2px;
-      top: auto;
-    }
+    animation: ${dotRev1} 3s infinite 0.5s;
+    @media (max-width: 768px) { animation: ${mobDotRev1} 3s infinite 0.5s; right: -2px; top: auto; }
   }
-  
   &.reverse-dot2 {
-    animation: ${reverseDotAnimation2} 3s infinite;
-    animation-delay: 1.5s;
-    
-    @media (max-width: 768px) {
-      animation: ${mobileReverseDotAnimation2} 3s infinite;
-      animation-delay: 1.5s;
-      right: -2px;
-      top: auto;
-    }
+    animation: ${dotRev2} 3s infinite 1.5s;
+    @media (max-width: 768px) { animation: ${mobDotRev2} 3s infinite 1.5s; right: -2px; top: auto; }
   }
 `;
 
 const CodeBlockContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 500px;
-  background-color: ${props => props.theme.card};
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 10px 30px ${props => props.theme.shadow};
-  font-family: 'Courier New', monospace;
-  overflow: visible;
-  margin-top: 20px;
+  max-width: 480px;
+  background: ${props => props.theme.card};
+  border: 1px solid ${props => props.theme.border};
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 40px ${props => props.theme.shadow};
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  margin-top: 16px;
   z-index: 10;
-  
+
   @media (min-width: 768px) {
-    margin-top: 150px;
-    width: 80%;
+    margin-top: 140px;
+    width: 76%;
   }
 `;
 
 const StandaloneCodeIcon = styled.div`
   position: absolute;
-  top: -15px;
-  right: -15px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: ${props => props.theme.primary};
+  top: -14px;
+  right: -14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: ${props => props.theme.primary};
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  font-size: 1rem;
+  box-shadow: 0 4px 16px ${props => props.theme.glow};
   z-index: 999;
-  transform: translateZ(0);
-  
-  @media (max-width: 768px) {
-    top: -15px;
-    right: -15px;
-  }
 `;
 
 const CodeSnippet = styled.div`
-  font-size: 0.8rem;
-  line-height: 1.5;
-  color: ${props => props.theme.text};
-  
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
-  }
+  font-size: 0.78rem;
+  line-height: 1.6;
 `;
 
 const CodeLine = styled.div`
@@ -917,176 +801,200 @@ const CodeLine = styled.div`
   color: ${props => props.theme.textSecondary};
   overflow: hidden;
   width: 0;
-  border-right: 2px solid transparent;
-  animation: ${props => props.$visible ? typingAnimation : 'none'} 1.8s forwards;
-  animation-play-state: ${props => props.$visible ? 'running' : 'paused'};
-  
-  @media (max-width: 576px) {
-    font-size: 0.65rem;
-  }
-  
-  &:nth-child(1) { animation-delay: ${props => props.$visible ? '0.3s' : '0s'}; }
-  &:nth-child(2) { animation-delay: ${props => props.$visible ? '1.2s' : '0s'}; }
-  &:nth-child(3) { animation-delay: ${props => props.$visible ? '2.1s' : '0s'}; }
-  &:nth-child(4) { animation-delay: ${props => props.$visible ? '3.0s' : '0s'}; }
-  &:nth-child(5) { animation-delay: ${props => props.$visible ? '3.9s' : '0s'}; }
-  &:nth-child(6) { animation-delay: ${props => props.$visible ? '4.8s' : '0s'}; }
-  &:nth-child(7) { animation-delay: ${props => props.$visible ? '5.7s' : '0s'}; }
-  &:nth-child(8) { animation-delay: ${props => props.$visible ? '6.6s' : '0s'}; }
-  &:nth-child(9) { animation-delay: ${props => props.$visible ? '7.5s' : '0s'}; }
-  &:nth-child(10) { animation-delay: ${props => props.$visible ? '8.4s' : '0s'}; }
-  &:nth-child(11) { animation-delay: ${props => props.$visible ? '9.3s' : '0s'}; }
-  &:nth-child(12) { animation-delay: ${props => props.$visible ? '10.2s' : '0s'}; }
-  &:nth-child(13) { animation-delay: ${props => props.$visible ? '11.1s' : '0s'}; }
-  
-  &:last-child {
-    border-right-color: transparent;
-  }
+  animation: ${props => props.$visible ? typingAnim : 'none'} 0.8s forwards;
+
+  @media (max-width: 576px) { font-size: 0.65rem; }
+
+  &:nth-child(1)  { animation-delay: ${props => props.$visible ? '0.1s'  : '0s'}; }
+  &:nth-child(2)  { animation-delay: ${props => props.$visible ? '0.55s' : '0s'}; }
+  &:nth-child(3)  { animation-delay: ${props => props.$visible ? '1.0s'  : '0s'}; }
+  &:nth-child(4)  { animation-delay: ${props => props.$visible ? '1.45s' : '0s'}; }
+  &:nth-child(5)  { animation-delay: ${props => props.$visible ? '1.9s'  : '0s'}; }
+  &:nth-child(6)  { animation-delay: ${props => props.$visible ? '2.35s' : '0s'}; }
+  &:nth-child(7)  { animation-delay: ${props => props.$visible ? '2.8s'  : '0s'}; }
+  &:nth-child(8)  { animation-delay: ${props => props.$visible ? '3.25s' : '0s'}; }
+  &:nth-child(9)  { animation-delay: ${props => props.$visible ? '3.7s'  : '0s'}; }
+  &:nth-child(10) { animation-delay: ${props => props.$visible ? '4.15s' : '0s'}; }
+  &:nth-child(11) { animation-delay: ${props => props.$visible ? '4.6s'  : '0s'}; }
+  &:nth-child(12) { animation-delay: ${props => props.$visible ? '5.05s' : '0s'}; }
 `;
+
+/* ─── Skills ─────────────────────────────────────────────────────────────────── */
 
 const SkillsContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
   max-width: 1000px;
   margin: 0 auto;
 `;
 
 const SkillCategory = styled.div`
-  background-color: ${props => props.theme.card};
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px ${props => props.theme.shadow};
+  background: ${props => props.theme.card};
+  border: 1px solid ${props => props.theme.border};
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px ${props => props.theme.shadow};
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.5s ease;
-  
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+
   &.animate {
     opacity: 1;
     transform: translateY(0);
   }
-  
+
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px ${props => props.theme.shadowHover};
+    box-shadow: 0 12px 40px ${props => props.theme.shadowHover};
+    border-color: ${props => props.theme.borderStrong};
+    transform: translateY(-6px);
   }
 `;
 
 const SkillCategoryTitle = styled.h3`
-  font-size: 1.2rem;
-  margin-bottom: 15px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: ${props => props.theme.primary};
+  margin: 0 0 16px;
 `;
 
-const SkillsList = styled.ul`
-  list-style: none;
-  padding: 0;
-`;
-
-const SkillItem = styled.li`
-  padding: 8px 0;
-  border-bottom: 1px solid ${props => props.theme.border};
-  color: ${props => props.theme.textSecondary};
+const SkillsList = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+const SkillItem = styled.div`
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  border: 1px solid ${props => props.theme.border};
+  background: ${props => props.theme.cardBackground};
+  color: ${props => props.theme.textSecondary};
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: default;
+  transition: all 0.25s ease;
+
   svg {
     color: ${props => props.theme.primary};
-    font-size: 1.2rem;
+    font-size: 0.95rem;
+    flex-shrink: 0;
   }
-  
-  &:last-child {
-    border-bottom: none;
-  }
-  
+
   &:hover {
-    color: ${props => props.theme.primary};
+    border-color: ${props => props.theme.primary};
+    background: ${props => props.theme.glow};
+    color: ${props => props.theme.text};
+    box-shadow: 0 4px 16px ${props => props.theme.glow};
+    transform: translateY(-2px);
   }
 `;
+
+/* ─── Projects ───────────────────────────────────────────────────────────────── */
 
 const ProjectsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 40px;
-  max-width: 1200px;
+  gap: 32px;
+  max-width: 1100px;
   margin: 0 auto;
-  
-  @media (min-width: 992px) {
+
+  @media (min-width: 900px) {
     grid-template-columns: repeat(2, 1fr);
   }
 `;
 
 const ProjectCard = styled.div`
-  background-color: ${props => props.theme.card};
-  border-radius: 12px;
+  background: ${props => props.theme.card};
+  border: 1px solid ${props => props.theme.border};
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 8px 20px ${props => props.theme.shadow};
-  transition: all 0.5s ease;
-  height: 100%;
+  box-shadow: 0 8px 32px ${props => props.theme.shadow};
   display: flex;
   flex-direction: column;
+  height: 100%;
   opacity: 0;
-  transform: translateY(20px);
-  
+  transform: translateY(28px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s ease,
+    border-color 0.3s ease;
+
   &.animate {
     opacity: 1;
     transform: translateY(0);
   }
-  
+
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 30px ${props => props.theme.shadowHover};
+    transform: translateY(-10px) perspective(900px) rotateX(-2deg);
+    box-shadow: 0 28px 56px ${props => props.theme.shadowHover};
+    border-color: ${props => props.theme.borderStrong};
   }
+`;
+
+const ProjectImageWrapper = styled.div`
+  overflow: hidden;
+  height: 220px;
+  background: ${props => props.theme.cardBackground};
 `;
 
 const ProjectImage = styled.img`
   width: 100%;
-  height: 240px;
+  height: 100%;
   object-fit: contain;
-  background-color: ${props => props.theme.cardBackground || '#f5f5f5'};
-  padding: 15px;
-  margin-bottom: 0;
+  padding: 16px;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+  ${ProjectCard}:hover & {
+    transform: scale(1.04);
+  }
 `;
 
 const ProjectContent = styled.div`
-  padding: 20px;
+  padding: 22px 24px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   justify-content: space-between;
+  gap: 16px;
 `;
 
 const ProjectDescription = styled.p`
-  font-size: 1rem;
+  font-size: 0.92rem;
   color: ${props => props.theme.textSecondary};
-  margin-bottom: 20px;
+  margin: 0;
+  line-height: 1.65;
 `;
 
 const ProjectButton = styled.a`
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: ${props => props.theme.primary};
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  background: ${props => props.$disabled ? props.theme.cardBackground : props.theme.primary};
+  color: ${props => props.$disabled ? props.theme.textSecondary : '#fff'};
   text-decoration: none;
-  border-radius: 4px;
-  text-align: center;
-  transition: background-color 0.3s;
-  
-  &:hover {
-    background-color: ${props => props.theme.primaryHover};
-  }
-`;
+  border-radius: 9px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  align-self: flex-start;
+  border: 1px solid ${props => props.$disabled ? props.theme.border : 'transparent'};
+  cursor: ${props => props.$disabled ? 'default' : 'pointer'};
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.3s ease;
 
-const BlurryBarrier = styled.div`
-  position: absolute;
-  bottom: -50px;
-  left: 0;
-  width: 100%;
-  height: 100px;
-  background: linear-gradient(to bottom, transparent, ${props => props.theme.background});
-  backdrop-filter: blur(10px);
-  z-index: 5;
+  ${props => !props.$disabled && `
+    &:hover {
+      background: ${props.theme.primaryDark};
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px ${props.theme.glow};
+    }
+  `}
 `;
 
 export default HomePage;

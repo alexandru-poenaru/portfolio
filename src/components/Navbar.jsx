@@ -1,39 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { FaGithub, FaLinkedin, FaBars, FaTimes } from 'react-icons/fa';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleMenu = () => setIsOpen(prev => !prev);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   return (
     <NavbarContainer $scrolled={scrolled}>
       <NavbarWrapper>
         <Logo to="/">
-          <LogoText>Alex P.</LogoText>
+          <LogoText $scrolled={scrolled}>A.P.</LogoText>
         </Logo>
 
-        <MenuButton onClick={toggleMenu}>
+        <MenuButton onClick={toggleMenu} aria-label="Toggle menu">
           {isOpen ? <FaTimes /> : <FaBars />}
         </MenuButton>
 
@@ -50,10 +39,10 @@ const Navbar = () => {
         </NavMenu>
 
         <SocialIcons>
-          <SocialIcon href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer">
+          <SocialIcon href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
             <FaGithub />
           </SocialIcon>
-          <SocialIcon href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer">
+          <SocialIcon href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
             <FaLinkedin />
           </SocialIcon>
         </SocialIcons>
@@ -68,11 +57,13 @@ const NavbarContainer = styled.nav`
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: ${props => props.$scrolled ? props.theme.navbar : 'transparent'};
-  box-shadow: ${props => props.$scrolled ? `0 2px 10px ${props.theme.shadow}` : 'none'};
-  padding: ${props => props.$scrolled ? '15px 0' : '20px 0'};
-  transition: all 0.3s ease-in-out;
-  backdrop-filter: ${props => props.$scrolled ? 'blur(10px)' : 'none'};
+  padding: ${props => props.$scrolled ? '14px 0' : '22px 0'};
+  background: ${props => props.$scrolled ? props.theme.navbar : 'transparent'};
+  backdrop-filter: ${props => props.$scrolled ? 'blur(20px) saturate(1.6)' : 'none'};
+  border-bottom: ${props => props.$scrolled ? `1px solid ${props.theme.border}` : '1px solid transparent'};
+  box-shadow: ${props => props.$scrolled ? `0 2px 24px ${props.theme.shadow}` : 'none'};
+  transition: padding 0.3s ease, background 0.3s ease, backdrop-filter 0.3s ease,
+    border-color 0.3s ease, box-shadow 0.3s ease;
 `;
 
 const NavbarWrapper = styled.div`
@@ -81,26 +72,33 @@ const NavbarWrapper = styled.div`
   justify-content: space-between;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 `;
 
 const Logo = styled(Link)`
   text-decoration: none;
 `;
 
-const LogoText = styled.h1`
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: ${props => props.theme.primary};
-  margin: 0;
+const LogoText = styled.span`
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: ${props => props.$scrolled ? props.theme.primary : '#fff'};
+  text-shadow: ${props => props.$scrolled ? `0 0 20px ${props.theme.glow}` : '0 0 20px rgba(255,255,255,0.3)'};
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
 `;
 
-const MenuButton = styled.div`
+const MenuButton = styled.button`
   display: none;
+  background: none;
+  border: none;
   color: ${props => props.theme.text};
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   cursor: pointer;
-  
+  padding: 4px;
+  line-height: 1;
+
   @media (max-width: 768px) {
     display: block;
   }
@@ -112,57 +110,74 @@ const NavMenu = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
-  
+  gap: 4px;
+
   @media (max-width: 768px) {
     flex-direction: column;
     position: absolute;
     top: 100%;
     left: 0;
     width: 100%;
-    background-color: ${props => props.theme.navbar};
-    padding: 20px 0;
-    box-shadow: 0 5px 10px ${props => props.theme.shadow};
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-20px)'};
+    background: ${props => props.theme.navbar};
+    backdrop-filter: blur(20px) saturate(1.6);
+    border-bottom: 1px solid ${props => props.theme.border};
+    padding: 16px 0;
+    transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-8px)'};
     opacity: ${props => props.$isOpen ? '1' : '0'};
     pointer-events: ${props => props.$isOpen ? 'all' : 'none'};
-    backdrop-filter: blur(10px);
+    transition: transform 0.25s ease, opacity 0.25s ease;
     z-index: 999;
   }
 `;
 
 const NavItem = styled.li`
-  margin: 0 15px;
-  
   @media (max-width: 768px) {
-    margin: 10px 0;
+    width: 100%;
+    text-align: center;
   }
 `;
 
 const NavLink = styled(Link)`
   color: ${props => props.theme.text};
   text-decoration: none;
-  font-weight: 500;
-  font-size: 1.1rem;
-  transition: color 0.3s;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: inline-block;
   position: relative;
-  
-  &:after {
+  transition: color 0.25s ease, background 0.25s ease;
+
+  &::after {
     content: '';
     position: absolute;
     width: 0;
     height: 2px;
-    bottom: -5px;
-    left: 0;
-    background-color: ${props => props.theme.primary};
-    transition: width 0.3s ease;
+    bottom: 4px;
+    left: 14px;
+    background: ${props => props.theme.primary};
+    border-radius: 1px;
+    box-shadow: 0 0 8px ${props => props.theme.glow};
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  
+
   &:hover {
     color: ${props => props.theme.primary};
-    
-    &:after {
-      width: 100%;
+
+    &::after {
+      width: calc(100% - 28px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 24px;
+    width: 100%;
+    display: block;
+    text-align: center;
+
+    &::after {
+      display: none;
     }
   }
 `;
@@ -170,21 +185,27 @@ const NavLink = styled(Link)`
 const SocialIcons = styled.div`
   display: flex;
   align-items: center;
-  
+  gap: 4px;
+
   @media (max-width: 768px) {
     display: none;
   }
 `;
 
 const SocialIcon = styled.a`
-  color: ${props => props.theme.text};
-  font-size: 1.2rem;
-  margin-left: 15px;
-  transition: color 0.3s, transform 0.3s;
-  
+  color: ${props => props.theme.textSecondary};
+  font-size: 1.1rem;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+
   &:hover {
     color: ${props => props.theme.primary};
-    transform: translateY(-3px);
+    background: ${props => props.theme.glow};
+    transform: translateY(-2px);
   }
 `;
 
