@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import { ThemeContext } from '../styles/ThemeContext';
 import styled, { keyframes } from 'styled-components';
-import { FaGithub, FaLinkedin, FaArrowDown, FaServer, FaDatabase, FaCode, FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaArrowDown, FaServer, FaDatabase, FaCode, FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact } from 'react-icons/fa';
 import { SiTypescript, SiNodedotjs, SiMysql, SiYarn, SiSpringboot } from 'react-icons/si';
 import { TbBrandCSharp } from 'react-icons/tb';
 import { DiMsqlServer } from 'react-icons/di';

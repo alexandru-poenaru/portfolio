@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { FaGithub, FaLinkedin, FaBars, FaTimes } from 'react-icons/fa';
 
 const Navbar = () => {
