@@ -443,6 +443,10 @@ const TypewriterText = styled.h2`
              ${cursorBlink} 1s infinite;
   width: 0;
   padding-right: 4px;
+
+  @media (max-width: 480px) {
+    font-size: 0.78rem;
+  }
 `;
 
 const AnimatedDescription = styled.p`
