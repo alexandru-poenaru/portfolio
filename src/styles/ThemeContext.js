@@ -12,7 +12,7 @@ export const ThemeProvider = ({ children }) => {
     if (savedMode !== null) {
       return savedMode === 'true';
     }
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return false; // default to light mode
   });
 
   // Store the theme preference in localStorage when it changes

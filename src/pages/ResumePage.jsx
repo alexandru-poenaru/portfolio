@@ -1,6 +1,7 @@
-import React, { useEffect, useContext } from 'react';
-import styled from 'styled-components';
-import { FaDownload, FaGraduationCap, FaBriefcase, FaCode } from 'react-icons/fa';
+import React, { useEffect, useContext, useState } from 'react';
+
+import styled, { keyframes, css } from 'styled-components';
+import { FaDownload, FaGraduationCap, FaBriefcase, FaCode, FaChevronDown } from 'react-icons/fa';
 import { FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact, FaDatabase } from 'react-icons/fa';
 import { SiTypescript, SiNodedotjs, SiMysql, SiYarn, SiSpringboot, SiDotnet, SiFastapi, SiSqlite, SiPostgresql, SiMongodb } from 'react-icons/si';
 import { TbBrandCSharp } from 'react-icons/tb';
@@ -73,6 +74,23 @@ const ProficiencyDots = ({ level }) => (
 
 const ResumePage = () => {
   const { darkMode } = useContext(ThemeContext);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+  const [openSkills, setOpenSkills] = useState({});
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  const toggleSkill = (cat) => {
+    if (!isMobile) return;
+    setOpenSkills(prev => ({ ...prev, [cat]: !prev[cat] }));
+  };
+
+  // On mobile: open only if explicitly toggled. On desktop: always open.
+  const isSkillOpen = (cat) => !isMobile || !!openSkills[cat];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -95,7 +113,7 @@ const ResumePage = () => {
       <PageTitle>My Resume</PageTitle>
 
       <DownloadButtonContainer>
-        <DownloadButton href={resumePdf} target="_blank" rel="noopener noreferrer" download="CV_Alexandru_Poenaru.pdf">
+        <DownloadButton href={resumePdf} target="_blank" download="CV_Alexandru_Poenaru.pdf">
           <FaDownload /> Download CV (Dutch)
         </DownloadButton>
       </DownloadButtonContainer>
@@ -112,7 +130,7 @@ const ResumePage = () => {
               <TimelineDot />
               <TimelineDate>March 2026 - May 2026</TimelineDate>
               <TimelineCard>
-                <h3>International Internship</h3>
+                <h3>International Internship - Italy</h3>
                 <h4>Turtle Srl</h4>
                 <ul>
                   <li><b>AI Privacy Engine:</b> Built a Python-based NLP and OCR module to automatically detect and redact Personally Identifiable Information (PII) from various documents.</li>
@@ -212,29 +230,48 @@ const ResumePage = () => {
           </SectionHeader>
 
           <SkillsGrid>
-            {Object.entries(SKILLS).map(([category, { accent, items }], catIdx) => (
-              <SkillCategory key={category} className="animate-on-scroll" $accent={accent} style={{ animationDelay: `${catIdx * 0.1}s` }}>
-                <SkillCategoryHeader $accent={accent}>
-                  <SkillAccentBar $accent={accent} />
-                  <h3>{category}</h3>
-                </SkillCategoryHeader>
-                <SkillPillGrid>
-                  {items.map(({ name, icon, level }) => (
-                    <SkillPill key={name} $accent={accent}>
-                      <SkillIcon $accent={accent}>{icon}</SkillIcon>
-                      <SkillPillName>{name}</SkillPillName>
-                      <ProficiencyDots level={level} />
-                    </SkillPill>
-                  ))}
-                </SkillPillGrid>
-              </SkillCategory>
-            ))}
+            {Object.entries(SKILLS).map(([category, { accent, items }], catIdx) => {
+              const open = isSkillOpen(category);
+              return (
+                <SkillCategory key={category} className="animate-on-scroll" $accent={accent} style={{ animationDelay: `${catIdx * 0.1}s` }}>
+                  <SkillCategoryHeader $accent={accent} onClick={() => toggleSkill(category)} $isOpen={open}>
+                    <SkillAccentBar $accent={accent} />
+                    <h3>{category}</h3>
+                    <SkillChevron $accent={accent} $open={open}><FaChevronDown /></SkillChevron>
+                  </SkillCategoryHeader>
+                  <SkillPillGrid $isOpen={open}>
+                    {items.map(({ name, icon, level }, itemIdx) => (
+                      <SkillPill key={name} $accent={accent} $idx={itemIdx} $isOpen={open}>
+                        <SkillIcon $accent={accent}>{icon}</SkillIcon>
+                        <SkillPillName>{name}</SkillPillName>
+                        <ProficiencyDots level={level} />
+                      </SkillPill>
+                    ))}
+                  </SkillPillGrid>
+                </SkillCategory>
+              );
+            })}
           </SkillsGrid>
         </ResumeSection>
       </ResumeContent>
     </ResumeContainer>
   );
 };
+
+/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
+
+const pillReveal = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+`;
 
 /* ─── Layout ─────────────────────────────────────────────────────────────────── */
 
@@ -278,28 +315,42 @@ const DownloadButton = styled.a`
   align-items: center;
   gap: 9px;
   padding: 13px 28px;
-  background: ${props => props.theme.primary};
-  color: #fff;
-  text-decoration: none;
-  border-radius: 12px;
+  border-radius: 50px;
   font-weight: 700;
   font-size: 0.95rem;
-  box-shadow: 0 6px 24px ${props => props.theme.glow};
-  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  text-decoration: none;
   cursor: pointer;
+  color: ${props => props.theme.primary};
+  background: ${props => props.theme.glassTinted};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassTintedBorder};
+  box-shadow:
+    inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
+    0 6px 24px ${props => props.theme.glow},
+    ${props => props.theme.glassShadow};
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.3s ease;
 
   &:hover {
-    background: ${props => props.theme.primaryDark};
     transform: translateY(-3px);
-    box-shadow: 0 12px 32px ${props => props.theme.glowStrong};
+    box-shadow:
+      inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
+      0 14px 36px ${props => props.theme.glowStrong},
+      0 4px 12px rgba(0,0,0,0.1);
   }
 `;
 
 const ResumeContent = styled.div`
-  background: ${props => props.theme.card};
-  border: 1px solid ${props => props.theme.border};
-  border-radius: 20px;
-  box-shadow: 0 8px 40px ${props => props.theme.shadow};
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  border-radius: 24px;
+  box-shadow:
+    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
+    ${props => props.theme.glassShadow};
   padding: 40px 32px;
 
   @media (max-width: 600px) { padding: 24px 16px; }
@@ -317,21 +368,24 @@ const SectionHeader = styled.div`
   gap: 14px;
   margin-bottom: 36px;
   padding-bottom: 16px;
-  border-bottom: 1px solid ${props => props.theme.border};
+  border-bottom: 0.5px solid ${props => props.theme.glassBorder};
 `;
 
 const SectionIcon = styled.div`
   width: 38px;
   height: 38px;
-  background: ${props => props.theme.primary};
-  color: #fff;
-  border-radius: 10px;
+  background: ${props => props.theme.glassTinted};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassTintedBorder};
+  box-shadow: inset 0 1px 0 ${props => props.theme.glassTintedHighlight}, 0 4px 14px ${props => props.theme.glow};
+  color: ${props => props.theme.primary};
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px ${props => props.theme.glow};
 `;
 
 const SectionTitle = styled.h2`
@@ -381,9 +435,13 @@ const TimelineDot = styled.div`
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: ${props => props.theme.primary};
-  border: 2px solid ${props => props.theme.body};
-  box-shadow: 0 0 10px ${props => props.theme.glow};
+  background: ${props => props.theme.glassTinted};
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 0.5px solid ${props => props.theme.glassTintedBorder};
+  box-shadow:
+    inset 0 1px 0 ${props => props.theme.glassTintedHighlight},
+    0 0 14px ${props => props.theme.glow};
   z-index: 2;
 `;
 
@@ -397,16 +455,24 @@ const TimelineDate = styled.div`
 `;
 
 const TimelineCard = styled.div`
-  background: ${props => props.theme.cardBackground};
-  border: 1px solid ${props => props.theme.border};
-  border-radius: 12px;
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  border-radius: 16px;
   padding: 18px 20px;
-  box-shadow: 0 2px 12px ${props => props.theme.shadow};
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  box-shadow:
+    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
+    ${props => props.theme.glassShadow};
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.25s ease;
 
   &:hover {
-    box-shadow: 0 8px 28px ${props => props.theme.shadowHover};
-    border-color: ${props => props.theme.borderStrong};
+    box-shadow:
+      inset 0 1.5px 0 ${props => props.theme.glassHighlight},
+      0 12px 32px ${props => props.theme.shadowHover},
+      0 4px 12px rgba(0,0,0,0.08);
+    border-color: ${props => props.theme.glassTintedBorder};
+    transform: translateX(4px);
   }
 
   h3 {
@@ -451,12 +517,16 @@ const SkillsGrid = styled.div`
 `;
 
 const SkillCategory = styled.div`
-  background: ${props => props.theme.cardBackground};
-  border: 1px solid ${props => props.theme.border};
-  border-top: 3px solid ${props => props.$accent};
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  border-top: 2px solid ${props => props.$accent};
   padding: 22px;
-  border-radius: 14px;
-  box-shadow: 0 2px 12px ${props => props.theme.shadow};
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
+    ${props => props.theme.glassShadow};
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -467,9 +537,12 @@ const SkillCategory = styled.div`
   }
 
   &:hover {
-    box-shadow: 0 10px 32px ${props => props.theme.shadowHover};
-    border-color: ${props => props.$accent}55;
-    transform: translateY(-4px);
+    box-shadow:
+      inset 0 1.5px 0 ${props => props.theme.glassHighlight},
+      0 14px 36px ${props => props.$accent}30,
+      0 4px 12px rgba(0,0,0,0.08);
+    border-color: ${props => props.$accent}80;
+    transform: translateY(-5px);
   }
 `;
 
@@ -478,14 +551,37 @@ const SkillCategoryHeader = styled.div`
   align-items: center;
   gap: 10px;
   margin-bottom: 18px;
+  cursor: default;
 
   h3 {
     margin: 0;
+    flex: 1;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: ${props => props.$accent};
+  }
+
+  @media (max-width: 768px) {
+    cursor: pointer;
+    margin-bottom: ${props => props.$isOpen ? '18px' : '0'};
+    transition: margin-bottom 0.25s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+`;
+
+const SkillChevron = styled.span`
+  display: none;
+  color: ${props => props.$accent};
+  font-size: 0.75rem;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: ${props => props.$open ? 'rotate(0deg)' : 'rotate(-90deg)'};
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
   }
 `;
 
@@ -501,6 +597,24 @@ const SkillPillGrid = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  @media (max-width: 768px) {
+    overflow: hidden;
+
+    /* Closed: collapse smoothly */
+    max-height: ${props => props.$isOpen ? '1000px' : '0'};
+    opacity: ${props => props.$isOpen ? 1 : 0};
+    transition:
+      max-height ${props => props.$isOpen ? '0.45s' : '0.3s'} cubic-bezier(0.16, 1, 0.3, 1),
+      opacity    ${props => props.$isOpen ? '0.3s' : '0.2s'} ease;
+
+    /* When opening, re-trigger pill animations */
+    ${props => props.$isOpen && `
+      > * {
+        animation: none;
+      }
+    `}
+  }
 `;
 
 const SkillPill = styled.div`
@@ -508,16 +622,26 @@ const SkillPill = styled.div`
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
-  border: 1px solid ${props => props.theme.border};
-  border-radius: 10px;
-  background: ${props => props.theme.card};
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  border-radius: 50px;
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  box-shadow: inset 0 1px 0 ${props => props.theme.glassHighlight};
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease;
 
   &:hover {
-    border-color: ${props => props.$accent}60;
-    box-shadow: 0 4px 16px ${props => props.$accent}18;
-    transform: translateX(4px);
-    background: ${props => props.$accent}08;
+    border-color: ${props => props.$accent}70;
+    box-shadow:
+      inset 0 1px 0 ${props => props.theme.glassHighlight},
+      0 6px 18px ${props => props.$accent}25;
+    transform: translateX(5px);
+  }
+
+  @media (max-width: 768px) {
+    ${props => props.$isOpen && css`
+      animation: ${pillReveal} 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${props.$idx * 0.04}s both;
+    `}
   }
 `;
 

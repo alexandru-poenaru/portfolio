@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useState, useEffect, useRef } from 'react';
+import styled, { keyframes, css } from 'styled-components';
 import emailjs from 'emailjs-com';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
+
 
 const slideUp = keyframes`
   from { opacity: 0; transform: translateY(28px); }
@@ -14,26 +15,86 @@ const orb = keyframes`
   66%       { transform: translate(-15px, 15px) scale(0.95); }
 `;
 
+const toastSlideIn = keyframes`
+  from { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(0.95); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0)     scale(1); }
+`;
+
+const toastSlideOut = keyframes`
+  from { opacity: 1; transform: translateX(-50%) translateY(0)     scale(1); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(-12px) scale(0.94); }
+`;
+
+/* ─── Toast component ─────────────────────────────────────────────────────────── */
+
+const Toast = ({ message, type, visible, onDone }) => {
+  const [exiting, setExiting] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    if (!visible) return;
+    setExiting(false);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setExiting(true);
+      timerRef.current = setTimeout(onDone, 320);
+    }, 3200);
+    return () => clearTimeout(timerRef.current);
+  }, [visible, message, onDone]);
+
+  if (!visible && !exiting) return null;
+
+  return (
+    <ToastEl $type={type} $exiting={exiting}>
+      <ToastIcon $type={type}>
+        {type === 'error' ? <FaExclamationTriangle /> : <FaCheckCircle />}
+      </ToastIcon>
+      {message}
+    </ToastEl>
+  );
+};
+
+/* ─── ContactPage ─────────────────────────────────────────────────────────────── */
+
 const ContactPage = () => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [formStatus, setFormStatus] = useState({ submitted: false, success: false, message: '' });
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'error' });
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const showToast = (message, type = 'error') => {
+    setToast({ visible: true, message, type });
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const dismissToast = () => setToast(t => ({ ...t, visible: false }));
+
+  const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async () => {
+    const { name, email, subject, message } = formData;
+
+    if (!name.trim() || !email.trim() || !subject.trim() || !message.trim()) {
+      showToast('All fields are required. Please fill everything in.', 'error');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      showToast('Please enter a valid email address.', 'error');
+      return;
+    }
+
     setLoading(true);
     try {
       await emailjs.send(
         'service_1avl1t7',
         'template_z6mawq9',
-        { from_name: formData.name, from_email: formData.email, subject: formData.subject, message: formData.message },
+        { from_name: name, from_email: email, subject, message },
         'chS7dIITr1soaZz_G'
       );
       setFormStatus({ submitted: true, success: true, message: "Message sent! I'll get back to you soon." });
       setFormData({ name: '', email: '', subject: '', message: '' });
-    } catch (error) {
+    } catch {
       setFormStatus({ submitted: true, success: false, message: 'Something went wrong. Please try again or email me directly.' });
     } finally {
       setLoading(false);
@@ -42,6 +103,13 @@ const ContactPage = () => {
 
   return (
     <ContactContainer id="contact">
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onDone={dismissToast}
+      />
+
       <PageTitle>Get In Touch</PageTitle>
       <ContactContent>
         <ContactInfo>
@@ -54,9 +122,7 @@ const ContactPage = () => {
             </ContactInfoText>
 
             <ContactInfoItem>
-              <IconWrapper href="mailto:alexandru.george.poenaru@gmail.com">
-                <FaEnvelope />
-              </IconWrapper>
+              <IconWrapperLink href="mailto:alexandru.george.poenaru@gmail.com"><FaEnvelope /></IconWrapperLink>
               <div>
                 <ContactInfoLabel>Email</ContactInfoLabel>
                 <ContactLink href="mailto:alexandru.george.poenaru@gmail.com">
@@ -66,9 +132,7 @@ const ContactPage = () => {
             </ContactInfoItem>
 
             <ContactInfoItem>
-              <IconWrapper href="tel:+32468301411">
-                <FaPhone />
-              </IconWrapper>
+              <IconWrapperLink href="tel:+32468301411"><FaPhone /></IconWrapperLink>
               <div>
                 <ContactInfoLabel>Phone</ContactInfoLabel>
                 <ContactLink href="tel:+32468301411">+32 468 30 14 11</ContactLink>
@@ -76,9 +140,7 @@ const ContactPage = () => {
             </ContactInfoItem>
 
             <ContactInfoItem>
-              <IconWrapper href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer">
-                <FaMapMarkerAlt />
-              </IconWrapper>
+              <IconWrapperLink href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer"><FaMapMarkerAlt /></IconWrapperLink>
               <div>
                 <ContactInfoLabel>Location</ContactInfoLabel>
                 <ContactLink href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer">
@@ -97,7 +159,7 @@ const ContactPage = () => {
               {formStatus.message}
             </FormStatusMessage>
           ) : (
-            <ContactForm onSubmit={handleSubmit}>
+            <ContactForm>
               <FormGroup>
                 <FormLabel>Full Name</FormLabel>
                 <FormInput
@@ -105,7 +167,6 @@ const ContactPage = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  required
                   placeholder="Your Full Name"
                 />
               </FormGroup>
@@ -117,7 +178,6 @@ const ContactPage = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  required
                   placeholder="your@email.com"
                 />
               </FormGroup>
@@ -129,7 +189,6 @@ const ContactPage = () => {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  required
                   placeholder="Subject"
                 />
               </FormGroup>
@@ -140,13 +199,17 @@ const ContactPage = () => {
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  required
                   placeholder="Your message..."
                   rows="6"
                 />
               </FormGroup>
 
-              <SubmitButton type="submit" disabled={loading}>
+              <SubmitButton
+                type="button"
+                disabled={loading}
+                onClick={!loading ? handleSubmit : undefined}
+                style={{ gridColumn: '1 / -1', marginTop: '4px' }}
+              >
                 {loading ? 'Sending…' : 'Send Message'}
               </SubmitButton>
             </ContactForm>
@@ -158,6 +221,47 @@ const ContactPage = () => {
 };
 
 /* ─── Styled components ──────────────────────────────────────────────────────── */
+
+const ToastEl = styled.div`
+  position: fixed;
+  top: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+
+  background: ${p => p.$type === 'error'
+    ? 'linear-gradient(180deg, rgba(239,68,68,0.20) 0%, rgba(239,68,68,0.10) 100%)'
+    : p.theme.glassTinted};
+  backdrop-filter: ${p => p.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${p => p.theme.glassBackdrop};
+  border: 0.5px solid ${p => p.$type === 'error' ? 'rgba(239,68,68,0.45)' : p.theme.glassTintedBorder};
+  box-shadow:
+    inset 0 1.5px 0 ${p => p.$type === 'error' ? 'rgba(255,255,255,0.20)' : p.theme.glassTintedHighlight},
+    0 8px 32px ${p => p.$type === 'error' ? 'rgba(239,68,68,0.25)' : p.theme.glow},
+    0 4px 12px rgba(0,0,0,0.15);
+  color: ${p => p.$type === 'error' ? '#fca5a5' : p.theme.primary};
+
+  animation: ${p => p.$exiting
+    ? css`${toastSlideOut} 0.3s ease forwards`
+    : css`${toastSlideIn} 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards`};
+`;
+
+const ToastIcon = styled.span`
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: ${p => p.$type === 'error' ? '#f87171' : 'inherit'};
+  flex-shrink: 0;
+`;
 
 const ContactContainer = styled.div`
   max-width: 1200px;
@@ -202,10 +306,16 @@ const ContactContent = styled.div`
 `;
 
 const ContactInfo = styled.div`
-  background: ${props => props.theme.primary};
+  background: ${props => props.theme.glassTinted};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassTintedBorder};
+  box-shadow:
+    inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
+    0 12px 40px ${props => props.theme.glow},
+    ${props => props.theme.glassShadow};
   padding: 36px;
-  border-radius: 18px;
-  box-shadow: 0 12px 40px ${props => props.theme.glow};
+  border-radius: 24px;
   position: relative;
   overflow: hidden;
 
@@ -234,11 +344,11 @@ const ContactInfoTitle = styled.h2`
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0 0 12px;
-  color: #fff;
+  color: ${props => props.theme.text};
 `;
 
 const ContactInfoText = styled.p`
-  color: rgba(255, 255, 255, 0.8);
+  color: ${props => props.theme.textSecondary};
   font-size: 0.92rem;
   line-height: 1.6;
   margin: 0 0 36px;
@@ -253,24 +363,53 @@ const ContactInfoItem = styled.div`
   &:last-child { margin-bottom: 0; }
 `;
 
-const IconWrapper = styled.a`
+const iconWrapperStyles = `
   width: 46px;
   height: 46px;
   min-width: 46px;
-  background: rgba(255, 255, 255, 0.18);
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
-  color: #fff;
-  text-decoration: none;
-  transition: background 0.25s ease, transform 0.2s ease;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+`;
+
+const IconWrapper = styled.div`
+  ${iconWrapperStyles}
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  box-shadow: inset 0 1.5px 0 ${props => props.theme.glassHighlight};
+  color: ${props => props.theme.primary};
 
   &:hover {
-    background: rgba(255, 255, 255, 0.32);
-    transform: scale(1.08);
+    transform: scale(1.1);
+    border-color: ${props => props.theme.glassTintedBorder};
+    box-shadow:
+      inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
+      0 6px 18px ${props => props.theme.glow};
+  }
+`;
+
+const IconWrapperLink = styled.a`
+  ${iconWrapperStyles}
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  box-shadow: inset 0 1.5px 0 ${props => props.theme.glassHighlight};
+  color: ${props => props.theme.primary};
+  text-decoration: none;
+
+  &:hover {
+    transform: scale(1.1);
+    border-color: ${props => props.theme.glassTintedBorder};
+    box-shadow:
+      inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
+      0 6px 18px ${props => props.theme.glow};
   }
 `;
 
@@ -279,12 +418,12 @@ const ContactInfoLabel = styled.h3`
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
+  color: ${props => props.theme.textSecondary};
   margin: 0 0 4px;
 `;
 
 const ContactLink = styled.a`
-  color: #fff;
+  color: ${props => props.theme.primary};
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
@@ -296,11 +435,15 @@ const ContactLink = styled.a`
 `;
 
 const ContactFormWrapper = styled.div`
-  background: ${props => props.theme.card};
-  border: 1px solid ${props => props.theme.border};
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  box-shadow:
+    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
+    ${props => props.theme.glassShadow};
   padding: 36px;
-  border-radius: 18px;
-  box-shadow: 0 8px 32px ${props => props.theme.shadow};
+  border-radius: 24px;
   animation: ${slideUp} 0.7s ease 0.15s both;
 
   @media (max-width: 768px) { padding: 24px; }
@@ -338,73 +481,93 @@ const FormLabel = styled.label`
 
 const inputBase = `
   padding: 12px 14px;
-  border-radius: 10px;
+  border-radius: 14px;
   font-size: 0.95rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
   cursor: text;
 `;
 
 const FormInput = styled.input`
   ${inputBase}
-  border: 1px solid ${props => props.theme.border};
-  background: ${props => props.theme.cardBackground};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  box-shadow: inset 0 1px 0 ${props => props.theme.glassHighlight};
   color: ${props => props.theme.text};
 
-  &::placeholder { color: ${props => props.theme.textSecondary}; opacity: 0.5; }
+  &::placeholder { color: ${props => props.theme.textSecondary}; opacity: 0.55; }
 
   &:focus {
-    border-color: ${props => props.theme.primary};
-    box-shadow: 0 0 0 3px ${props => props.theme.glow};
+    border-color: ${props => props.theme.glassTintedBorder};
+    box-shadow:
+      inset 0 1px 0 ${props => props.theme.glassTintedHighlight},
+      0 0 0 3px ${props => props.theme.glow};
   }
 `;
 
 const FormTextarea = styled.textarea`
   ${inputBase}
-  border: 1px solid ${props => props.theme.border};
-  background: ${props => props.theme.cardBackground};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  box-shadow: inset 0 1px 0 ${props => props.theme.glassHighlight};
   color: ${props => props.theme.text};
   resize: vertical;
 
-  &::placeholder { color: ${props => props.theme.textSecondary}; opacity: 0.5; }
+  &::placeholder { color: ${props => props.theme.textSecondary}; opacity: 0.55; }
 
   &:focus {
-    border-color: ${props => props.theme.primary};
-    box-shadow: 0 0 0 3px ${props => props.theme.glow};
+    border-color: ${props => props.theme.glassTintedBorder};
+    box-shadow:
+      inset 0 1px 0 ${props => props.theme.glassTintedHighlight},
+      0 0 0 3px ${props => props.theme.glow};
   }
 `;
 
 const SubmitButton = styled.button`
-  grid-column: 1 / -1;
-  background: ${props => props.theme.primary};
-  color: #fff;
-  border: none;
+  width: 100%;
+  background: ${props => props.theme.glassTinted};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassTintedBorder};
+  box-shadow:
+    inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
+    0 4px 14px ${props => props.theme.glow};
+  color: ${props => props.theme.primary};
   padding: 13px 32px;
-  border-radius: 10px;
+  border-radius: 50px;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 4px;
-  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 
   &:hover:not(:disabled) {
-    background: ${props => props.theme.primaryDark};
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px ${props => props.theme.glow};
+    box-shadow:
+      inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
+      0 12px 30px ${props => props.theme.glowStrong};
   }
 
   &:disabled {
-    opacity: 0.55;
+    opacity: 0.45;
     cursor: not-allowed;
   }
 `;
 
 const FormStatusMessage = styled.div`
   padding: 20px;
-  border-radius: 10px;
-  border: 1px solid ${props => props.$success ? props.theme.primary : '#ef4444'};
-  background: ${props => props.$success ? props.theme.glow : 'rgba(239,68,68,0.08)'};
+  border-radius: 14px;
+  border: 0.5px solid ${props => props.$success ? props.theme.glassTintedBorder : 'rgba(239,68,68,0.5)'};
+  background: ${props => props.$success ? props.theme.glassTinted : 'rgba(239,68,68,0.08)'};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  box-shadow: inset 0 1px 0 ${props => props.$success ? props.theme.glassTintedHighlight : 'rgba(255,255,255,0.15)'};
   color: ${props => props.$success ? props.theme.text : '#ef4444'};
   text-align: center;
   font-weight: 500;

@@ -1,5 +1,5 @@
 export const lightTheme = {
-  body: '#FAFAFA',
+  body: '#F0EEF8',
   surface: '#FFFFFF',
   text: '#0A0A12',
   textSecondary: '#52527A',
@@ -15,16 +15,25 @@ export const lightTheme = {
   shadow: 'rgba(10, 10, 20, 0.06)',
   shadowHover: 'rgba(79, 70, 229, 0.15)',
   timeline: 'rgba(79, 70, 229, 0.2)',
-  navbar: 'rgba(250, 250, 250, 0.88)',
+  navbar: 'rgba(240, 238, 248, 0.75)',
   footer: '#0A0A12',
   footerText: '#7878A0',
+  // Liquid glass tokens
+  glass: 'linear-gradient(180deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.44) 100%)',
+  glassBorder: 'rgba(255, 255, 255, 0.78)',
+  glassHighlight: 'rgba(255, 255, 255, 0.96)',
+  glassBackdrop: 'blur(44px) saturate(1.6) brightness(1.04)',
+  glassShadow: '0 16px 48px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04)',
+  glassTinted: 'linear-gradient(180deg, rgba(79,70,229,0.18) 0%, rgba(79,70,229,0.10) 100%)',
+  glassTintedBorder: 'rgba(79, 70, 229, 0.40)',
+  glassTintedHighlight: 'rgba(255, 255, 255, 0.55)',
 };
 
 export const darkTheme = {
   body: '#050507',
   surface: '#0A0A12',
   text: '#E8E8F4',
-  textSecondary: '#72729A',
+  textSecondary: '#9898BE',
   primary: '#818cf8',
   primaryDark: '#6366F1',
   primaryLight: '#A5B4FC',
@@ -37,9 +46,18 @@ export const darkTheme = {
   shadow: 'rgba(0, 0, 0, 0.6)',
   shadowHover: 'rgba(129, 140, 248, 0.2)',
   timeline: 'rgba(129, 140, 248, 0.25)',
-  navbar: 'rgba(5, 5, 7, 0.88)',
+  navbar: 'rgba(5, 5, 7, 0.75)',
   footer: '#02020A',
   footerText: '#4C4C6E',
+  // Liquid glass tokens
+  glass: 'linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%)',
+  glassBorder: 'rgba(255, 255, 255, 0.13)',
+  glassHighlight: 'rgba(255, 255, 255, 0.20)',
+  glassBackdrop: 'blur(44px) saturate(2.0) brightness(1.14)',
+  glassShadow: '0 16px 48px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.30)',
+  glassTinted: 'linear-gradient(180deg, rgba(129,140,248,0.18) 0%, rgba(129,140,248,0.08) 100%)',
+  glassTintedBorder: 'rgba(129, 140, 248, 0.35)',
+  glassTintedHighlight: 'rgba(255, 255, 255, 0.22)',
 };
 
 export const animations = {

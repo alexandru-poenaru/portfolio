@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { ThemeContext } from '../styles/ThemeContext';
 import styled, { keyframes } from 'styled-components';
 import { FaGithub, FaLinkedin, FaArrowDown } from 'react-icons/fa';
+
 import helpdesk from '../assets/images/helpdesk.png';
 import kingdomino from '../assets/images/kingdomino.jpg';
 import kottask from '../assets/images/kottask.png';
@@ -172,9 +173,7 @@ const HomePage = () => {
     <>
       <FullWidthHeroContainer>
         <HeroSection id="hero">
-          <VideoBackground autoPlay loop muted playsInline>
-            <source src={require('../assets/videos/background-video.mp4')} type="video/mp4" />
-          </VideoBackground>
+          <AnimatedHeroBg />
           <HeroOverlay />
           <HeroContent>
             <TypewriterContainer>
@@ -186,12 +185,8 @@ const HomePage = () => {
               and architecture that makes them work.
             </AnimatedDescription>
             <HeroActions>
-              <SocialLink href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer">
-                <FaGithub /> GitHub
-              </SocialLink>
-              <SocialLink href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer">
-                <FaLinkedin /> LinkedIn
-              </SocialLink>
+              <SocialLink href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer"><FaGithub /> GitHub</SocialLink>
+              <SocialLink href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer"><FaLinkedin /> LinkedIn</SocialLink>
             </HeroActions>
             <ScrollDownButton href="#about" onClick={handleScrollClick}>
               <FaArrowDown />
@@ -211,7 +206,7 @@ const HomePage = () => {
             </ProfileImageContainer>
             <AboutTextContent>
               <p>
-                Hi! I'm Alex, an IT student based in Tielt, Belgium. My relationship with technology
+                Hi! I'm Alex, a 21 year old IT student based in Tielt, Belgium. My relationship with technology
                 started at 10, when I got into robotics. Soldering components onto a motherboard in just
                 the right order, and watching something actually work as a result. No code, just patience
                 and precision. It was the best thing in the world to me at the time.
@@ -256,9 +251,7 @@ const HomePage = () => {
                 <ProjectDescription>
                   A ticket system for the helpdesk of my internship company (2023), written in C#.
                 </ProjectDescription>
-                <ProjectButton href="https://github.com/alexandru-poenaru/helpdesk-sintandries" target="_blank" rel="noopener noreferrer">
-                  <FaGithub /> GitHub Repo
-                </ProjectButton>
+                <ProjectButton href="https://github.com/alexandru-poenaru/helpdesk-sintandries" target="_blank" rel="noopener noreferrer"><FaGithub /> GitHub Repo</ProjectButton>
               </ProjectContent>
             </ProjectCard>
 
@@ -270,9 +263,7 @@ const HomePage = () => {
                 <ProjectDescription>
                   The board game KingDomino playable by 2–4 players, written in Java.
                 </ProjectDescription>
-                <ProjectButton href="https://github.com/alexandru-poenaru/kingdomino" target="_blank" rel="noopener noreferrer">
-                  <FaGithub /> GitHub Repo
-                </ProjectButton>
+                <ProjectButton href="https://github.com/alexandru-poenaru/kingdomino" target="_blank" rel="noopener noreferrer"><FaGithub /> GitHub Repo</ProjectButton>
               </ProjectContent>
             </ProjectCard>
 
@@ -284,9 +275,7 @@ const HomePage = () => {
                 <ProjectDescription>
                   A TODO-app with integrated calendar — assign tasks to yourself and others. Built with React, Node.js, TypeScript.
                 </ProjectDescription>
-                <ProjectButton href="https://github.com/alexandru-poenaru/kottask" target="_blank" rel="noopener noreferrer">
-                  <FaGithub /> GitHub Repo
-                </ProjectButton>
+                <ProjectButton href="https://github.com/alexandru-poenaru/kottask" target="_blank" rel="noopener noreferrer"><FaGithub /> GitHub Repo</ProjectButton>
               </ProjectContent>
             </ProjectCard>
 
@@ -318,13 +307,17 @@ const fadeIn = keyframes`
 `;
 
 const typewriter = keyframes`
-  from { width: 0; }
-  to   { width: 100%; }
+  from { max-width: 0; }
+  to   { max-width: 100vw; }
 `;
 
 const cursorBlink = keyframes`
   from, to { opacity: 1; }
   50%       { opacity: 0; }
+`;
+
+const cursorHide = keyframes`
+  to { border-color: transparent; }
 `;
 
 const floatAnim = keyframes`
@@ -349,6 +342,127 @@ const responseFadeIn = keyframes`
   to   { opacity: 1; transform: translateY(0); }
 `;
 
+/* ─── AnimatedHeroBg ────────────────────────────────────────────────────────── */
+
+const bgBlob1 = keyframes`
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%       { transform: translate(80px, -100px) scale(1.12); }
+  50%       { transform: translate(160px, 30px) scale(0.92); }
+  75%       { transform: translate(50px, -60px) scale(1.06); }
+`;
+const bgBlob2 = keyframes`
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-100px, 80px) scale(1.15); }
+  66%       { transform: translate(60px, -120px) scale(0.90); }
+`;
+const bgBlob3 = keyframes`
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40%       { transform: translate(120px, 100px) scale(1.08); }
+  75%       { transform: translate(-80px, 50px) scale(0.96); }
+`;
+const orbDrift1 = keyframes`
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33%       { transform: translateY(-30px) translateX(14px); }
+  66%       { transform: translateY(-16px) translateX(-20px); }
+`;
+const orbDrift2 = keyframes`
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  40%       { transform: translateY(-40px) translateX(-18px); }
+  75%       { transform: translateY(-22px) translateX(24px); }
+`;
+
+const BgRoot = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: ${props => props.theme.body};
+  transition: background 0.4s ease;
+`;
+
+const GridDots = styled.div`
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, ${props => props.theme.border} 1px, transparent 1px);
+  background-size: 52px 52px;
+`;
+
+const AuroraBase = styled.div`
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(88px);
+  will-change: transform;
+  transition: background 0.4s ease;
+`;
+
+const Aurora1 = styled(AuroraBase)`
+  width: 900px; height: 700px;
+  top: -200px; left: -200px;
+  background: radial-gradient(ellipse, ${props => props.theme.glowStrong} 0%, ${props => props.theme.glow} 45%, transparent 70%);
+  animation: ${bgBlob1} 20s ease-in-out infinite;
+`;
+const Aurora2 = styled(AuroraBase)`
+  width: 780px; height: 620px;
+  bottom: -180px; right: -140px;
+  background: radial-gradient(ellipse, ${props => props.theme.glowStrong} 0%, ${props => props.theme.glow} 45%, transparent 70%);
+  animation: ${bgBlob2} 24s ease-in-out infinite;
+`;
+const Aurora3 = styled(AuroraBase)`
+  width: 580px; height: 480px;
+  top: 35%; left: 42%;
+  background: radial-gradient(ellipse, ${props => props.theme.glow} 0%, transparent 70%);
+  animation: ${bgBlob3} 17s ease-in-out infinite;
+`;
+
+const OrbBase = styled.div`
+  position: absolute;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 26%, ${props => props.theme.glassHighlight} 0%, transparent 42%),
+    radial-gradient(circle at 50% 50%, ${props => props.theme.glow} 0%, transparent 70%);
+  border: 1px solid ${props => props.theme.border};
+  box-shadow:
+    inset 0 2px 0 ${props => props.theme.glassHighlight},
+    0 0 60px ${props => props.theme.glow};
+  backdrop-filter: blur(0.5px);
+  -webkit-backdrop-filter: blur(0.5px);
+  will-change: transform;
+`;
+
+const Orb1 = styled(OrbBase)`
+  width: 520px; height: 520px;
+  top: -80px; left: -130px;
+  animation: ${orbDrift1} 14s ease-in-out infinite;
+`;
+const Orb2 = styled(OrbBase)`
+  width: 360px; height: 360px;
+  bottom: -50px; right: -90px;
+  animation: ${orbDrift2} 19s ease-in-out 1.5s infinite;
+`;
+const Orb3 = styled(OrbBase)`
+  width: 210px; height: 210px;
+  top: 18%; right: 10%;
+  animation: ${orbDrift1} 12s ease-in-out 0.7s infinite;
+`;
+const Orb4 = styled(OrbBase)`
+  width: 155px; height: 155px;
+  top: 55%; left: 22%;
+  animation: ${orbDrift2} 16s ease-in-out 2.8s infinite;
+`;
+
+const AnimatedHeroBg = () => (
+  <BgRoot>
+    <GridDots />
+    <Aurora1 />
+    <Aurora2 />
+    <Aurora3 />
+    <Orb1 />
+    <Orb2 />
+    <Orb3 />
+    <Orb4 />
+  </BgRoot>
+);
+
 /* ─── Hero ───────────────────────────────────────────────────────────────────── */
 
 const FullWidthHeroContainer = styled.div`
@@ -370,16 +484,6 @@ const HeroSection = styled.section`
   }
 `;
 
-const VideoBackground = styled.video`
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.3) saturate(0.6);
-  z-index: 0;
-`;
-
 const HeroOverlay = styled.div`
   position: absolute;
   inset: 0;
@@ -390,6 +494,7 @@ const HeroOverlay = styled.div`
     ${props => props.theme.body} 100%
   );
   z-index: 1;
+  transition: background 0.4s ease;
 `;
 
 const HeroBottomFade = styled.div`
@@ -401,6 +506,7 @@ const HeroBottomFade = styled.div`
   background: linear-gradient(to bottom, transparent, ${props => props.theme.body});
   z-index: 5;
   pointer-events: none;
+  transition: background 0.4s ease;
 `;
 
 const HeroContent = styled.div`
@@ -413,6 +519,9 @@ const HeroContent = styled.div`
 `;
 
 const TypewriterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 1.2rem;
 `;
 
@@ -420,14 +529,13 @@ const HeroTitle = styled.h1`
   font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: #fff;
+  color: ${props => props.theme.text};
   margin: 0 0 0.8rem;
   line-height: 1.15;
 `;
 
 const HighlightSpan = styled.span`
-  color: ${props => props.theme.primary};
-  text-shadow: 0 0 24px ${props => props.theme.glow};
+  color: ${props => props.theme.text};
 `;
 
 const TypewriterText = styled.h2`
@@ -439,9 +547,11 @@ const TypewriterText = styled.h2`
   white-space: nowrap;
   border-right: 2px solid ${props => props.theme.primary};
   color: ${props => props.theme.primary};
-  animation: ${typewriter} 1.8s steps(22, end) 0.6s forwards,
-             ${cursorBlink} 1s infinite;
-  width: 0;
+  animation:
+    ${typewriter} 3.2s steps(40, end) 0.6s forwards,
+    ${cursorBlink} 0.8s 0.6s 5,
+    ${cursorHide} 0.05s 4.65s forwards;
+  max-width: 0;
   padding-right: 4px;
 
   @media (max-width: 480px) {
@@ -453,7 +563,7 @@ const AnimatedDescription = styled.p`
   font-size: clamp(0.95rem, 1.6vw, 1.1rem);
   max-width: 580px;
   margin: 0 auto 2rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: ${props => props.theme.textSecondary};
   opacity: 0;
   animation: ${fadeIn} 0.8s ease-out 2.2s forwards;
   line-height: 1.7;
@@ -473,23 +583,27 @@ const SocialLink = styled.a`
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
-  color: #fff;
+  padding: 10px 22px;
+  border-radius: 50px;
+  color: ${props => props.theme.text};
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  box-shadow: inset 0 1.5px 0 ${props => props.theme.glassHighlight}, ${props => props.theme.glassShadow};
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 
   &:hover {
-    background: ${props => props.theme.primary};
-    border-color: ${props => props.theme.primary};
-    box-shadow: 0 8px 28px ${props => props.theme.glow};
     transform: translateY(-3px);
+    box-shadow:
+      inset 0 1.5px 0 ${props => props.theme.glassHighlight},
+      0 12px 32px ${props => props.theme.glowStrong};
   }
 `;
 
@@ -498,7 +612,7 @@ const ScrollDownButton = styled.a`
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  color: rgba(255, 255, 255, 0.55);
+  color: ${props => props.theme.textSecondary};
   text-decoration: none;
   font-size: 0.7rem;
   letter-spacing: 0.12em;
@@ -577,8 +691,14 @@ const ProfileImageContainer = styled.div`
   border-radius: 50%;
   flex-shrink: 0;
   padding: 3px;
-  background: linear-gradient(135deg, ${props => props.theme.primary}, ${props => props.theme.primaryLight});
-  box-shadow: 0 0 28px ${props => props.theme.glow};
+  background: ${props => props.theme.glassTinted};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassTintedBorder};
+  box-shadow:
+    inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
+    0 0 40px ${props => props.theme.glow},
+    ${props => props.theme.glassShadow};
   opacity: 0;
   transform: translateY(20px) scale(0.95);
   transition: opacity 0.5s ease, transform 0.5s ease;
@@ -647,10 +767,16 @@ const TerminalIntroText = styled.div`
 const TerminalWrapper = styled.div`
   width: 100%;
   max-width: 780px;
-  background: #0D1117;
-  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(13,17,23,0.85) 0%, rgba(13,17,23,0.75) 100%);
+  backdrop-filter: blur(44px) saturate(1.8) brightness(0.95);
+  -webkit-backdrop-filter: blur(44px) saturate(1.8) brightness(0.95);
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  border: 0.5px solid rgba(255,255,255,0.12);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.14),
+    0 24px 64px rgba(0, 0, 0, 0.55),
+    0 6px 20px rgba(0,0,0,0.3);
   font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 `;
 
@@ -659,8 +785,8 @@ const TerminalHeader = styled.div`
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
-  background: #161B22;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(22,27,34,0.60);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.10);
 `;
 
 const TrafficLights = styled.div`
@@ -793,11 +919,15 @@ const ProjectsGrid = styled.div`
 `;
 
 const ProjectCard = styled.div`
-  background: ${props => props.theme.card};
-  border: 1px solid ${props => props.theme.border};
-  border-radius: 18px;
+  background: ${props => props.theme.glass};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.theme.glassBorder};
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 8px 32px ${props => props.theme.shadow};
+  box-shadow:
+    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
+    ${props => props.theme.glassShadow};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -816,15 +946,19 @@ const ProjectCard = styled.div`
 
   &:hover {
     transform: translateY(-10px) perspective(900px) rotateX(-2deg);
-    box-shadow: 0 28px 56px ${props => props.theme.shadowHover};
-    border-color: ${props => props.theme.borderStrong};
+    box-shadow:
+      inset 0 1.5px 0 ${props => props.theme.glassHighlight},
+      0 28px 56px ${props => props.theme.shadowHover},
+      0 8px 20px rgba(0,0,0,0.15);
+    border-color: ${props => props.theme.glassTintedBorder};
   }
 `;
 
 const ProjectImageWrapper = styled.div`
   overflow: hidden;
   height: 220px;
-  background: ${props => props.theme.cardBackground};
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 0.5px solid ${props => props.theme.glassBorder};
 `;
 
 const ProjectImage = styled.img`
@@ -860,22 +994,35 @@ const ProjectButton = styled.a`
   align-items: center;
   gap: 7px;
   padding: 9px 18px;
-  background: ${props => props.$disabled ? props.theme.cardBackground : props.theme.primary};
-  color: ${props => props.$disabled ? props.theme.textSecondary : '#fff'};
-  text-decoration: none;
-  border-radius: 9px;
+  border-radius: 50px;
   font-size: 0.84rem;
   font-weight: 600;
   align-self: flex-start;
-  border: 1px solid ${props => props.$disabled ? props.theme.border : 'transparent'};
+  text-decoration: none;
   cursor: ${props => props.$disabled ? 'default' : 'pointer'};
-  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+
+  background: ${props => props.$disabled
+    ? props.theme.glass
+    : props.theme.glassTinted};
+  backdrop-filter: ${props => props.theme.glassBackdrop};
+  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
+  border: 0.5px solid ${props => props.$disabled
+    ? props.theme.glassBorder
+    : props.theme.glassTintedBorder};
+  box-shadow: inset 0 1px 0 ${props => props.$disabled
+    ? props.theme.glassHighlight
+    : props.theme.glassTintedHighlight};
+  color: ${props => props.$disabled ? props.theme.textSecondary : props.theme.primary};
 
   ${props => !props.$disabled && `
     &:hover {
-      background: ${props.theme.primaryDark};
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px ${props.theme.glow};
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.35),
+        0 8px 24px rgba(79,70,229,0.28);
     }
   `}
 `;
