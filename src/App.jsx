@@ -33,46 +33,29 @@ const orbDrift3 = keyframes`
 const BackgroundOrbs = ({ darkMode }) => (
   <OrbsContainer>
     <Orb
-      $top="−5%"
-      $left="−8%"
-      $size="700px"
+      $top="-5%"
+      $left="-8%"
+      $size="600px"
       $color={darkMode ? 'rgba(79,70,229,0.14)' : 'rgba(124,99,255,0.10)'}
       $anim={orbDrift1}
       $duration="55s"
     />
     <Orb
       $top="10%"
-      $right="−10%"
-      $size="560px"
+      $right="-10%"
+      $size="500px"
       $color={darkMode ? 'rgba(139,92,246,0.10)' : 'rgba(167,106,255,0.08)'}
       $anim={orbDrift2}
       $duration="62s"
     />
     <Orb
-      $top="45%"
-      $left="30%"
-      $size="480px"
-      $color={darkMode ? 'rgba(168,85,247,0.08)' : 'rgba(99,118,255,0.07)'}
-      $anim={orbDrift3}
-      $duration="70s"
-    />
-    <Orb
-      $bottom="10%"
-      $right="5%"
-      $size="520px"
-      $color={darkMode ? 'rgba(59,130,246,0.07)' : 'rgba(79,148,255,0.07)'}
-      $anim={orbDrift1}
-      $duration="58s"
-      $delay="4s"
-    />
-    <Orb
-      $bottom="0%"
-      $left="10%"
-      $size="420px"
+      $bottom="5%"
+      $left="15%"
+      $size="440px"
       $color={darkMode ? 'rgba(129,140,248,0.09)' : 'rgba(192,132,252,0.08)'}
-      $anim={orbDrift2}
+      $anim={orbDrift3}
       $duration="66s"
-      $delay="8s"
+      $delay="6s"
     />
   </OrbsContainer>
 );
@@ -147,7 +130,7 @@ const Orb = styled.div`
   height: ${p => p.$size};
   border-radius: 50%;
   background: ${p => p.$color};
-  filter: blur(90px);
+  filter: blur(50px);
   animation: ${p => p.$anim} ${p => p.$duration || '20s'} ease-in-out ${p => p.$delay || '0s'} infinite;
   will-change: transform;
 `;

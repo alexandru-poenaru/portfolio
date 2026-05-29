@@ -245,7 +245,7 @@ const HomePage = () => {
           <ProjectsGrid>
             <ProjectCard className="animate-on-scroll">
               <ProjectImageWrapper>
-                <ProjectImage src={helpdesk} alt="Helpdesk Project" />
+                <ProjectImage src={helpdesk} alt="Helpdesk Project" loading="lazy" />
               </ProjectImageWrapper>
               <ProjectContent>
                 <ProjectDescription>
@@ -257,7 +257,7 @@ const HomePage = () => {
 
             <ProjectCard className="animate-on-scroll">
               <ProjectImageWrapper>
-                <ProjectImage src={kingdomino} alt="Kingdomino Project" />
+                <ProjectImage src={kingdomino} alt="Kingdomino Project" loading="lazy" />
               </ProjectImageWrapper>
               <ProjectContent>
                 <ProjectDescription>
@@ -269,7 +269,7 @@ const HomePage = () => {
 
             <ProjectCard className="animate-on-scroll">
               <ProjectImageWrapper>
-                <ProjectImage src={kottask} alt="KotTask Project" />
+                <ProjectImage src={kottask} alt="KotTask Project" loading="lazy" />
               </ProjectImageWrapper>
               <ProjectContent>
                 <ProjectDescription>
@@ -281,7 +281,7 @@ const HomePage = () => {
 
             <ProjectCard className="animate-on-scroll">
               <ProjectImageWrapper>
-                <ProjectImage src={dashboard} alt="Dashboard Project" />
+                <ProjectImage src={dashboard} alt="Dashboard Project" loading="lazy" />
               </ProjectImageWrapper>
               <ProjectContent>
                 <ProjectDescription>
@@ -351,12 +351,6 @@ const bgBlob2 = keyframes`
   33%       { transform: translate(-50px, 40px) scale(1.06); }
   66%       { transform: translate(30px, -60px) scale(0.96); }
 `;
-const bgBlob3 = keyframes`
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  40%       { transform: translate(60px, 50px) scale(1.04); }
-  75%       { transform: translate(-40px, 25px) scale(0.98); }
-`;
-
 const BgRoot = styled.div`
   position: absolute;
   inset: 0;
@@ -376,28 +370,22 @@ const GridDots = styled.div`
 const AuroraBase = styled.div`
   position: absolute;
   border-radius: 50%;
-  filter: blur(88px);
+  filter: blur(60px);
   will-change: transform;
   transition: background 0.4s ease;
 `;
 
 const Aurora1 = styled(AuroraBase)`
-  width: 900px; height: 700px;
-  top: -200px; left: -200px;
+  width: 640px; height: 500px;
+  top: -150px; left: -150px;
   background: radial-gradient(ellipse, ${props => props.theme.glow} 0%, transparent 65%);
   animation: ${bgBlob1} 42s ease-in-out infinite;
 `;
 const Aurora2 = styled(AuroraBase)`
-  width: 780px; height: 620px;
-  bottom: -180px; right: -140px;
+  width: 560px; height: 440px;
+  bottom: -120px; right: -100px;
   background: radial-gradient(ellipse, ${props => props.theme.glow} 0%, transparent 65%);
   animation: ${bgBlob2} 50s ease-in-out infinite;
-`;
-const Aurora3 = styled(AuroraBase)`
-  width: 580px; height: 480px;
-  top: 35%; left: 42%;
-  background: radial-gradient(ellipse, ${props => props.theme.glow} 0%, transparent 70%);
-  animation: ${bgBlob3} 38s ease-in-out infinite;
 `;
 
 const AnimatedHeroBg = () => (
@@ -405,7 +393,6 @@ const AnimatedHeroBg = () => (
     <GridDots />
     <Aurora1 />
     <Aurora2 />
-    <Aurora3 />
   </BgRoot>
 );
 
