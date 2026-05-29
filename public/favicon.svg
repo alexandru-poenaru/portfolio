@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <style>
+      @font-face {
+        font-family: 'Satoshi';
+        src: url('https://api.fontshare.com/v2/fonts/satoshi/Satoshi-Bold.woff2') format('woff2'),
+             url('https://api.fontshare.com/v2/fonts/satoshi/Satoshi-Bold.woff') format('woff');
+        font-weight: 700;
+        font-style: normal;
+      }
+      .initials {
+        font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        font-weight: 700;
+        fill: #818cf8;
+        font-size: 230px;
+        letter-spacing: -8px;
+      }
+    </style>
+  </defs>
+  <rect width="512" height="512" fill="#11111E" rx="72"/>
+  <text
+    x="256"
+    y="332"
+    text-anchor="middle"
+    class="initials"
+  >AP</text>
+</svg>

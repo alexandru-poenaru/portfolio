@@ -25,7 +25,7 @@ export const darkTheme = {
   surface: '#0A0A12',
   text: '#E8E8F4',
   textSecondary: '#72729A',
-  primary: '#818CF8',
+  primary: '#818cf8',
   primaryDark: '#6366F1',
   primaryLight: '#A5B4FC',
   glow: 'rgba(129, 140, 248, 0.25)',

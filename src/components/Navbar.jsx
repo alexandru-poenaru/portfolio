@@ -127,7 +127,7 @@ const LogoText = styled.span`
   color: ${props => props.theme.primary};
   text-shadow: 0 0 20px ${props => props.theme.glow};
   transition: color 0.3s ease, text-shadow 0.3s ease;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Satoshi', sans-serif;
 `;
 
 const MenuButton = styled.button`
