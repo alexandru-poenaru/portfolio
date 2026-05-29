@@ -1,7 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
+
+const scrollToSection = (id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const offset = el.getBoundingClientRect().top + window.pageYOffset - 80;
+  window.scrollTo({ top: offset, behavior: 'smooth' });
+};
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -20,9 +26,9 @@ const Footer = () => {
         <FooterSection>
           <FooterTitle>Navigation</FooterTitle>
           <FooterLinks>
-            <FooterLink to="/">Home</FooterLink>
-            <FooterLink to="/resume">Resume</FooterLink>
-            <FooterLink to="/contact">Contact</FooterLink>
+            <FooterLink href="#hero" onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }}>Home</FooterLink>
+            <FooterLink href="#resume" onClick={(e) => { e.preventDefault(); scrollToSection('resume'); }}>Resume</FooterLink>
+            <FooterLink href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}>Contact</FooterLink>
           </FooterLinks>
         </FooterSection>
 
@@ -113,11 +119,12 @@ const FooterLinks = styled.div`
   gap: 10px;
 `;
 
-const FooterLink = styled(Link)`
+const FooterLink = styled.a`
   color: ${props => props.theme.footerText};
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.25s ease, padding-left 0.25s ease;
+  cursor: pointer;
 
   &:hover {
     color: ${props => props.theme.primary};
@@ -139,6 +146,7 @@ const SocialLink = styled.a`
   align-items: center;
   gap: 8px;
   transition: color 0.25s ease;
+  cursor: pointer;
 
   &:hover {
     color: ${props => props.theme.primary};

@@ -1,15 +1,78 @@
-import React, { useEffect, useContext, useRef, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FaDownload, FaGraduationCap, FaBriefcase, FaCode } from 'react-icons/fa';
-import resumePdf from '../assets/pdf/CV_Alexandru_Poenaru.pdf';
+import { FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact, FaDatabase } from 'react-icons/fa';
+import { SiTypescript, SiNodedotjs, SiMysql, SiYarn, SiSpringboot, SiDotnet, SiFastapi, SiSqlite, SiPostgresql, SiMongodb } from 'react-icons/si';
+import { TbBrandCSharp } from 'react-icons/tb';
+import { DiMsqlServer } from 'react-icons/di';
+import { RiTailwindCssFill } from 'react-icons/ri';
+import { PiFileJsxDuotone } from 'react-icons/pi';
+import resumePdf from '../assets/pdf/CV Alexandru Poenaru.pdf';
 import { ThemeContext } from '../styles/ThemeContext';
+
+/* ─── Skill Data ─────────────────────────────────────────────────────────────── */
+
+const SKILLS = {
+  Languages: {
+    accent: '#6366F1',
+    items: [
+      { name: 'JavaScript', icon: <FaJsSquare />, level: 4 },
+      { name: 'TypeScript', icon: <SiTypescript />, level: 4 },
+      { name: 'Python', icon: <FaPython />, level: 4 },
+      { name: 'Java', icon: <FaJava />, level: 4 },
+      { name: 'C#', icon: <TbBrandCSharp />, level: 3 },
+      { name: 'HTML', icon: <FaHtml5 />, level: 4 },
+      { name: 'CSS', icon: <FaCss3Alt />, level: 3 },
+    ],
+  },
+  'Frameworks & Libraries': {
+    accent: '#06B6D4',
+    items: [
+      { name: 'Node.js', icon: <SiNodedotjs />, level: 4 },
+      { name: 'Spring Boot', icon: <SiSpringboot />, level: 2 },
+      { name: 'React', icon: <FaReact />, level: 3 },
+      { name: 'JSX', icon: <PiFileJsxDuotone />, level: 3 },
+      { name: 'Tailwind CSS', icon: <RiTailwindCssFill />, level: 4 },
+      { name: '.NET Framework', icon: <SiDotnet />, level: 3 },
+      { name: 'Entity Framework', icon: <FaCode />, level: 3 },
+      { name: 'FastAPI', icon: <SiFastapi />, level: 4 },
+      { name: 'React Native', icon: <FaReact />, level: 2 },
+      { name: 'Llama-cpp', icon: <FaCode />, level: 2 },
+    ],
+  },
+  Databases: {
+    accent: '#F97316',
+    items: [
+      { name: 'MySQL', icon: <SiMysql />, level: 4 },
+      { name: 'MS SQL Server', icon: <DiMsqlServer />, level: 3 },
+      { name: 'MongoDB', icon: <SiMongodb />, level: 2 },
+      { name: 'DuckDB', icon: <FaDatabase />, level: 2 },
+      { name: 'SQLite', icon: <SiSqlite />, level: 2 },
+      { name: 'PostgreSQL', icon: <SiPostgresql />, level: 3 },
+    ],
+  },
+  'DevOps & Tools': {
+    accent: '#10B981',
+    items: [
+      { name: 'Git', icon: <FaGitAlt />, level: 5 },
+      { name: 'Docker', icon: <FaDocker />, level: 3 },
+      { name: 'Yarn', icon: <SiYarn />, level: 3 },
+    ],
+  },
+};
+
+const ProficiencyDots = ({ level }) => (
+  <DotsRow>
+    {[1, 2, 3, 4, 5].map(n => (
+      <Dot key={n} $filled={n <= level} />
+    ))}
+  </DotsRow>
+);
+
+/* ─── ResumePage ─────────────────────────────────────────────────────────────── */
 
 const ResumePage = () => {
   const { darkMode } = useContext(ThemeContext);
-  const skillsRef = useRef(null);
-  const [barsVisible, setBarsVisible] = useState(false);
-
-  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -27,18 +90,8 @@ const ResumePage = () => {
     });
   }, [darkMode]);
 
-  useEffect(() => {
-    const currentRef = skillsRef.current;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setBarsVisible(true); observer.unobserve(entry.target); } },
-      { threshold: 0.2 }
-    );
-    if (currentRef) observer.observe(currentRef);
-    return () => { if (currentRef) observer.unobserve(currentRef); };
-  }, []);
-
   return (
-    <ResumeContainer>
+    <ResumeContainer id="resume">
       <PageTitle>My Resume</PageTitle>
 
       <DownloadButtonContainer>
@@ -55,7 +108,6 @@ const ResumePage = () => {
           </SectionHeader>
 
           <Timeline>
-
             <TimelineItem className="animate-on-scroll">
               <TimelineDot />
               <TimelineDate>March 2026 - May 2026</TimelineDate>
@@ -68,7 +120,7 @@ const ResumePage = () => {
                   <li><b>Enterprise Scalability:</b> Integrated these applications into a large-scale enterprise platform, optimizing backend performance and concurrency using asyncio, thread pools, and webhooks.</li>
                 </ul>
               </TimelineCard>
-            </TimelineItem>            
+            </TimelineItem>
 
             <TimelineItem className="animate-on-scroll">
               <TimelineDot />
@@ -111,7 +163,7 @@ const ResumePage = () => {
 
             <TimelineItem className="animate-on-scroll">
               <TimelineDot />
-              <TimelineDate>September 2019 – Present (weekends)</TimelineDate>
+              <TimelineDate>September 2019 – 2025 (weekends)</TimelineDate>
               <TimelineCard>
                 <h3>Student Worker</h3>
                 <h4>Groot Ambachtelijke Bakkerij Ranson-Cannière Tielt</h4>
@@ -137,7 +189,7 @@ const ResumePage = () => {
               <TimelineCard>
                 <h3>Bachelor of Applied Information Technology</h3>
                 <h4>HOGENT University of Applied Sciences and Arts, Ghent</h4>
-                <p>Specialization in Web Development</p>
+                <p>Specialization in Full Stack Development</p>
               </TimelineCard>
             </TimelineItem>
 
@@ -153,79 +205,36 @@ const ResumePage = () => {
           </Timeline>
         </ResumeSection>
 
-        <ResumeSection ref={skillsRef}>
+        <ResumeSection>
           <SectionHeader>
             <SectionIcon><FaCode /></SectionIcon>
             <SectionTitle>Technical Skills</SectionTitle>
           </SectionHeader>
 
           <SkillsGrid>
-            <SkillCategory className="animate-on-scroll">
-              <h3>Languages</h3>
-              <SkillList>
-                <SkillItem><SkillName>JavaScript</SkillName><SkillBar><SkillProgress $width={75} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>TypeScript</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Python</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Java</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>C#</SkillName><SkillBar><SkillProgress $width={50} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>HTML</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>CSS</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
-              </SkillList>
-            </SkillCategory>
-
-            <SkillCategory className="animate-on-scroll">
-              <h3>Frameworks & Libraries</h3>
-              <SkillList>
-                <SkillItem><SkillName>Node.js</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Spring Boot</SkillName><SkillBar><SkillProgress $width={45} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>React</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>JSX</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Tailwind CSS</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>.NET Framework</SkillName><SkillBar><SkillProgress $width={65} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Entity Framework</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>FastAPI</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>React (Native)</SkillName><SkillBar><SkillProgress $width={50} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Llama-cpp</SkillName><SkillBar><SkillProgress $width={50} $visible={barsVisible} /></SkillBar></SkillItem>
-              </SkillList>
-            </SkillCategory>
-
-            <SkillCategory className="animate-on-scroll">
-              <h3>Databases</h3>
-              <SkillList>
-                <SkillItem><SkillName>MySQL</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>MS SQL Server</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>MongoDB</SkillName><SkillBar><SkillProgress $width={30} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>DuckDB</SkillName><SkillBar><SkillProgress $width={40} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>SQLite</SkillName><SkillBar><SkillProgress $width={40} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>PostgreSQL</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
-              </SkillList>
-            </SkillCategory>
-
-            <SkillCategory className="animate-on-scroll">
-              <h3>DevOps & Tools</h3>
-              <SkillList>
-                <SkillItem><SkillName>Git</SkillName><SkillBar><SkillProgress $width={85} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Docker</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Yarn</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
-              </SkillList>
-            </SkillCategory>
+            {Object.entries(SKILLS).map(([category, { accent, items }], catIdx) => (
+              <SkillCategory key={category} className="animate-on-scroll" $accent={accent} style={{ animationDelay: `${catIdx * 0.1}s` }}>
+                <SkillCategoryHeader $accent={accent}>
+                  <SkillAccentBar $accent={accent} />
+                  <h3>{category}</h3>
+                </SkillCategoryHeader>
+                <SkillPillGrid>
+                  {items.map(({ name, icon, level }) => (
+                    <SkillPill key={name} $accent={accent}>
+                      <SkillIcon $accent={accent}>{icon}</SkillIcon>
+                      <SkillPillName>{name}</SkillPillName>
+                      <ProficiencyDots level={level} />
+                    </SkillPill>
+                  ))}
+                </SkillPillGrid>
+              </SkillCategory>
+            ))}
           </SkillsGrid>
         </ResumeSection>
       </ResumeContent>
     </ResumeContainer>
   );
 };
-
-/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
-
-const progressFill = keyframes`
-  from { width: 0; }
-`;
-
-const dataFlow = keyframes`
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
-`;
 
 /* ─── Layout ─────────────────────────────────────────────────────────────────── */
 
@@ -277,6 +286,7 @@ const DownloadButton = styled.a`
   font-size: 0.95rem;
   box-shadow: 0 6px 24px ${props => props.theme.glow};
   transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 
   &:hover {
     background: ${props => props.theme.primaryDark};
@@ -443,6 +453,7 @@ const SkillsGrid = styled.div`
 const SkillCategory = styled.div`
   background: ${props => props.theme.cardBackground};
   border: 1px solid ${props => props.theme.border};
+  border-top: 3px solid ${props => props.$accent};
   padding: 22px;
   border-radius: 14px;
   box-shadow: 0 2px 12px ${props => props.theme.shadow};
@@ -457,52 +468,86 @@ const SkillCategory = styled.div`
 
   &:hover {
     box-shadow: 0 10px 32px ${props => props.theme.shadowHover};
-    border-color: ${props => props.theme.borderStrong};
+    border-color: ${props => props.$accent}55;
     transform: translateY(-4px);
   }
+`;
+
+const SkillCategoryHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
 
   h3 {
-    margin: 0 0 18px;
+    margin: 0;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: ${props => props.theme.primary};
+    color: ${props => props.$accent};
   }
 `;
 
-const SkillList = styled.div`
+const SkillAccentBar = styled.div`
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: ${props => props.$accent};
+  flex-shrink: 0;
+`;
+
+const SkillPillGrid = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 `;
 
-const SkillItem = styled.div``;
+const SkillPill = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid ${props => props.theme.border};
+  border-radius: 10px;
+  background: ${props => props.theme.card};
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
 
-const SkillName = styled.div`
-  margin-bottom: 6px;
-  font-size: 0.88rem;
+  &:hover {
+    border-color: ${props => props.$accent}60;
+    box-shadow: 0 4px 16px ${props => props.$accent}18;
+    transform: translateX(4px);
+    background: ${props => props.$accent}08;
+  }
+`;
+
+const SkillIcon = styled.span`
+  font-size: 1rem;
+  color: ${props => props.$accent};
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+`;
+
+const SkillPillName = styled.span`
+  font-size: 0.85rem;
   font-weight: 500;
   color: ${props => props.theme.text};
+  flex: 1;
 `;
 
-const SkillBar = styled.div`
+const DotsRow = styled.div`
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+`;
+
+const Dot = styled.div`
+  width: 6px;
   height: 6px;
-  background: ${props => props.theme.border};
-  border-radius: 3px;
-  overflow: hidden;
-`;
-
-const SkillProgress = styled.div`
-  height: 100%;
-  border-radius: 3px;
-  background: linear-gradient(90deg, ${props => props.theme.primaryDark}, ${props => props.theme.primaryLight});
-  background-size: 200% 200%;
-  width: ${props => props.$visible ? `${props.$width}%` : '0'};
-  animation: ${props => props.$visible ? progressFill : 'none'} 0.9s cubic-bezier(0.16, 1, 0.3, 1) both,
-             ${dataFlow} 3s linear infinite;
-  box-shadow: 0 0 8px ${props => props.theme.glow};
-  transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  background: ${props => props.$filled ? props.theme.primary : props.theme.border};
+  transition: background 0.3s ease;
 `;
 
 export default ResumePage;

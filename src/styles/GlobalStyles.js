@@ -61,6 +61,10 @@ const GlobalStyles = createGlobalStyle`
     scroll-behavior: smooth;
   }
 
+  [id] {
+    scroll-margin-top: 88px;
+  }
+
   * {
     box-sizing: border-box;
     transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;

@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import emailjs from 'emailjs-com';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaServer, FaDatabase, FaLaptop } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 
 const slideUp = keyframes`
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
 `;
 
+const orb = keyframes`
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(20px, -20px) scale(1.08); }
+  66%       { transform: translate(-15px, 15px) scale(0.95); }
+`;
+
 const ContactPage = () => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [formStatus, setFormStatus] = useState({ submitted: false, success: false, message: '' });
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -37,48 +41,52 @@ const ContactPage = () => {
   };
 
   return (
-    <ContactContainer>
+    <ContactContainer id="contact">
       <PageTitle>Get In Touch</PageTitle>
       <ContactContent>
         <ContactInfo>
-          <ContactInfoTitle>Contact Information</ContactInfoTitle>
-          <ContactInfoText>
-            Feel free to reach out for any questions or opportunities. I'm always open to discussing new projects and ideas.
-          </ContactInfoText>
+          <OrbDecor $top="10%" $left="60%" $size="180px" $delay="0s" />
+          <OrbDecor $top="55%" $left="20%" $size="120px" $delay="2s" />
+          <InfoInner>
+            <ContactInfoTitle>Contact Information</ContactInfoTitle>
+            <ContactInfoText>
+              Feel free to reach out for any questions or opportunities. I'm always open to discussing new projects and ideas.
+            </ContactInfoText>
 
-          <ContactInfoItem>
-            <IconWrapper href="mailto:alexandru.george.poenaru@gmail.com">
-              <FaEnvelope />
-            </IconWrapper>
-            <div>
-              <ContactInfoLabel>Email</ContactInfoLabel>
-              <ContactLink href="mailto:alexandru.george.poenaru@gmail.com">
-                alexandru.george.poenaru@gmail.com
-              </ContactLink>
-            </div>
-          </ContactInfoItem>
+            <ContactInfoItem>
+              <IconWrapper href="mailto:alexandru.george.poenaru@gmail.com">
+                <FaEnvelope />
+              </IconWrapper>
+              <div>
+                <ContactInfoLabel>Email</ContactInfoLabel>
+                <ContactLink href="mailto:alexandru.george.poenaru@gmail.com">
+                  alexandru.george.poenaru@gmail.com
+                </ContactLink>
+              </div>
+            </ContactInfoItem>
 
-          <ContactInfoItem>
-            <IconWrapper href="tel:+32468301411">
-              <FaPhone />
-            </IconWrapper>
-            <div>
-              <ContactInfoLabel>Phone</ContactInfoLabel>
-              <ContactLink href="tel:+32468301411">+32 468 30 14 11</ContactLink>
-            </div>
-          </ContactInfoItem>
+            <ContactInfoItem>
+              <IconWrapper href="tel:+32468301411">
+                <FaPhone />
+              </IconWrapper>
+              <div>
+                <ContactInfoLabel>Phone</ContactInfoLabel>
+                <ContactLink href="tel:+32468301411">+32 468 30 14 11</ContactLink>
+              </div>
+            </ContactInfoItem>
 
-          <ContactInfoItem>
-            <IconWrapper href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer">
-              <FaMapMarkerAlt />
-            </IconWrapper>
-            <div>
-              <ContactInfoLabel>Location</ContactInfoLabel>
-              <ContactLink href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer">
-                Tielt, Belgium
-              </ContactLink>
-            </div>
-          </ContactInfoItem>
+            <ContactInfoItem>
+              <IconWrapper href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer">
+                <FaMapMarkerAlt />
+              </IconWrapper>
+              <div>
+                <ContactInfoLabel>Location</ContactInfoLabel>
+                <ContactLink href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer">
+                  Tielt, Belgium
+                </ContactLink>
+              </div>
+            </ContactInfoItem>
+          </InfoInner>
         </ContactInfo>
 
         <ContactFormWrapper>
@@ -114,7 +122,7 @@ const ContactPage = () => {
                 />
               </FormGroup>
 
-              <FormGroup>
+              <FormGroup $full>
                 <FormLabel>Subject</FormLabel>
                 <FormInput
                   type="text"
@@ -126,7 +134,7 @@ const ContactPage = () => {
                 />
               </FormGroup>
 
-              <FormGroup>
+              <FormGroup $full>
                 <FormLabel>Message</FormLabel>
                 <FormTextarea
                   name="message"
@@ -145,121 +153,9 @@ const ContactPage = () => {
           )}
         </ContactFormWrapper>
       </ContactContent>
-
-      <BackendAnimation>
-        <AnimationTitle>How Backend Systems Work</AnimationTitle>
-        <AnimationContainer>
-          <NodeContainer>
-            <AppIcon><FaLaptop /></AppIcon>
-            <NodeLabel>App</NodeLabel>
-          </NodeContainer>
-          <NodeContainer>
-            <ServerIconEl><FaServer /></ServerIconEl>
-            <NodeLabel>API Server</NodeLabel>
-          </NodeContainer>
-          <NodeContainer>
-            <DatabaseIconEl><FaDatabase /></DatabaseIconEl>
-            <NodeLabel>Database</NodeLabel>
-          </NodeContainer>
-          <HorizontalLine />
-          <Dot1 /><Dot2 /><Dot3 /><Dot4 />
-        </AnimationContainer>
-      </BackendAnimation>
     </ContactContainer>
   );
 };
-
-/* ─── Dot animations ─────────────────────────────────────────────────────────── */
-
-const appToServer = keyframes`
-  0%   { left:5%;  opacity:0 }  2%  { left:5%;  opacity:1 }
-  23%  { left:47%; opacity:1 }  25% { left:47%; opacity:0 }
-  100% { opacity:0 }
-`;
-const serverToDb = keyframes`
-  0%,25% { opacity:0 }  27% { left:53%; opacity:1 }
-  48%    { left:95%; opacity:1 } 50% { left:95%; opacity:0 }
-  100%   { opacity:0 }
-`;
-const dbToServer = keyframes`
-  0%,50% { opacity:0 }  52% { left:95%; opacity:1 }
-  73%    { left:53%; opacity:1 } 75% { left:53%; opacity:0 }
-  100%   { opacity:0 }
-`;
-const serverToApp = keyframes`
-  0%,75% { opacity:0 }  77% { left:47%; opacity:1 }
-  98%    { left:5%;  opacity:1 } 100% { left:5%;  opacity:0 }
-`;
-
-const topToMid = keyframes`
-  0%  { top:20%; opacity:0 }  5%  { top:20%; opacity:1 }
-  20% { top:45%; opacity:1 }  25% { top:45%; opacity:0 }
-  100%{ top:20%; opacity:0 }
-`;
-const midToBot = keyframes`
-  0%  { top:45%; opacity:0 }  30% { top:45%; opacity:1 }
-  45% { top:70%; opacity:1 }  50% { top:70%; opacity:0 }
-  100%{ top:45%; opacity:0 }
-`;
-const botToMid = keyframes`
-  0%  { top:70%; opacity:0 }  55% { top:70%; opacity:1 }
-  70% { top:45%; opacity:1 }  75% { top:45%; opacity:0 }
-  100%{ top:70%; opacity:0 }
-`;
-const midToTop = keyframes`
-  0%  { top:45%; opacity:0 }  80% { top:45%; opacity:1 }
-  95% { top:20%; opacity:1 } 100% { top:20%; opacity:0 }
-`;
-
-const dotBase = `
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  top: 42px;
-  transform: translateY(-50%);
-`;
-
-const Dot1 = styled.div`
-  ${dotBase}
-  background: ${props => props.theme.primary};
-  box-shadow: 0 0 10px ${props => props.theme.glow};
-  animation: ${appToServer} 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  @media (max-width: 768px) {
-    top: auto; left: 50%; transform: translateX(-50%);
-    animation: ${topToMid} 12s infinite;
-  }
-`;
-const Dot2 = styled.div`
-  ${dotBase}
-  background: ${props => props.theme.primary};
-  box-shadow: 0 0 10px ${props => props.theme.glow};
-  animation: ${serverToDb} 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  @media (max-width: 768px) {
-    top: auto; left: 50%; transform: translateX(-50%);
-    animation: ${midToBot} 12s infinite;
-  }
-`;
-const Dot3 = styled.div`
-  ${dotBase}
-  background: ${props => props.theme.primary};
-  box-shadow: 0 0 10px ${props => props.theme.glow};
-  animation: ${dbToServer} 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  @media (max-width: 768px) {
-    top: auto; left: 50%; transform: translateX(-50%);
-    animation: ${botToMid} 12s infinite;
-  }
-`;
-const Dot4 = styled.div`
-  ${dotBase}
-  background: ${props => props.theme.primary};
-  box-shadow: 0 0 10px ${props => props.theme.glow};
-  animation: ${serverToApp} 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  @media (max-width: 768px) {
-    top: auto; left: 50%; transform: translateX(-50%);
-    animation: ${midToTop} 12s infinite;
-  }
-`;
 
 /* ─── Styled components ──────────────────────────────────────────────────────── */
 
@@ -310,8 +206,28 @@ const ContactInfo = styled.div`
   padding: 36px;
   border-radius: 18px;
   box-shadow: 0 12px 40px ${props => props.theme.glow};
+  position: relative;
+  overflow: hidden;
 
   @media (max-width: 768px) { padding: 24px; }
+`;
+
+const InfoInner = styled.div`
+  position: relative;
+  z-index: 1;
+`;
+
+const OrbDecor = styled.div`
+  position: absolute;
+  top: ${props => props.$top};
+  left: ${props => props.$left};
+  width: ${props => props.$size};
+  height: ${props => props.$size};
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  filter: blur(32px);
+  animation: ${orb} 8s ease-in-out ${props => props.$delay} infinite;
+  pointer-events: none;
 `;
 
 const ContactInfoTitle = styled.h2`
@@ -350,6 +266,7 @@ const IconWrapper = styled.a`
   color: #fff;
   text-decoration: none;
   transition: background 0.25s ease, transform 0.2s ease;
+  cursor: pointer;
 
   &:hover {
     background: rgba(255, 255, 255, 0.32);
@@ -373,6 +290,7 @@ const ContactLink = styled.a`
   font-weight: 500;
   word-break: break-all;
   transition: opacity 0.2s;
+  cursor: pointer;
 
   &:hover { opacity: 0.75; text-decoration: underline; }
 `;
@@ -406,8 +324,7 @@ const ContactForm = styled.form`
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-
-  &:nth-child(3), &:nth-child(4) { grid-column: 1 / -1; }
+  grid-column: ${props => props.$full ? '1 / -1' : 'auto'};
 `;
 
 const FormLabel = styled.label`
@@ -426,6 +343,7 @@ const inputBase = `
   font-family: inherit;
   outline: none;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  cursor: text;
 `;
 
 const FormInput = styled.input`
@@ -490,124 +408,6 @@ const FormStatusMessage = styled.div`
   color: ${props => props.$success ? props.theme.text : '#ef4444'};
   text-align: center;
   font-weight: 500;
-`;
-
-const BackendAnimation = styled.div`
-  margin-top: 80px;
-  padding: 40px;
-  background: ${props => props.theme.card};
-  border: 1px solid ${props => props.theme.border};
-  border-radius: 18px;
-  box-shadow: 0 8px 32px ${props => props.theme.shadow};
-  animation: ${slideUp} 0.7s ease 0.3s both;
-
-  @media (max-width: 768px) { display: none; }
-`;
-
-const AnimationTitle = styled.h2`
-  text-align: center;
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 48px;
-  color: ${props => props.theme.text};
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    width: 40px;
-    height: 2px;
-    background: ${props => props.theme.primary};
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 2px;
-    box-shadow: 0 0 10px ${props => props.theme.glow};
-  }
-`;
-
-const AnimationContainer = styled.div`
-  height: 140px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 40px;
-  max-width: 720px;
-  margin: 0 auto;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    height: auto;
-    padding: 40px 0;
-    gap: 72px;
-  }
-`;
-
-const nodeIconBase = `
-  width: 72px;
-  height: 72px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.8rem;
-  margin-bottom: 10px;
-  transition: transform 0.3s;
-  z-index: 1;
-  &:hover { transform: scale(1.06); }
-`;
-
-const AppIcon = styled.div`
-  ${nodeIconBase}
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  box-shadow: 0 8px 24px rgba(106, 17, 203, 0.3);
-`;
-const ServerIconEl = styled.div`
-  ${nodeIconBase}
-  background: linear-gradient(135deg, #0078FF, #00C6FF);
-  box-shadow: 0 8px 24px rgba(0, 120, 255, 0.3);
-`;
-const DatabaseIconEl = styled.div`
-  ${nodeIconBase}
-  background: linear-gradient(135deg, #FF7200, #FF4B00);
-  box-shadow: 0 8px 24px rgba(255, 114, 0, 0.3);
-`;
-
-const NodeContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-`;
-
-const NodeLabel = styled.div`
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: ${props => props.theme.textSecondary};
-  letter-spacing: 0.04em;
-`;
-
-const HorizontalLine = styled.div`
-  position: absolute;
-  height: 2px;
-  width: 82%;
-  background: linear-gradient(to right, #6a11cb, #0078FF, #FF7200);
-  top: 38px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 0;
-  border-radius: 1px;
-
-  @media (max-width: 768px) {
-    width: 2px;
-    height: 82%;
-    top: 9%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(to bottom, #6a11cb, #0078FF, #FF7200);
-  }
 `;
 
 export default ContactPage;

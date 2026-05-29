@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import { ThemeContext, ThemeProvider as CustomThemeProvider } from './styles/ThemeContext';
 import { lightTheme, darkTheme } from './styles/theme';
@@ -9,11 +9,11 @@ import './App.css';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import ScrollToTop from './components/ScrollToTop';
+import Cursor from './components/Cursor';
 
 import HomePage from './pages/HomePage';
-import ContactPage from './pages/ContactPage';
 import ResumePage from './pages/ResumePage';
+import ContactPage from './pages/ContactPage';
 
 const AppWithTheme = () => {
   const { darkMode, toggleDarkMode } = useContext(ThemeContext);
@@ -22,16 +22,14 @@ const AppWithTheme = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
+      <Cursor />
       <Router>
-        <ScrollToTop />
         <AppContainer>
           <Navbar />
           <MainContent>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/resume" element={<ResumePage />} />
-              <Route path="/contact" element={<ContactPage />} />
-            </Routes>
+            <HomePage />
+            <ResumePage />
+            <ContactPage />
           </MainContent>
           <Footer />
           <ThemeToggle onClick={toggleDarkMode} aria-label="Toggle theme">

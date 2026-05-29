@@ -1,13 +1,21 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { FaGithub, FaLinkedin, FaBars, FaTimes } from 'react-icons/fa';
+
+const SECTIONS = ['hero', 'about', 'projects', 'resume', 'contact'];
+
+const scrollToSection = (id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const offset = el.getBoundingClientRect().top + window.pageYOffset - 80;
+  window.scrollTo({ top: offset, behavior: 'smooth' });
+};
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
-  const toggleMenu = () => setIsOpen(prev => !prev);
+  const [activeSection, setActiveSection] = useState('hero');
+  const observerRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -15,27 +23,57 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
+    );
+    SECTIONS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observerRef.current.observe(el);
+    });
+    return () => observerRef.current?.disconnect();
+  }, []);
+
+  const handleNavClick = (e, id) => {
+    e.preventDefault();
+    setIsOpen(false);
+    scrollToSection(id);
+  };
+
+  const navLinks = [
+    { label: 'Home', id: 'hero' },
+    { label: 'Resume', id: 'resume' },
+    { label: 'Contact', id: 'contact' },
+  ];
+
   return (
     <NavbarContainer $scrolled={scrolled}>
       <NavbarWrapper>
-        <Logo to="/">
+        <LogoButton onClick={(e) => handleNavClick(e, 'hero')}>
           <LogoText $scrolled={scrolled}>A.P.</LogoText>
-        </Logo>
+        </LogoButton>
 
-        <MenuButton onClick={toggleMenu} aria-label="Toggle menu">
+        <MenuButton onClick={() => setIsOpen(prev => !prev)} aria-label="Toggle menu">
           {isOpen ? <FaTimes /> : <FaBars />}
         </MenuButton>
 
         <NavMenu $isOpen={isOpen}>
-          <NavItem>
-            <NavLink to="/" onClick={() => setIsOpen(false)}>Home</NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/resume" onClick={() => setIsOpen(false)}>Resume</NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/contact" onClick={() => setIsOpen(false)}>Contact</NavLink>
-          </NavItem>
+          {navLinks.map(({ label, id }) => (
+            <NavItem key={id}>
+              <NavLinkA
+                href={`#${id}`}
+                $active={activeSection === id}
+                onClick={(e) => handleNavClick(e, id)}
+              >
+                {label}
+              </NavLinkA>
+            </NavItem>
+          ))}
         </NavMenu>
 
         <SocialIcons>
@@ -75,16 +113,19 @@ const NavbarWrapper = styled.div`
   padding: 0 24px;
 `;
 
-const Logo = styled(Link)`
-  text-decoration: none;
+const LogoButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 `;
 
 const LogoText = styled.span`
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.04em;
-  color: ${props => props.$scrolled ? props.theme.primary : '#fff'};
-  text-shadow: ${props => props.$scrolled ? `0 0 20px ${props.theme.glow}` : '0 0 20px rgba(255,255,255,0.3)'};
+  color: ${props => props.theme.primary};
+  text-shadow: 0 0 20px ${props => props.theme.glow};
   transition: color 0.3s ease, text-shadow 0.3s ease;
   font-family: 'Montserrat', sans-serif;
 `;
@@ -137,8 +178,8 @@ const NavItem = styled.li`
   }
 `;
 
-const NavLink = styled(Link)`
-  color: ${props => props.theme.text};
+const NavLinkA = styled.a`
+  color: ${props => props.$active ? props.theme.primary : props.theme.text};
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
@@ -148,11 +189,12 @@ const NavLink = styled(Link)`
   display: inline-block;
   position: relative;
   transition: color 0.25s ease, background 0.25s ease;
+  cursor: pointer;
 
   &::after {
     content: '';
     position: absolute;
-    width: 0;
+    width: ${props => props.$active ? 'calc(100% - 28px)' : '0'};
     height: 2px;
     bottom: 4px;
     left: 14px;
@@ -164,10 +206,7 @@ const NavLink = styled(Link)`
 
   &:hover {
     color: ${props => props.theme.primary};
-
-    &::after {
-      width: calc(100% - 28px);
-    }
+    &::after { width: calc(100% - 28px); }
   }
 
   @media (max-width: 768px) {
@@ -175,10 +214,7 @@ const NavLink = styled(Link)`
     width: 100%;
     display: block;
     text-align: center;
-
-    &::after {
-      display: none;
-    }
+    &::after { display: none; }
   }
 `;
 
@@ -201,6 +237,7 @@ const SocialIcon = styled.a`
   align-items: center;
   justify-content: center;
   transition: color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+  cursor: pointer;
 
   &:hover {
     color: ${props => props.theme.primary};

@@ -1,33 +1,149 @@
-import React, { useRef, useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { ThemeContext } from '../styles/ThemeContext';
 import styled, { keyframes } from 'styled-components';
-import { FaGithub, FaLinkedin, FaArrowDown, FaServer, FaDatabase, FaCode, FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact } from 'react-icons/fa';
-import { SiTypescript, SiNodedotjs, SiMysql, SiYarn, SiSpringboot } from 'react-icons/si';
-import { TbBrandCSharp } from 'react-icons/tb';
-import { DiMsqlServer } from 'react-icons/di';
-import { PiFileJsxDuotone } from 'react-icons/pi';
-import { RiTailwindCssFill } from 'react-icons/ri';
+import { FaGithub, FaLinkedin, FaArrowDown } from 'react-icons/fa';
 import helpdesk from '../assets/images/helpdesk.png';
 import kingdomino from '../assets/images/kingdomino.jpg';
 import kottask from '../assets/images/kottask.png';
 import dashboard from '../assets/images/dashboard.png';
 import alex from '../assets/images/alex.jpg';
 
-const HomePage = () => {
-  const serverRef = useRef(null);
-  const codeBlockRef = useRef(null);
-  const [codeVisible, setCodeVisible] = useState(false);
-  const { darkMode } = useContext(ThemeContext);
+/* ─── API Terminal Data ──────────────────────────────────────────────────────── */
+
+const ENDPOINTS = [
+  {
+    method: 'GET',
+    url: 'https://api.alex.dev/portfolio/projects',
+    color: '#34D399',
+    response: `{
+  "status": "success",
+  "data": [
+    {
+      "name": "KotTask",
+      "tech": ["React", "Node.js", "TypeScript"],
+      "status": "live"
+    },
+    {
+      "name": "AI Privacy Engine",
+      "tech": ["Python", "FastAPI", "NLP"],
+      "status": "live"
+    }
+  ]
+}`,
+  },
+  {
+    method: 'POST',
+    url: 'https://api.alex.dev/portfolio/contact',
+    color: '#FB923C',
+    response: `{
+  "status": "success",
+  "message": "Message delivered",
+  "timestamp": "2026-05-29T10:42:00Z",
+  "recipient": "Alexandru Poenaru"
+}`,
+  },
+  {
+    method: 'GET',
+    url: 'https://api.alex.dev/portfolio/skills',
+    color: '#34D399',
+    response: `{
+  "status": "success",
+  "languages": ["JavaScript", "TypeScript",
+                "Python", "Java"],
+  "frameworks": ["React", "Node.js", "FastAPI",
+                 "Spring Boot"],
+  "databases": ["PostgreSQL", "MySQL", "DuckDB"]
+}`,
+  },
+];
+
+/* ─── ApiTerminal Component ──────────────────────────────────────────────────── */
+
+const ApiTerminal = () => {
+  const [idx, setIdx] = useState(0);
+  const [phase, setPhase] = useState('typing'); // typing | response | done
+  const [typed, setTyped] = useState('');
+  const endpoint = ENDPOINTS[idx];
+  const command = `curl -X ${endpoint.method} \\\n  "${endpoint.url}"`;
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (serverRef.current) {
-        serverRef.current.classList.add('pulse');
-        setTimeout(() => serverRef.current?.classList.remove('pulse'), 1000);
-      }
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+    setPhase('typing');
+    setTyped('');
+  }, [idx]);
+
+  useEffect(() => {
+    if (phase !== 'typing') return;
+    if (typed.length < command.length) {
+      const t = setTimeout(() => setTyped(command.slice(0, typed.length + 1)), 28);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => setPhase('response'), 900);
+    return () => clearTimeout(t);
+  }, [phase, typed, command]);
+
+  useEffect(() => {
+    if (phase !== 'response') return;
+    const t = setTimeout(() => setPhase('done'), 200);
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIdx(i => (i + 1) % ENDPOINTS.length), 8000);
+    return () => clearTimeout(t);
+  }, [idx]);
+
+  const syntaxHighlight = (json) =>
+    json.split('\n').map((line, i) => {
+      const parts = line.split(/("[\w\s]+"(?=:)|"[^"]*"|[\d.]+(?=[,\n}])|[{}[\],])/g);
+      return (
+        <div key={i}>
+          {parts.map((part, j) => {
+            if (/^"[\w\s]+"$/.test(part) && line.includes(`${part}:`)) return <JsonKey key={j}>{part}</JsonKey>;
+            if (/^"/.test(part)) return <JsonString key={j}>{part}</JsonString>;
+            if (/^\d/.test(part)) return <JsonNumber key={j}>{part}</JsonNumber>;
+            if (/^[{}[\],]$/.test(part)) return <JsonPunct key={j}>{part}</JsonPunct>;
+            return <span key={j}>{part}</span>;
+          })}
+        </div>
+      );
+    });
+
+  return (
+    <TerminalWrapper>
+      <TerminalHeader>
+        <TrafficLights>
+          <TrafficDot $color="#FF5F57" />
+          <TrafficDot $color="#FFBD2E" />
+          <TrafficDot $color="#28C840" />
+        </TrafficLights>
+        <TerminalLabel>api.alex.dev — terminal</TerminalLabel>
+        <MethodBadge $color={endpoint.color}>{endpoint.method}</MethodBadge>
+      </TerminalHeader>
+      <TerminalBody>
+        <TerminalLine>
+          <Prompt>$</Prompt>
+          <CommandText>{typed}<Caret /></CommandText>
+        </TerminalLine>
+        {phase === 'response' && (
+          <LoadingLine><Spinner>⠋</Spinner> Waiting for response...</LoadingLine>
+        )}
+        {phase === 'done' && (
+          <>
+            <StatusLine><StatusOk>HTTP/1.1 200 OK</StatusOk></StatusLine>
+            <ContentType>Content-Type: application/json</ContentType>
+            <Divider />
+            <ResponseBlock>{syntaxHighlight(endpoint.response)}</ResponseBlock>
+          </>
+        )}
+      </TerminalBody>
+    </TerminalWrapper>
+  );
+};
+
+/* ─── HomePage ───────────────────────────────────────────────────────────────── */
+
+const HomePage = () => {
+  const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -45,26 +161,17 @@ const HomePage = () => {
     });
   }, [darkMode]);
 
-  useEffect(() => {
-    const currentRef = codeBlockRef.current;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setCodeVisible(true); observer.unobserve(entry.target); } },
-      { threshold: 0.3 }
-    );
-    if (currentRef) observer.observe(currentRef);
-    return () => { if (currentRef) observer.unobserve(currentRef); };
-  }, []);
-
-  const handleLearnMoreClick = (e) => {
+  const handleScrollClick = (e) => {
     e.preventDefault();
-    const id = e.currentTarget.getAttribute('href').substring(1);
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    const el = document.getElementById('about');
+    if (!el) return;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
   };
 
   return (
     <>
       <FullWidthHeroContainer>
-        <HeroSection>
+        <HeroSection id="hero">
           <VideoBackground autoPlay loop muted playsInline>
             <source src={require('../assets/videos/background-video.mp4')} type="video/mp4" />
           </VideoBackground>
@@ -72,11 +179,11 @@ const HomePage = () => {
           <HeroContent>
             <TypewriterContainer>
               <HeroTitle>Hello, I'm <HighlightSpan>Alexandru Poenaru</HighlightSpan></HeroTitle>
-              <TypewriterText>Student IT-Dev @ HOGENT</TypewriterText>
+              <TypewriterText>Student Full Stack Development @ HOGENT</TypewriterText>
             </TypewriterContainer>
             <AnimatedDescription>
-              Applied IT student with a passion for web and back-end development.
-              I build efficient, scalable server-side applications and clean front-end experiences.
+              Full-stack developer who loves building clean interfaces, but lives for the logic, structure,
+              and architecture that makes them work.
             </AnimatedDescription>
             <HeroActions>
               <SocialLink href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer">
@@ -86,7 +193,7 @@ const HomePage = () => {
                 <FaLinkedin /> LinkedIn
               </SocialLink>
             </HeroActions>
-            <ScrollDownButton href="#about" onClick={handleLearnMoreClick}>
+            <ScrollDownButton href="#about" onClick={handleScrollClick}>
               <FaArrowDown />
               <span>Scroll</span>
             </ScrollDownButton>
@@ -104,105 +211,38 @@ const HomePage = () => {
             </ProfileImageContainer>
             <AboutTextContent>
               <p>
-                Hi! I'm Alex, an enthusiastic IT student with a passion for web and backend development.
-                I've been fascinated by code since I was 12 — amazed by how just the right characters in the
-                right order can create something truly special. That early curiosity turned into a love for
-                logic, problem-solving, and building things that actually work.
+                Hi! I'm Alex, an IT student based in Tielt, Belgium. My relationship with technology
+                started at 10, when I got into robotics. Soldering components onto a motherboard in just
+                the right order, and watching something actually work as a result. No code, just patience
+                and precision. It was the best thing in the world to me at the time.
               </p>
               <p>
-                I enjoy working on API development, scalable architecture, real-time data, and everything
-                that makes development more efficient, elegant, or clever. Always experimenting, learning
-                fast, and looking for challenges that push me to grow.
+                A couple of years later I discovered programming, and everything clicked into place. I
+                realized the software was where the real power was. You could build anything, with no physical
+                limits, just logic. So I shifted my focus to development, and that decision has shaped
+                everything since.
               </p>
               <p>
-                Open to opportunities where I can keep learning, building cool stuff, and collaborating
-                with people who love tech as much as I do.
+                I enjoy working across the full stack. Frontend is satisfying when the details come together
+                and something looks and feels right. But backend is where I genuinely love spending time.
+                The structure, the data flow, the architecture decisions that determine how well something
+                actually scales. That is where I feel most in my element.
+              </p>
+              <p>
+                I am currently finishing my Bachelor of Applied IT at HOGENT, specializing in Full Stack Development.
+                I am always looking for challenges that push me further, and for people who care as much
+                about building things well as I do.
               </p>
             </AboutTextContent>
           </AboutContent>
 
-          <BackendVisualization>
-            <ServerContainer ref={serverRef}>
-              <ServerIcon><FaServer /></ServerIcon>
-              <NodeLabel>Server</NodeLabel>
-            </ServerContainer>
-
-            <ConnectionLine>
-              <DataDot className="dot1" />
-              <DataDot className="dot2" />
-              <DataDot className="reverse-dot1" />
-              <DataDot className="reverse-dot2" />
-            </ConnectionLine>
-
-            <DatabaseContainer>
-              <DatabaseIcon><FaDatabase /></DatabaseIcon>
-              <NodeLabel>Database</NodeLabel>
-            </DatabaseContainer>
-
-            <CodeBlockContainer ref={codeBlockRef}>
-              <StandaloneCodeIcon><FaCode /></StandaloneCodeIcon>
-              <CodeSnippet>
-                <CodeLine $visible={codeVisible}>export default function Data() &#123;</CodeLine>
-                <CodeLine $visible={codeVisible}>  const &#123; data, error, isLoading &#125;</CodeLine>
-                <CodeLine $visible={codeVisible}>    = useSWR('/api/data', fetcher);</CodeLine>
-                <CodeLine $visible={codeVisible}>  if (isLoading) return &lt;p&gt;Loading...&lt;/p&gt;;</CodeLine>
-                <CodeLine $visible={codeVisible}>  if (error) return &lt;p&gt;Error&lt;/p&gt;;</CodeLine>
-                <CodeLine $visible={codeVisible}></CodeLine>
-                <CodeLine $visible={codeVisible}>  return (</CodeLine>
-                <CodeLine $visible={codeVisible}>   &lt;div&gt;</CodeLine>
-                <CodeLine $visible={codeVisible}>    &lt;pre&gt;&#123;JSON.stringify(data)&#125;&lt;/pre&gt;</CodeLine>
-                <CodeLine $visible={codeVisible}>   &lt;/div&gt;</CodeLine>
-                <CodeLine $visible={codeVisible}>  );</CodeLine>
-                <CodeLine $visible={codeVisible}>&#125;</CodeLine>
-              </CodeSnippet>
-            </CodeBlockContainer>
-          </BackendVisualization>
-        </Section>
-
-        <Section id="skills">
-          <SectionTitle>Technical Skills</SectionTitle>
-          <SkillsContainer>
-            <SkillCategory className="animate-on-scroll">
-              <SkillCategoryTitle>Languages</SkillCategoryTitle>
-              <SkillsList>
-                <SkillItem><FaJsSquare /> JavaScript</SkillItem>
-                <SkillItem><SiTypescript /> TypeScript</SkillItem>
-                <SkillItem><FaPython /> Python</SkillItem>
-                <SkillItem><FaJava /> Java</SkillItem>
-                <SkillItem><TbBrandCSharp /> C#</SkillItem>
-                <SkillItem><FaHtml5 /> HTML</SkillItem>
-                <SkillItem><FaCss3Alt /> CSS</SkillItem>
-              </SkillsList>
-            </SkillCategory>
-
-            <SkillCategory className="animate-on-scroll">
-              <SkillCategoryTitle>Frameworks & Libraries</SkillCategoryTitle>
-              <SkillsList>
-                <SkillItem><SiNodedotjs /> Node.js</SkillItem>
-                <SkillItem><SiSpringboot /> Spring Boot</SkillItem>
-                <SkillItem><FaReact /> React</SkillItem>
-                <SkillItem><PiFileJsxDuotone /> JSX</SkillItem>
-                <SkillItem><RiTailwindCssFill /> Tailwind CSS</SkillItem>
-              </SkillsList>
-            </SkillCategory>
-
-            <SkillCategory className="animate-on-scroll">
-              <SkillCategoryTitle>Databases</SkillCategoryTitle>
-              <SkillsList>
-                <SkillItem><SiMysql /> MySQL</SkillItem>
-                <SkillItem><DiMsqlServer /> MS SQL Server</SkillItem>
-              </SkillsList>
-            </SkillCategory>
-
-            <SkillCategory className="animate-on-scroll">
-              <SkillCategoryTitle>DevOps & Tools</SkillCategoryTitle>
-              <SkillsList>
-                <SkillItem><FaGitAlt /> Git</SkillItem>
-                <SkillItem><FaDocker /> Docker</SkillItem>
-                <SkillItem><SiYarn /> Yarn</SkillItem>
-              </SkillsList>
-            </SkillCategory>
-          </SkillsContainer>
+          <TerminalSection className="animate-on-scroll">
+            <TerminalIntro>
+              <TerminalIntroLabel>Live API Explorer</TerminalIntroLabel>
+              <TerminalIntroText>A peek at the APIs powering this portfolio</TerminalIntroText>
+            </TerminalIntro>
+            <ApiTerminal />
+          </TerminalSection>
         </Section>
 
         <Section id="projects">
@@ -283,8 +323,8 @@ const typewriter = keyframes`
 `;
 
 const cursorBlink = keyframes`
-  from, to { border-color: transparent; }
-  50%       { border-color: currentColor; }
+  from, to { opacity: 1; }
+  50%       { opacity: 0; }
 `;
 
 const floatAnim = keyframes`
@@ -292,68 +332,21 @@ const floatAnim = keyframes`
   50%       { transform: translateY(-8px); }
 `;
 
-const pulseAnim = keyframes`
-  0%   { box-shadow: 0 0 0 0 rgba(124, 116, 255, 0.6); }
-  70%  { box-shadow: 0 0 0 12px rgba(124, 116, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(124, 116, 255, 0); }
+const spinnerAnim = keyframes`
+  0%   { content: '⠋'; }
+  12%  { content: '⠙'; }
+  25%  { content: '⠹'; }
+  37%  { content: '⠸'; }
+  50%  { content: '⠼'; }
+  62%  { content: '⠴'; }
+  75%  { content: '⠦'; }
+  87%  { content: '⠧'; }
+  100% { content: '⠇'; }
 `;
 
-const serverPulseAnim = keyframes`
-  0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.05); }
-`;
-
-const dotFwd1 = keyframes`
-  0%   { left: 5%;  opacity: 0; }
-  10%  { left: 10%; opacity: 1; }
-  90%  { left: 90%; opacity: 1; }
-  100% { left: 95%; opacity: 0; }
-`;
-const dotFwd2 = keyframes`
-  0%   { left: 5%;  opacity: 0; }
-  10%  { left: 10%; opacity: 1; }
-  90%  { left: 90%; opacity: 1; }
-  100% { left: 95%; opacity: 0; }
-`;
-const dotRev1 = keyframes`
-  0%   { right: 5%;  opacity: 0; }
-  10%  { right: 10%; opacity: 1; }
-  90%  { right: 90%; opacity: 1; }
-  100% { right: 95%; opacity: 0; }
-`;
-const dotRev2 = keyframes`
-  0%   { right: 5%;  opacity: 0; }
-  10%  { right: 10%; opacity: 1; }
-  90%  { right: 90%; opacity: 1; }
-  100% { right: 95%; opacity: 0; }
-`;
-const mobDotFwd1 = keyframes`
-  0%   { top: 5%;  opacity: 0; }
-  10%  { top: 10%; opacity: 1; }
-  90%  { top: 90%; opacity: 1; }
-  100% { top: 95%; opacity: 0; }
-`;
-const mobDotFwd2 = keyframes`
-  0%   { top: 5%;  opacity: 0; }
-  10%  { top: 10%; opacity: 1; }
-  90%  { top: 90%; opacity: 1; }
-  100% { top: 95%; opacity: 0; }
-`;
-const mobDotRev1 = keyframes`
-  0%   { bottom: 5%;  opacity: 0; }
-  10%  { bottom: 10%; opacity: 1; }
-  90%  { bottom: 90%; opacity: 1; }
-  100% { bottom: 95%; opacity: 0; }
-`;
-const mobDotRev2 = keyframes`
-  0%   { bottom: 5%;  opacity: 0; }
-  10%  { bottom: 10%; opacity: 1; }
-  90%  { bottom: 90%; opacity: 1; }
-  100% { bottom: 95%; opacity: 0; }
-`;
-const typingAnim = keyframes`
-  from { width: 0; }
-  to   { width: 100%; }
+const responseFadeIn = keyframes`
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 `;
 
 /* ─── Hero ───────────────────────────────────────────────────────────────────── */
@@ -383,7 +376,7 @@ const VideoBackground = styled.video`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.35) saturate(0.7);
+  filter: brightness(0.3) saturate(0.6);
   z-index: 0;
 `;
 
@@ -486,6 +479,7 @@ const SocialLink = styled.a`
   background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  cursor: pointer;
 
   &:hover {
     background: ${props => props.theme.primary};
@@ -509,15 +503,14 @@ const ScrollDownButton = styled.a`
   opacity: 0;
   animation: ${fadeIn} 0.8s ease-out 3.4s forwards;
   transition: color 0.3s;
+  cursor: pointer;
 
   svg {
     font-size: 1.1rem;
     animation: ${floatAnim} 2.5s ease-in-out infinite;
   }
 
-  &:hover {
-    color: ${props => props.theme.primary};
-  }
+  &:hover { color: ${props => props.theme.primary}; }
 `;
 
 /* ─── Sections ───────────────────────────────────────────────────────────────── */
@@ -611,289 +604,175 @@ const AboutTextContent = styled.div`
   }
 `;
 
-/* ─── Backend Visualization ──────────────────────────────────────────────────── */
+/* ─── Terminal ───────────────────────────────────────────────────────────────── */
 
-const BackendVisualization = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+const TerminalSection = styled.div`
   margin-top: 72px;
-  position: relative;
-  min-height: 380px;
-
-  @media (max-width: 768px) {
-    min-height: 480px;
-    gap: 12px;
-  }
-`;
-
-const ServerContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 10;
-
-  &.pulse {
-    animation: ${serverPulseAnim} 1s ease;
-  }
-
-  @media (min-width: 768px) {
-    position: absolute;
-    left: 12%;
-    top: 16px;
-  }
-`;
-
-const ServerIcon = styled.div`
-  width: 76px;
-  height: 76px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #136f63, #00C6FF);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.8rem;
-  box-shadow: 0 8px 28px rgba(0, 198, 255, 0.3);
-  animation: ${pulseAnim} 3s infinite;
-  margin-bottom: 10px;
-  transition: transform 0.3s;
-
-  &:hover { transform: scale(1.06); }
-`;
-
-const DatabaseContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 10;
-
-  @media (min-width: 768px) {
-    position: absolute;
-    right: 12%;
-    top: 16px;
-  }
-`;
-
-const DatabaseIcon = styled.div`
-  width: 76px;
-  height: 76px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #FF7200, #FF4B00);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.8rem;
-  box-shadow: 0 8px 28px rgba(255, 114, 0, 0.3);
-  margin-bottom: 10px;
-  transition: transform 0.3s;
-
-  &:hover { transform: scale(1.06); }
-`;
-
-const NodeLabel = styled.div`
-  font-weight: 600;
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
-  color: ${props => props.theme.textSecondary};
-`;
-
-const ConnectionLine = styled.div`
-  position: relative;
-  width: 60%;
-  height: 2px;
-  background: linear-gradient(to right, #136f63, #FF7200);
-  margin: 8px 0;
-  z-index: 5;
-  overflow: visible;
-
-  @media (min-width: 768px) {
-    position: absolute;
-    top: 54px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
-    width: 76%;
-  }
-
-  @media (max-width: 768px) {
-    width: 2px;
-    height: 100px;
-    background: linear-gradient(to bottom, #136f63, #FF7200);
-    margin: 0 auto;
-  }
-`;
-
-const DataDot = styled.div`
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  background: white;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255,255,255,0.9), 0 0 20px ${props => props.theme.glow};
-  z-index: 20;
-
-  &.dot1, &.dot2 { top: -2px; left: 0; }
-  &.dot1 {
-    animation: ${dotFwd1} 3s infinite;
-    @media (max-width: 768px) { animation: ${mobDotFwd1} 3s infinite; left: -2px; }
-  }
-  &.dot2 {
-    animation: ${dotFwd2} 3s infinite 1s;
-    @media (max-width: 768px) { animation: ${mobDotFwd2} 3s infinite 1s; left: -2px; }
-  }
-
-  &.reverse-dot1, &.reverse-dot2 { top: -2px; right: 0; }
-  &.reverse-dot1 {
-    animation: ${dotRev1} 3s infinite 0.5s;
-    @media (max-width: 768px) { animation: ${mobDotRev1} 3s infinite 0.5s; right: -2px; top: auto; }
-  }
-  &.reverse-dot2 {
-    animation: ${dotRev2} 3s infinite 1.5s;
-    @media (max-width: 768px) { animation: ${mobDotRev2} 3s infinite 1.5s; right: -2px; top: auto; }
-  }
-`;
-
-const CodeBlockContainer = styled.div`
-  position: relative;
-  width: 100%;
-  max-width: 480px;
-  background: ${props => props.theme.card};
-  border: 1px solid ${props => props.theme.border};
-  border-radius: 14px;
-  padding: 20px 24px;
-  box-shadow: 0 12px 40px ${props => props.theme.shadow};
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-  margin-top: 16px;
-  z-index: 10;
-
-  @media (min-width: 768px) {
-    margin-top: 140px;
-    width: 76%;
-  }
-`;
-
-const StandaloneCodeIcon = styled.div`
-  position: absolute;
-  top: -14px;
-  right: -14px;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: ${props => props.theme.primary};
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  box-shadow: 0 4px 16px ${props => props.theme.glow};
-  z-index: 999;
-`;
-
-const CodeSnippet = styled.div`
-  font-size: 0.78rem;
-  line-height: 1.6;
-`;
-
-const CodeLine = styled.div`
-  white-space: pre;
-  color: ${props => props.theme.textSecondary};
-  overflow: hidden;
-  width: 0;
-  animation: ${props => props.$visible ? typingAnim : 'none'} 0.8s forwards;
-
-  @media (max-width: 576px) { font-size: 0.65rem; }
-
-  &:nth-child(1)  { animation-delay: ${props => props.$visible ? '0.1s'  : '0s'}; }
-  &:nth-child(2)  { animation-delay: ${props => props.$visible ? '0.55s' : '0s'}; }
-  &:nth-child(3)  { animation-delay: ${props => props.$visible ? '1.0s'  : '0s'}; }
-  &:nth-child(4)  { animation-delay: ${props => props.$visible ? '1.45s' : '0s'}; }
-  &:nth-child(5)  { animation-delay: ${props => props.$visible ? '1.9s'  : '0s'}; }
-  &:nth-child(6)  { animation-delay: ${props => props.$visible ? '2.35s' : '0s'}; }
-  &:nth-child(7)  { animation-delay: ${props => props.$visible ? '2.8s'  : '0s'}; }
-  &:nth-child(8)  { animation-delay: ${props => props.$visible ? '3.25s' : '0s'}; }
-  &:nth-child(9)  { animation-delay: ${props => props.$visible ? '3.7s'  : '0s'}; }
-  &:nth-child(10) { animation-delay: ${props => props.$visible ? '4.15s' : '0s'}; }
-  &:nth-child(11) { animation-delay: ${props => props.$visible ? '4.6s'  : '0s'}; }
-  &:nth-child(12) { animation-delay: ${props => props.$visible ? '5.05s' : '0s'}; }
-`;
-
-/* ─── Skills ─────────────────────────────────────────────────────────────────── */
-
-const SkillsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 24px;
-  max-width: 1000px;
-  margin: 0 auto;
-`;
-
-const SkillCategory = styled.div`
-  background: ${props => props.theme.card};
-  border: 1px solid ${props => props.theme.border};
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px ${props => props.theme.shadow};
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 
   &.animate {
     opacity: 1;
     transform: translateY(0);
   }
-
-  &:hover {
-    box-shadow: 0 12px 40px ${props => props.theme.shadowHover};
-    border-color: ${props => props.theme.borderStrong};
-    transform: translateY(-6px);
-  }
 `;
 
-const SkillCategoryTitle = styled.h3`
-  font-size: 0.75rem;
+const TerminalIntro = styled.div`
+  text-align: center;
+  margin-bottom: 24px;
+`;
+
+const TerminalIntroLabel = styled.div`
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: ${props => props.theme.primary};
-  margin: 0 0 16px;
+  margin-bottom: 6px;
 `;
 
-const SkillsList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-`;
-
-const SkillItem = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 100px;
-  border: 1px solid ${props => props.theme.border};
-  background: ${props => props.theme.cardBackground};
+const TerminalIntroText = styled.div`
+  font-size: 0.9rem;
   color: ${props => props.theme.textSecondary};
-  font-size: 0.82rem;
-  font-weight: 500;
-  cursor: default;
-  transition: all 0.25s ease;
-
-  svg {
-    color: ${props => props.theme.primary};
-    font-size: 0.95rem;
-    flex-shrink: 0;
-  }
-
-  &:hover {
-    border-color: ${props => props.theme.primary};
-    background: ${props => props.theme.glow};
-    color: ${props => props.theme.text};
-    box-shadow: 0 4px 16px ${props => props.theme.glow};
-    transform: translateY(-2px);
-  }
 `;
+
+const TerminalWrapper = styled.div`
+  width: 100%;
+  max-width: 780px;
+  background: #0D1117;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+`;
+
+const TerminalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #161B22;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+`;
+
+const TrafficLights = styled.div`
+  display: flex;
+  gap: 6px;
+`;
+
+const TrafficDot = styled.div`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: ${props => props.$color};
+  opacity: 0.9;
+`;
+
+const TerminalLabel = styled.span`
+  flex: 1;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+`;
+
+const MethodBadge = styled.span`
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: ${props => props.$color};
+  border: 1px solid ${props => props.$color}50;
+  background: ${props => props.$color}15;
+`;
+
+const TerminalBody = styled.div`
+  padding: 20px 20px 24px;
+  min-height: 220px;
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: #C9D1D9;
+`;
+
+const TerminalLine = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+`;
+
+const Prompt = styled.span`
+  color: #34D399;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+`;
+
+const CommandText = styled.span`
+  color: #E6EDF3;
+  white-space: pre-wrap;
+`;
+
+const Caret = styled.span`
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  background: #818CF8;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: ${cursorBlink} 1s step-end infinite;
+`;
+
+const LoadingLine = styled.div`
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.78rem;
+  margin-top: 8px;
+  animation: ${responseFadeIn} 0.3s ease;
+`;
+
+const Spinner = styled.span`
+  display: inline-block;
+  animation: ${spinnerAnim} 0.8s linear infinite;
+`;
+
+const StatusLine = styled.div`
+  margin-top: 12px;
+  animation: ${responseFadeIn} 0.4s ease;
+`;
+
+const StatusOk = styled.span`
+  color: #34D399;
+  font-weight: 700;
+`;
+
+const ContentType = styled.div`
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  margin-bottom: 12px;
+  animation: ${responseFadeIn} 0.4s ease 0.05s both;
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin-bottom: 12px;
+`;
+
+const ResponseBlock = styled.div`
+  animation: ${responseFadeIn} 0.5s ease 0.1s both;
+  font-size: 0.78rem;
+  line-height: 1.7;
+`;
+
+const JsonKey = styled.span`color: #818CF8;`;
+const JsonString = styled.span`color: #34D399;`;
+const JsonNumber = styled.span`color: #FB923C;`;
+const JsonPunct = styled.span`color: rgba(255,255,255,0.35);`;
 
 /* ─── Projects ───────────────────────────────────────────────────────────────── */
 
