@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, memo } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import styled, { ThemeProvider, keyframes } from 'styled-components';
 import { ThemeContext, ThemeProvider as CustomThemeProvider } from './styles/ThemeContext';
@@ -30,7 +30,7 @@ const orbDrift3 = keyframes`
   50%       { transform: translate(30px, 50px) scale(1.05); }
 `;
 
-const BackgroundOrbs = ({ darkMode }) => (
+const BackgroundOrbs = memo(({ darkMode }) => (
   <OrbsContainer>
     <Orb
       $top="-5%"
@@ -58,7 +58,7 @@ const BackgroundOrbs = ({ darkMode }) => (
       $delay="6s"
     />
   </OrbsContainer>
-);
+));
 
 const AppWithTheme = () => {
   const { darkMode, toggleDarkMode } = useContext(ThemeContext);

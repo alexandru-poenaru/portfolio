@@ -56,20 +56,6 @@ const GlobalStyles = createGlobalStyle`
     from { width: 0; }
     to { width: 48px; }
   }
-  @keyframes orbDrift1 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33%       { transform: translate(60px, -40px) scale(1.06); }
-    66%       { transform: translate(-40px, 30px) scale(0.96); }
-  }
-  @keyframes orbDrift2 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33%       { transform: translate(-50px, 60px) scale(1.04); }
-    66%       { transform: translate(40px, -30px) scale(0.97); }
-  }
-  @keyframes orbDrift3 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50%       { transform: translate(30px, 50px) scale(1.05); }
-  }
   @keyframes glassShimmer {
     0%   { opacity: 0; transform: translateX(-100%) skewX(-15deg); }
     50%  { opacity: 1; }

@@ -267,6 +267,8 @@ const ContactContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 80px 24px 100px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1000px;
 
   @media (max-width: 768px) { padding: 60px 16px 80px; }
 `;

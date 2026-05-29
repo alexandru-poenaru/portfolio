@@ -698,8 +698,8 @@ const TerminalWrapper = styled.div`
   width: 100%;
   max-width: 780px;
   background: linear-gradient(180deg, rgba(13,17,23,0.85) 0%, rgba(13,17,23,0.75) 100%);
-  backdrop-filter: blur(44px) saturate(1.8) brightness(0.95);
-  -webkit-backdrop-filter: blur(44px) saturate(1.8) brightness(0.95);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
   border-radius: 18px;
   overflow: hidden;
   border: 0.5px solid rgba(255,255,255,0.12);

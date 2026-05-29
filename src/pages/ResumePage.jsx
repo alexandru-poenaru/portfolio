@@ -234,7 +234,7 @@ const ResumePage = () => {
               const open = isSkillOpen(category);
               return (
                 <SkillCategory key={category} className="animate-on-scroll" $accent={accent} style={{ animationDelay: `${catIdx * 0.1}s` }}>
-                  <SkillCategoryHeader $accent={accent} onClick={() => toggleSkill(category)} $isOpen={open}>
+                  <SkillCategoryHeader type="button" $accent={accent} onClick={() => toggleSkill(category)} $isOpen={open}>
                     <SkillAccentBar $accent={accent} />
                     <h3>{category}</h3>
                     <SkillChevron $accent={accent} $open={open}><FaChevronDown /></SkillChevron>
@@ -279,6 +279,8 @@ const ResumeContainer = styled.div`
   max-width: 1100px;
   margin: 0 auto;
   padding: 80px 24px 100px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1200px;
 `;
 
 const PageTitle = styled.h1`
@@ -545,12 +547,18 @@ const SkillCategory = styled.div`
   }
 `;
 
-const SkillCategoryHeader = styled.div`
+const SkillCategoryHeader = styled.button`
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 18px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
   cursor: default;
+  pointer-events: none;
 
   h3 {
     margin: 0;
@@ -564,6 +572,7 @@ const SkillCategoryHeader = styled.div`
 
   @media (max-width: 768px) {
     cursor: pointer;
+    pointer-events: auto;
     margin-bottom: ${props => props.$isOpen ? '18px' : '0'};
     transition: margin-bottom 0.25s ease;
     user-select: none;
