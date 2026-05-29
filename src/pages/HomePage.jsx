@@ -259,7 +259,7 @@ const HomePage = () => {
                   Production KPI Dashboard with machine maintenance overview. React + Node.js + TypeScript + Java (WIP).
                 </ProjectDescription>
                 <ProjectButton as="span" $disabled>
-                  WIP
+                  Unavailable
                 </ProjectButton>
               </ProjectContent>
             </ProjectCard>

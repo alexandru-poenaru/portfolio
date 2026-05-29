@@ -43,7 +43,7 @@ const ResumePage = () => {
 
       <DownloadButtonContainer>
         <DownloadButton href={resumePdf} target="_blank" rel="noopener noreferrer" download="CV_Alexandru_Poenaru.pdf">
-          <FaDownload /> Download CV
+          <FaDownload /> Download CV (Dutch)
         </DownloadButton>
       </DownloadButtonContainer>
 
@@ -55,9 +55,24 @@ const ResumePage = () => {
           </SectionHeader>
 
           <Timeline>
+
             <TimelineItem className="animate-on-scroll">
               <TimelineDot />
-              <TimelineDate>July 2024</TimelineDate>
+              <TimelineDate>March 2026 - May 2026</TimelineDate>
+              <TimelineCard>
+                <h3>International Internship</h3>
+                <h4>Turtle Srl</h4>
+                <ul>
+                  <li><b>AI Privacy Engine:</b> Built a Python-based NLP and OCR module to automatically detect and redact Personally Identifiable Information (PII) from various documents.</li>
+                  <li><b>Chat-to-Chart Platform:</b> Engineered the backend and database for an AI analytics tool, using LLMs and DuckDB to generate dynamic charts from natural language queries.</li>
+                  <li><b>Enterprise Scalability:</b> Integrated these applications into a large-scale enterprise platform, optimizing backend performance and concurrency using asyncio, thread pools, and webhooks.</li>
+                </ul>
+              </TimelineCard>
+            </TimelineItem>            
+
+            <TimelineItem className="animate-on-scroll">
+              <TimelineDot />
+              <TimelineDate>July 2024, July 2025</TimelineDate>
               <TimelineCard>
                 <h3>Student Worker</h3>
                 <h4>INJEXTRU Tielt</h4>
@@ -70,7 +85,7 @@ const ResumePage = () => {
 
             <TimelineItem className="animate-on-scroll">
               <TimelineDot />
-              <TimelineDate>August 2024</TimelineDate>
+              <TimelineDate>August 2024, August 2025</TimelineDate>
               <TimelineCard>
                 <h3>Student Worker</h3>
                 <h4>SOVAPLASTICS Tielt</h4>
@@ -150,9 +165,9 @@ const ResumePage = () => {
               <SkillList>
                 <SkillItem><SkillName>JavaScript</SkillName><SkillBar><SkillProgress $width={75} $visible={barsVisible} /></SkillBar></SkillItem>
                 <SkillItem><SkillName>TypeScript</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Python</SkillName><SkillBar><SkillProgress $width={50} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>Python</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
                 <SkillItem><SkillName>Java</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>C#</SkillName><SkillBar><SkillProgress $width={20} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>C#</SkillName><SkillBar><SkillProgress $width={50} $visible={barsVisible} /></SkillBar></SkillItem>
                 <SkillItem><SkillName>HTML</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
                 <SkillItem><SkillName>CSS</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
               </SkillList>
@@ -166,6 +181,11 @@ const ResumePage = () => {
                 <SkillItem><SkillName>React</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
                 <SkillItem><SkillName>JSX</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
                 <SkillItem><SkillName>Tailwind CSS</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>.NET Framework</SkillName><SkillBar><SkillProgress $width={65} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>Entity Framework</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>FastAPI</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>React (Native)</SkillName><SkillBar><SkillProgress $width={50} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>Llama-cpp</SkillName><SkillBar><SkillProgress $width={50} $visible={barsVisible} /></SkillBar></SkillItem>
               </SkillList>
             </SkillCategory>
 
@@ -174,15 +194,19 @@ const ResumePage = () => {
               <SkillList>
                 <SkillItem><SkillName>MySQL</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
                 <SkillItem><SkillName>MS SQL Server</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>MongoDB</SkillName><SkillBar><SkillProgress $width={30} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>DuckDB</SkillName><SkillBar><SkillProgress $width={40} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>SQLite</SkillName><SkillBar><SkillProgress $width={40} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>PostgreSQL</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
               </SkillList>
             </SkillCategory>
 
             <SkillCategory className="animate-on-scroll">
               <h3>DevOps & Tools</h3>
               <SkillList>
-                <SkillItem><SkillName>Git</SkillName><SkillBar><SkillProgress $width={75} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Docker</SkillName><SkillBar><SkillProgress $width={35} $visible={barsVisible} /></SkillBar></SkillItem>
-                <SkillItem><SkillName>Yarn</SkillName><SkillBar><SkillProgress $width={70} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>Git</SkillName><SkillBar><SkillProgress $width={85} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>Docker</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
+                <SkillItem><SkillName>Yarn</SkillName><SkillBar><SkillProgress $width={60} $visible={barsVisible} /></SkillBar></SkillItem>
               </SkillList>
             </SkillCategory>
           </SkillsGrid>
