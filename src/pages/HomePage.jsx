@@ -320,10 +320,6 @@ const cursorHide = keyframes`
   to { border-color: transparent; }
 `;
 
-const floatAnim = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-8px); }
-`;
 
 const spinnerAnim = keyframes`
   0%   { content: '⠋'; }

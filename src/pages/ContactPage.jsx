@@ -375,24 +375,6 @@ const iconWrapperStyles = `
   transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
 `;
 
-const IconWrapper = styled.div`
-  ${iconWrapperStyles}
-  background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  box-shadow: inset 0 1.5px 0 ${props => props.theme.glassHighlight};
-  color: ${props => props.theme.primary};
-
-  &:hover {
-    transform: scale(1.1);
-    border-color: ${props => props.theme.glassTintedBorder};
-    box-shadow:
-      inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
-      0 6px 18px ${props => props.theme.glow};
-  }
-`;
-
 const IconWrapperLink = styled.a`
   ${iconWrapperStyles}
   background: ${props => props.theme.glass};
