@@ -11,7 +11,7 @@ const slideUp = keyframes`
 
 const orb = keyframes`
   0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(20px, -20px) scale(1.08); }
+  33%       { transform: translate(10px, -10px) scale(1.03); }
   66%       { transform: translate(-15px, 15px) scale(0.95); }
 `;
 
@@ -272,9 +272,9 @@ const ContactContainer = styled.div`
 `;
 
 const PageTitle = styled.h1`
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
   text-align: center;
   margin-bottom: 60px;
   color: ${props => props.theme.text};
@@ -283,14 +283,13 @@ const PageTitle = styled.h1`
   &::after {
     content: '';
     position: absolute;
-    width: 48px;
+    width: 40px;
     height: 3px;
     background: ${props => props.theme.primary};
     bottom: -18px;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 2px;
-    box-shadow: 0 0 14px ${props => props.theme.glow};
+    border-radius: 1px;
   }
 `;
 
@@ -336,7 +335,7 @@ const OrbDecor = styled.div`
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   filter: blur(32px);
-  animation: ${orb} 8s ease-in-out ${props => props.$delay} infinite;
+  animation: ${orb} 30s ease-in-out ${props => props.$delay} infinite;
   pointer-events: none;
 `;
 

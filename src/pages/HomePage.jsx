@@ -178,7 +178,7 @@ const HomePage = () => {
           <HeroContent>
             <TypewriterContainer>
               <HeroTitle>Hello, I'm <HighlightSpan>Alexandru Poenaru</HighlightSpan></HeroTitle>
-              <TypewriterText>Student Full Stack Development @ HOGENT</TypewriterText>
+              <TypewriterText>Student Full-Stack Development · Incoming Master's Student</TypewriterText>
             </TypewriterContainer>
             <AnimatedDescription>
               Full-stack developer who loves building clean interfaces, but lives for the logic, structure,
@@ -346,29 +346,19 @@ const responseFadeIn = keyframes`
 
 const bgBlob1 = keyframes`
   0%, 100% { transform: translate(0, 0) scale(1); }
-  25%       { transform: translate(80px, -100px) scale(1.12); }
-  50%       { transform: translate(160px, 30px) scale(0.92); }
-  75%       { transform: translate(50px, -60px) scale(1.06); }
+  25%       { transform: translate(40px, -50px) scale(1.05); }
+  50%       { transform: translate(80px, 15px) scale(0.97); }
+  75%       { transform: translate(25px, -30px) scale(1.02); }
 `;
 const bgBlob2 = keyframes`
   0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(-100px, 80px) scale(1.15); }
-  66%       { transform: translate(60px, -120px) scale(0.90); }
+  33%       { transform: translate(-50px, 40px) scale(1.06); }
+  66%       { transform: translate(30px, -60px) scale(0.96); }
 `;
 const bgBlob3 = keyframes`
   0%, 100% { transform: translate(0, 0) scale(1); }
-  40%       { transform: translate(120px, 100px) scale(1.08); }
-  75%       { transform: translate(-80px, 50px) scale(0.96); }
-`;
-const orbDrift1 = keyframes`
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  33%       { transform: translateY(-30px) translateX(14px); }
-  66%       { transform: translateY(-16px) translateX(-20px); }
-`;
-const orbDrift2 = keyframes`
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  40%       { transform: translateY(-40px) translateX(-18px); }
-  75%       { transform: translateY(-22px) translateX(24px); }
+  40%       { transform: translate(60px, 50px) scale(1.04); }
+  75%       { transform: translate(-40px, 25px) scale(0.98); }
 `;
 
 const BgRoot = styled.div`
@@ -398,56 +388,20 @@ const AuroraBase = styled.div`
 const Aurora1 = styled(AuroraBase)`
   width: 900px; height: 700px;
   top: -200px; left: -200px;
-  background: radial-gradient(ellipse, ${props => props.theme.glowStrong} 0%, ${props => props.theme.glow} 45%, transparent 70%);
-  animation: ${bgBlob1} 20s ease-in-out infinite;
+  background: radial-gradient(ellipse, ${props => props.theme.glow} 0%, transparent 65%);
+  animation: ${bgBlob1} 42s ease-in-out infinite;
 `;
 const Aurora2 = styled(AuroraBase)`
   width: 780px; height: 620px;
   bottom: -180px; right: -140px;
-  background: radial-gradient(ellipse, ${props => props.theme.glowStrong} 0%, ${props => props.theme.glow} 45%, transparent 70%);
-  animation: ${bgBlob2} 24s ease-in-out infinite;
+  background: radial-gradient(ellipse, ${props => props.theme.glow} 0%, transparent 65%);
+  animation: ${bgBlob2} 50s ease-in-out infinite;
 `;
 const Aurora3 = styled(AuroraBase)`
   width: 580px; height: 480px;
   top: 35%; left: 42%;
   background: radial-gradient(ellipse, ${props => props.theme.glow} 0%, transparent 70%);
-  animation: ${bgBlob3} 17s ease-in-out infinite;
-`;
-
-const OrbBase = styled.div`
-  position: absolute;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 30% 26%, ${props => props.theme.glassHighlight} 0%, transparent 42%),
-    radial-gradient(circle at 50% 50%, ${props => props.theme.glow} 0%, transparent 70%);
-  border: 1px solid ${props => props.theme.border};
-  box-shadow:
-    inset 0 2px 0 ${props => props.theme.glassHighlight},
-    0 0 60px ${props => props.theme.glow};
-  backdrop-filter: blur(0.5px);
-  -webkit-backdrop-filter: blur(0.5px);
-  will-change: transform;
-`;
-
-const Orb1 = styled(OrbBase)`
-  width: 520px; height: 520px;
-  top: -80px; left: -130px;
-  animation: ${orbDrift1} 14s ease-in-out infinite;
-`;
-const Orb2 = styled(OrbBase)`
-  width: 360px; height: 360px;
-  bottom: -50px; right: -90px;
-  animation: ${orbDrift2} 19s ease-in-out 1.5s infinite;
-`;
-const Orb3 = styled(OrbBase)`
-  width: 210px; height: 210px;
-  top: 18%; right: 10%;
-  animation: ${orbDrift1} 12s ease-in-out 0.7s infinite;
-`;
-const Orb4 = styled(OrbBase)`
-  width: 155px; height: 155px;
-  top: 55%; left: 22%;
-  animation: ${orbDrift2} 16s ease-in-out 2.8s infinite;
+  animation: ${bgBlob3} 38s ease-in-out infinite;
 `;
 
 const AnimatedHeroBg = () => (
@@ -456,10 +410,6 @@ const AnimatedHeroBg = () => (
     <Aurora1 />
     <Aurora2 />
     <Aurora3 />
-    <Orb1 />
-    <Orb2 />
-    <Orb3 />
-    <Orb4 />
   </BgRoot>
 );
 
@@ -526,12 +476,12 @@ const TypewriterContainer = styled.div`
 `;
 
 const HeroTitle = styled.h1`
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
   color: ${props => props.theme.text};
   margin: 0 0 0.8rem;
-  line-height: 1.15;
+  line-height: 1.1;
 `;
 
 const HighlightSpan = styled.span`
@@ -625,7 +575,6 @@ const ScrollDownButton = styled.a`
 
   svg {
     font-size: 1.1rem;
-    animation: ${floatAnim} 2.5s ease-in-out infinite;
   }
 
   &:hover { color: ${props => props.theme.primary}; }
@@ -647,9 +596,9 @@ const Section = styled.section`
 `;
 
 const SectionTitle = styled.h2`
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
   text-align: center;
   margin-bottom: 64px;
   color: ${props => props.theme.text};
@@ -658,14 +607,13 @@ const SectionTitle = styled.h2`
   &::after {
     content: '';
     position: absolute;
-    width: 48px;
+    width: 40px;
     height: 3px;
     background: ${props => props.theme.primary};
     bottom: -18px;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 2px;
-    box-shadow: 0 0 14px ${props => props.theme.glow};
+    border-radius: 1px;
   }
 `;
 
@@ -697,7 +645,6 @@ const ProfileImageContainer = styled.div`
   border: 0.5px solid ${props => props.theme.glassTintedBorder};
   box-shadow:
     inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
-    0 0 40px ${props => props.theme.glow},
     ${props => props.theme.glassShadow};
   opacity: 0;
   transform: translateY(20px) scale(0.95);
@@ -945,11 +892,11 @@ const ProjectCard = styled.div`
   }
 
   &:hover {
-    transform: translateY(-10px) perspective(900px) rotateX(-2deg);
+    transform: translateY(-6px);
     box-shadow:
       inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-      0 28px 56px ${props => props.theme.shadowHover},
-      0 8px 20px rgba(0,0,0,0.15);
+      0 20px 40px ${props => props.theme.shadowHover},
+      0 6px 16px rgba(0,0,0,0.10);
     border-color: ${props => props.theme.glassTintedBorder};
   }
 `;
@@ -969,7 +916,7 @@ const ProjectImage = styled.img`
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
   ${ProjectCard}:hover & {
-    transform: scale(1.04);
+    transform: scale(1.01);
   }
 `;
 

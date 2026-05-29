@@ -282,9 +282,9 @@ const ResumeContainer = styled.div`
 `;
 
 const PageTitle = styled.h1`
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
   text-align: center;
   margin-bottom: 24px;
   color: ${props => props.theme.text};
@@ -293,14 +293,13 @@ const PageTitle = styled.h1`
   &::after {
     content: '';
     position: absolute;
-    width: 48px;
+    width: 40px;
     height: 3px;
     background: ${props => props.theme.primary};
     bottom: -16px;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 2px;
-    box-shadow: 0 0 14px ${props => props.theme.glow};
+    border-radius: 1px;
   }
 `;
 

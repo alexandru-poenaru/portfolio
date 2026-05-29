@@ -36,42 +36,42 @@ const BackgroundOrbs = ({ darkMode }) => (
       $top="−5%"
       $left="−8%"
       $size="700px"
-      $color={darkMode ? 'rgba(79,70,229,0.32)' : 'rgba(124,99,255,0.20)'}
+      $color={darkMode ? 'rgba(79,70,229,0.14)' : 'rgba(124,99,255,0.10)'}
       $anim={orbDrift1}
-      $duration="18s"
+      $duration="55s"
     />
     <Orb
       $top="10%"
       $right="−10%"
       $size="560px"
-      $color={darkMode ? 'rgba(139,92,246,0.22)' : 'rgba(167,106,255,0.16)'}
+      $color={darkMode ? 'rgba(139,92,246,0.10)' : 'rgba(167,106,255,0.08)'}
       $anim={orbDrift2}
-      $duration="22s"
+      $duration="62s"
     />
     <Orb
       $top="45%"
       $left="30%"
       $size="480px"
-      $color={darkMode ? 'rgba(168,85,247,0.16)' : 'rgba(99,118,255,0.13)'}
+      $color={darkMode ? 'rgba(168,85,247,0.08)' : 'rgba(99,118,255,0.07)'}
       $anim={orbDrift3}
-      $duration="26s"
+      $duration="70s"
     />
     <Orb
       $bottom="10%"
       $right="5%"
       $size="520px"
-      $color={darkMode ? 'rgba(59,130,246,0.14)' : 'rgba(79,148,255,0.14)'}
+      $color={darkMode ? 'rgba(59,130,246,0.07)' : 'rgba(79,148,255,0.07)'}
       $anim={orbDrift1}
-      $duration="20s"
+      $duration="58s"
       $delay="4s"
     />
     <Orb
       $bottom="0%"
       $left="10%"
       $size="420px"
-      $color={darkMode ? 'rgba(129,140,248,0.18)' : 'rgba(192,132,252,0.15)'}
+      $color={darkMode ? 'rgba(129,140,248,0.09)' : 'rgba(192,132,252,0.08)'}
       $anim={orbDrift2}
-      $duration="24s"
+      $duration="66s"
       $delay="8s"
     />
   </OrbsContainer>
