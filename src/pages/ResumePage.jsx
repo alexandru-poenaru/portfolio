@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { FaDownload, FaGraduationCap, FaBriefcase, FaCode } from 'react-icons/fa';
 import { FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact, FaDatabase } from 'react-icons/fa';
 import { SiTypescript, SiNodedotjs, SiMysql, SiYarn, SiSpringboot, SiDotnet, SiFastapi, SiSqlite, SiPostgresql, SiMongodb } from 'react-icons/si';
