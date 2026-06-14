@@ -7,7 +7,6 @@ import './App.css';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Cursor from './components/Cursor';
 
 import HomePage from './pages/HomePage';
 import ResumePage from './pages/ResumePage';
@@ -62,7 +61,6 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
-      <Cursor />
       <Router>
         <AppContainer>
           <BackgroundOrbs />
