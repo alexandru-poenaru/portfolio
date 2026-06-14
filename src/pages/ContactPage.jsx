@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import emailjs from 'emailjs-com';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaExclamationTriangle, FaCheckCircle, FaChevronRight } from 'react-icons/fa';
 
 
 const slideUp = keyframes`
@@ -9,11 +9,6 @@ const slideUp = keyframes`
   to   { opacity: 1; transform: translateY(0); }
 `;
 
-const orb = keyframes`
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(10px, -10px) scale(1.03); }
-  66%       { transform: translate(-15px, 15px) scale(0.95); }
-`;
 
 const toastSlideIn = keyframes`
   from { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(0.95); }
@@ -113,42 +108,48 @@ const ContactPage = () => {
       <PageTitle>Get In Touch</PageTitle>
       <ContactContent>
         <ContactInfo>
-          <OrbDecor $top="10%" $left="60%" $size="180px" $delay="0s" />
-          <OrbDecor $top="55%" $left="20%" $size="120px" $delay="2s" />
-          <InfoInner>
-            <ContactInfoTitle>Contact Information</ContactInfoTitle>
-            <ContactInfoText>
-              Feel free to reach out for any questions or opportunities. I'm always open to discussing new projects and ideas.
-            </ContactInfoText>
+          <InfoHeader>
+            <InfoHeaderDots />
+            <InfoHeaderGlow />
+            <InfoHeaderContent>
+              <InfoHeaderEyebrow>Let's Connect</InfoHeaderEyebrow>
+              <InfoHeaderName>Alexandru Poenaru</InfoHeaderName>
+              <InfoHeaderRole>Full-Stack Developer · Belgium</InfoHeaderRole>
+            </InfoHeaderContent>
+          </InfoHeader>
 
-            <ContactInfoItem>
-              <IconWrapperLink href="mailto:alexandru.george.poenaru@gmail.com"><FaEnvelope /></IconWrapperLink>
-              <div>
-                <ContactInfoLabel>Email</ContactInfoLabel>
-                <ContactLink href="mailto:alexandru.george.poenaru@gmail.com">
-                  alexandru.george.poenaru@gmail.com
-                </ContactLink>
-              </div>
-            </ContactInfoItem>
+          <ContactRows>
+            <ContactRow href="mailto:alexandru.george.poenaru@gmail.com" title="alexandru.george.poenaru@gmail.com">
+              <RowIconBadge $color="#e26d5c"><FaEnvelope /></RowIconBadge>
+              <RowText>
+                <RowLabel>Email</RowLabel>
+                <RowValue>alexandru.george.poenaru@gmail.com</RowValue>
+              </RowText>
+              <RowArrow><FaChevronRight /></RowArrow>
+            </ContactRow>
 
-            <ContactInfoItem>
-              <IconWrapperLink href="tel:+32468301411"><FaPhone /></IconWrapperLink>
-              <div>
-                <ContactInfoLabel>Phone</ContactInfoLabel>
-                <ContactLink href="tel:+32468301411">+32 468 30 14 11</ContactLink>
-              </div>
-            </ContactInfoItem>
+            <RowSep />
 
-            <ContactInfoItem>
-              <IconWrapperLink href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer"><FaMapMarkerAlt /></IconWrapperLink>
-              <div>
-                <ContactInfoLabel>Location</ContactInfoLabel>
-                <ContactLink href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer">
-                  Tielt, Belgium
-                </ContactLink>
-              </div>
-            </ContactInfoItem>
-          </InfoInner>
+            <ContactRow href="tel:+32468301411">
+              <RowIconBadge $color="#c9cba3"><FaPhone /></RowIconBadge>
+              <RowText>
+                <RowLabel>Phone</RowLabel>
+                <RowValue>+32 468 30 14 11</RowValue>
+              </RowText>
+              <RowArrow><FaChevronRight /></RowArrow>
+            </ContactRow>
+
+            <RowSep />
+
+            <ContactRow href="https://maps.google.com/?q=Tielt+Belgium" target="_blank" rel="noopener noreferrer">
+              <RowIconBadge $color="#ffe1a8"><FaMapMarkerAlt /></RowIconBadge>
+              <RowText>
+                <RowLabel>Location</RowLabel>
+                <RowValue>Tielt, Belgium</RowValue>
+              </RowText>
+              <RowArrow><FaChevronRight /></RowArrow>
+            </ContactRow>
+          </ContactRows>
         </ContactInfo>
 
         <ContactFormWrapper>
@@ -232,23 +233,18 @@ const ToastEl = styled.div`
   align-items: center;
   gap: 10px;
   padding: 13px 22px;
-  border-radius: 50px;
+  border-radius: 0;
   font-size: 0.9rem;
   font-weight: 600;
   white-space: nowrap;
   pointer-events: none;
 
   background: ${p => p.$type === 'error'
-    ? 'linear-gradient(180deg, rgba(239,68,68,0.20) 0%, rgba(239,68,68,0.10) 100%)'
+    ? 'rgba(193,18,31,0.18)'
     : p.theme.glassTinted};
-  backdrop-filter: ${p => p.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${p => p.theme.glassBackdrop};
-  border: 0.5px solid ${p => p.$type === 'error' ? 'rgba(239,68,68,0.45)' : p.theme.glassTintedBorder};
-  box-shadow:
-    inset 0 1.5px 0 ${p => p.$type === 'error' ? 'rgba(255,255,255,0.20)' : p.theme.glassTintedHighlight},
-    0 8px 32px ${p => p.$type === 'error' ? 'rgba(239,68,68,0.25)' : p.theme.glow},
-    0 4px 12px rgba(0,0,0,0.15);
-  color: ${p => p.$type === 'error' ? '#fca5a5' : p.theme.primary};
+  border: 1px solid ${p => p.$type === 'error' ? '#c1121f' : p.theme.glassTintedBorder};
+  box-shadow: 0 8px 32px ${p => p.$type === 'error' ? 'rgba(193,18,31,0.25)' : p.theme.glow}, 0 4px 12px rgba(0,0,0,0.3);
+  color: ${p => p.$type === 'error' ? '#fdf0d5' : p.theme.primary};
 
   animation: ${p => p.$exiting
     ? css`${toastSlideOut} 0.3s ease forwards`
@@ -259,7 +255,7 @@ const ToastIcon = styled.span`
   display: flex;
   align-items: center;
   font-size: 0.9rem;
-  color: ${p => p.$type === 'error' ? '#f87171' : 'inherit'};
+  color: ${p => p.$type === 'error' ? '#c1121f' : 'inherit'};
   flex-shrink: 0;
 `;
 
@@ -291,7 +287,7 @@ const PageTitle = styled.h1`
     bottom: -18px;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 1px;
+    border-radius: 0;
   }
 `;
 
@@ -308,125 +304,151 @@ const ContactContent = styled.div`
 
 const ContactInfo = styled.div`
   background: ${props => props.theme.glassTinted};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassTintedBorder};
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
-    0 12px 40px ${props => props.theme.glow},
-    ${props => props.theme.glassShadow};
-  padding: 36px;
-  border-radius: 24px;
-  position: relative;
+  border: 1px solid ${props => props.theme.glassTintedBorder};
+  box-shadow: 0 12px 40px ${props => props.theme.glow}, ${props => props.theme.glassShadow};
+  padding: 0;
+  border-radius: 0;
   overflow: hidden;
-
-  @media (max-width: 768px) { padding: 24px; }
 `;
 
-const InfoInner = styled.div`
+const InfoHeader = styled.div`
+  position: relative;
+  overflow: hidden;
+  padding: 28px 28px 24px;
+  border-bottom: 1px solid ${props => props.theme.glassTintedBorder};
+`;
+
+const InfoHeaderDots = styled.div`
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, ${props => props.theme.border} 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+  opacity: 0.55;
+`;
+
+const InfoHeaderGlow = styled.div`
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, ${props => props.theme.glow} 0%, transparent 70%);
+  filter: blur(24px);
+  pointer-events: none;
+`;
+
+const InfoHeaderContent = styled.div`
   position: relative;
   z-index: 1;
 `;
 
-const OrbDecor = styled.div`
-  position: absolute;
-  top: ${props => props.$top};
-  left: ${props => props.$left};
-  width: ${props => props.$size};
-  height: ${props => props.$size};
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  filter: blur(32px);
-  animation: ${orb} 30s ease-in-out ${props => props.$delay} infinite;
-  pointer-events: none;
-`;
-
-const ContactInfoTitle = styled.h2`
-  font-size: 1.4rem;
+const InfoHeaderEyebrow = styled.div`
+  font-size: 0.68rem;
   font-weight: 700;
-  margin: 0 0 12px;
-  color: ${props => props.theme.text};
-`;
-
-const ContactInfoText = styled.p`
-  color: ${props => props.theme.textSecondary};
-  font-size: 0.92rem;
-  line-height: 1.6;
-  margin: 0 0 36px;
-`;
-
-const ContactInfoItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-
-  &:last-child { margin-bottom: 0; }
-`;
-
-const iconWrapperStyles = `
-  width: 46px;
-  height: 46px;
-  min-width: 46px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
-`;
-
-const IconWrapperLink = styled.a`
-  ${iconWrapperStyles}
-  background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  box-shadow: inset 0 1.5px 0 ${props => props.theme.glassHighlight};
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: ${props => props.theme.primary};
+  margin-bottom: 7px;
+`;
+
+const InfoHeaderName = styled.div`
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: ${props => props.theme.text};
+  margin-bottom: 4px;
+`;
+
+const InfoHeaderRole = styled.div`
+  font-size: 0.8rem;
+  color: ${props => props.theme.textSecondary};
+`;
+
+const ContactRows = styled.div`
+  padding: 8px 16px 16px;
+`;
+
+const ContactRow = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 10px;
   text-decoration: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 0.18s ease;
 
   &:hover {
-    transform: scale(1.1);
-    border-color: ${props => props.theme.glassTintedBorder};
-    box-shadow:
-      inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
-      0 6px 18px ${props => props.theme.glow};
+    background: rgba(253, 240, 213, 0.06);
+  }
+
+  &:hover > *:last-child {
+    opacity: 1;
+    transform: translateX(3px);
   }
 `;
 
-const ContactInfoLabel = styled.h3`
-  font-size: 0.72rem;
+const RowIconBadge = styled.div`
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.88rem;
+  color: ${props => props.$color};
+  background: ${props => props.$color}18;
+  border: 1px solid ${props => props.$color}55;
+  flex-shrink: 0;
+`;
+
+const RowText = styled.div`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const RowLabel = styled.div`
+  font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: ${props => props.theme.textSecondary};
-  margin: 0 0 4px;
+  margin-bottom: 2px;
 `;
 
-const ContactLink = styled.a`
-  color: ${props => props.theme.primary};
-  text-decoration: none;
-  font-size: 0.9rem;
+const RowValue = styled.div`
+  font-size: 0.82rem;
   font-weight: 500;
-  word-break: break-all;
-  transition: opacity 0.2s;
-  cursor: pointer;
+  color: ${props => props.theme.text};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
-  &:hover { opacity: 0.75; text-decoration: underline; }
+const RowArrow = styled.div`
+  font-size: 0.68rem;
+  color: ${props => props.theme.textSecondary};
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+`;
+
+const RowSep = styled.div`
+  height: 1px;
+  background: ${props => props.theme.glassTintedBorder};
+  margin: 0 10px;
+  opacity: 0.3;
 `;
 
 const ContactFormWrapper = styled.div`
   background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-    ${props => props.theme.glassShadow};
+  border: 1px solid ${props => props.theme.glassBorder};
+  box-shadow: ${props => props.theme.glassShadow};
   padding: 36px;
-  border-radius: 24px;
+  border-radius: 0;
   animation: ${slideUp} 0.7s ease 0.15s both;
 
   @media (max-width: 768px) { padding: 24px; }
@@ -464,7 +486,7 @@ const FormLabel = styled.label`
 
 const inputBase = `
   padding: 12px 14px;
-  border-radius: 14px;
+  border-radius: 0;
   font-size: 0.95rem;
   font-family: inherit;
   outline: none;
@@ -474,30 +496,22 @@ const inputBase = `
 
 const FormInput = styled.input`
   ${inputBase}
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  box-shadow: inset 0 1px 0 ${props => props.theme.glassHighlight};
+  border: 1px solid ${props => props.theme.glassBorder};
+  background: ${props => props.theme.cardBackground};
   color: ${props => props.theme.text};
 
   &::placeholder { color: ${props => props.theme.textSecondary}; opacity: 0.55; }
 
   &:focus {
     border-color: ${props => props.theme.glassTintedBorder};
-    box-shadow:
-      inset 0 1px 0 ${props => props.theme.glassTintedHighlight},
-      0 0 0 3px ${props => props.theme.glow};
+    box-shadow: 0 0 0 3px ${props => props.theme.glow};
   }
 `;
 
 const FormTextarea = styled.textarea`
   ${inputBase}
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  box-shadow: inset 0 1px 0 ${props => props.theme.glassHighlight};
+  border: 1px solid ${props => props.theme.glassBorder};
+  background: ${props => props.theme.cardBackground};
   color: ${props => props.theme.text};
   resize: vertical;
 
@@ -505,36 +519,28 @@ const FormTextarea = styled.textarea`
 
   &:focus {
     border-color: ${props => props.theme.glassTintedBorder};
-    box-shadow:
-      inset 0 1px 0 ${props => props.theme.glassTintedHighlight},
-      0 0 0 3px ${props => props.theme.glow};
+    box-shadow: 0 0 0 3px ${props => props.theme.glow};
   }
 `;
 
 const SubmitButton = styled.button`
   width: 100%;
   background: ${props => props.theme.glassTinted};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassTintedBorder};
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
-    0 4px 14px ${props => props.theme.glow};
+  border: 1px solid ${props => props.theme.glassTintedBorder};
+  box-shadow: 0 4px 14px ${props => props.theme.glow};
   color: ${props => props.theme.primary};
   padding: 13px 32px;
-  border-radius: 50px;
+  border-radius: 0;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.2s ease;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow:
-      inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
-      0 12px 30px ${props => props.theme.glowStrong};
+    background: ${props => props.theme.primary};
+    color: ${props => props.theme.text};
+    box-shadow: 0 12px 30px ${props => props.theme.glowStrong};
   }
 
   &:disabled {
@@ -545,13 +551,10 @@ const SubmitButton = styled.button`
 
 const FormStatusMessage = styled.div`
   padding: 20px;
-  border-radius: 14px;
-  border: 0.5px solid ${props => props.$success ? props.theme.glassTintedBorder : 'rgba(239,68,68,0.5)'};
-  background: ${props => props.$success ? props.theme.glassTinted : 'rgba(239,68,68,0.08)'};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  box-shadow: inset 0 1px 0 ${props => props.$success ? props.theme.glassTintedHighlight : 'rgba(255,255,255,0.15)'};
-  color: ${props => props.$success ? props.theme.text : '#ef4444'};
+  border-radius: 0;
+  border: 1px solid ${props => props.$success ? props.theme.glassTintedBorder : '#c1121f'};
+  background: ${props => props.$success ? props.theme.glassTinted : 'rgba(193,18,31,0.10)'};
+  color: ${props => props.$success ? props.theme.text : '#fdf0d5'};
   text-align: center;
   font-weight: 500;
 `;

@@ -1,10 +1,8 @@
-import React, { useContext, memo } from 'react';
+import React, { memo } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import styled, { ThemeProvider, keyframes } from 'styled-components';
-import { ThemeContext, ThemeProvider as CustomThemeProvider } from './styles/ThemeContext';
-import { lightTheme, darkTheme } from './styles/theme';
+import { theme } from './styles/theme';
 import GlobalStyles from './styles/GlobalStyles';
-import { FaSun, FaMoon } from 'react-icons/fa';
 import './App.css';
 
 import Navbar from './components/Navbar';
@@ -30,13 +28,13 @@ const orbDrift3 = keyframes`
   50%       { transform: translate(30px, 50px) scale(1.05); }
 `;
 
-const BackgroundOrbs = memo(({ darkMode }) => (
+const BackgroundOrbs = memo(() => (
   <OrbsContainer>
     <Orb
       $top="-5%"
       $left="-8%"
       $size="600px"
-      $color={darkMode ? 'rgba(79,70,229,0.14)' : 'rgba(124,99,255,0.10)'}
+      $color="rgba(226,109,92,0.12)"
       $anim={orbDrift1}
       $duration="55s"
     />
@@ -44,7 +42,7 @@ const BackgroundOrbs = memo(({ darkMode }) => (
       $top="10%"
       $right="-10%"
       $size="500px"
-      $color={darkMode ? 'rgba(139,92,246,0.10)' : 'rgba(167,106,255,0.08)'}
+      $color="rgba(114,61,70,0.4)"
       $anim={orbDrift2}
       $duration="62s"
     />
@@ -52,7 +50,7 @@ const BackgroundOrbs = memo(({ darkMode }) => (
       $bottom="5%"
       $left="15%"
       $size="440px"
-      $color={darkMode ? 'rgba(129,140,248,0.09)' : 'rgba(192,132,252,0.08)'}
+      $color="rgba(201,203,163,0.07)"
       $anim={orbDrift3}
       $duration="66s"
       $delay="6s"
@@ -60,17 +58,14 @@ const BackgroundOrbs = memo(({ darkMode }) => (
   </OrbsContainer>
 ));
 
-const AppWithTheme = () => {
-  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
-  const theme = darkMode ? darkTheme : lightTheme;
-
+function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
       <Cursor />
       <Router>
         <AppContainer>
-          <BackgroundOrbs darkMode={darkMode} />
+          <BackgroundOrbs />
           <Navbar />
           <MainContent>
             <HomePage />
@@ -78,20 +73,9 @@ const AppWithTheme = () => {
             <ContactPage />
           </MainContent>
           <Footer />
-          <ThemeToggle onClick={toggleDarkMode} aria-label="Toggle theme">
-            {darkMode ? <FaSun /> : <FaMoon />}
-          </ThemeToggle>
         </AppContainer>
       </Router>
     </ThemeProvider>
-  );
-};
-
-function App() {
-  return (
-    <CustomThemeProvider>
-      <AppWithTheme />
-    </CustomThemeProvider>
   );
 }
 
@@ -100,7 +84,6 @@ const AppContainer = styled.div`
   flex-direction: column;
   min-height: 100vh;
   background-color: ${props => props.theme.body};
-  transition: background-color 0.4s ease;
   position: relative;
   isolation: isolate;
 `;
@@ -133,42 +116,6 @@ const Orb = styled.div`
   filter: blur(50px);
   animation: ${p => p.$anim} ${p => p.$duration || '20s'} ease-in-out ${p => p.$delay || '0s'} infinite;
   will-change: transform;
-`;
-
-const ThemeToggle = styled.button`
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-    ${props => props.theme.glassShadow};
-  color: ${props => props.theme.primary};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  z-index: 1000;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: scale(1.1);
-    box-shadow:
-      inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-      0 8px 28px ${props => props.theme.glow},
-      0 4px 12px rgba(0,0,0,0.12);
-  }
-
-  &:active {
-    transform: scale(0.94);
-  }
 `;
 
 export default App;

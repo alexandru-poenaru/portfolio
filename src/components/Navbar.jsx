@@ -97,16 +97,11 @@ const NavbarContainer = styled.nav`
   z-index: 1000;
   padding: ${props => props.$scrolled ? '12px 0' : '18px 0'};
   background: ${props => props.$scrolled ? props.theme.glass : 'transparent'};
-  backdrop-filter: ${props => props.$scrolled ? props.theme.glassBackdrop : 'none'};
-  -webkit-backdrop-filter: ${props => props.$scrolled ? props.theme.glassBackdrop : 'none'};
   border-bottom: ${props => props.$scrolled
-    ? `0.5px solid ${props.theme.glassBorder}`
-    : '0.5px solid transparent'};
-  box-shadow: ${props => props.$scrolled
-    ? `inset 0 1px 0 ${props.theme.glassHighlight}, ${props.theme.glassShadow}`
-    : 'none'};
-  transition: padding 0.3s ease, background 0.3s ease, backdrop-filter 0.3s ease,
-    border-color 0.3s ease, box-shadow 0.3s ease;
+    ? `1px solid ${props.theme.glassBorder}`
+    : '1px solid transparent'};
+  box-shadow: ${props => props.$scrolled ? props.theme.glassShadow : 'none'};
+  transition: padding 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 `;
 
 const NavbarWrapper = styled.div`
@@ -138,15 +133,12 @@ const LogoText = styled.span`
 const MenuButton = styled.button`
   display: none;
   background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  box-shadow: inset 0 1px 0 ${props => props.theme.glassHighlight};
+  border: 1px solid ${props => props.theme.glassBorder};
   color: ${props => props.theme.text};
   font-size: 1.1rem;
   cursor: pointer;
   padding: 8px 10px;
-  border-radius: 12px;
+  border-radius: 0;
   line-height: 1;
   transition: box-shadow 0.2s ease, transform 0.15s ease;
 
@@ -181,27 +173,19 @@ const NavLinkA = styled.a`
   font-size: 0.9rem;
   letter-spacing: 0.02em;
   padding: 7px 14px;
-  border-radius: 20px;
+  border-radius: 0;
   display: inline-block;
   position: relative;
-  transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
   cursor: pointer;
-  background: ${props => props.$active
-    ? props.theme.glassTinted
-    : 'transparent'};
-  backdrop-filter: ${props => props.$active ? props.theme.glassBackdrop : 'none'};
-  -webkit-backdrop-filter: ${props => props.$active ? props.theme.glassBackdrop : 'none'};
-  border: 0.5px solid ${props => props.$active ? props.theme.glassTintedBorder : 'transparent'};
-  box-shadow: ${props => props.$active
-    ? `inset 0 1px 0 ${props.theme.glassTintedHighlight}`
-    : 'none'};
+  background: ${props => props.$active ? props.theme.glassTinted : 'transparent'};
+  border: 1px solid ${props => props.$active ? props.theme.glassTintedBorder : 'transparent'};
 
   ${props => !props.$active && `
     &:hover {
       color: ${props.theme.primary};
-      background: ${props.theme.glow};
-      border-color: transparent;
-      box-shadow: none;
+      background: transparent;
+      border-color: ${props.theme.glassTintedBorder};
     }
   `}
 `;
@@ -218,14 +202,14 @@ const NavMobileDropdown = styled.div`
     max-height: ${props => props.$isOpen ? '240px' : '0'};
     overflow: hidden;
     transition: max-height 0.28s cubic-bezier(0.16, 1, 0.3, 1), padding 0.28s ease;
-    border-top: ${props => props.$isOpen ? `0.5px solid ${props.theme.glassBorder}` : 'none'};
+    border-top: ${props => props.$isOpen ? `1px solid ${props.theme.glassBorder}` : 'none'};
   }
 `;
 
 const MobileNavLink = styled.a`
   display: block;
   padding: 11px 32px;
-  border-radius: 14px;
+  border-radius: 0;
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
@@ -233,10 +217,7 @@ const MobileNavLink = styled.a`
   min-width: 160px;
   color: ${props => props.$active ? props.theme.primary : props.theme.text};
   background: ${props => props.$active ? props.theme.glassTinted : props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.$active ? props.theme.glassTintedBorder : props.theme.glassBorder};
-  box-shadow: inset 0 1px 0 ${props => props.$active ? props.theme.glassTintedHighlight : props.theme.glassHighlight};
+  border: 1px solid ${props => props.$active ? props.theme.glassTintedBorder : props.theme.glassBorder};
   transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
 
   &:active { transform: scale(0.97); }
@@ -256,21 +237,18 @@ const SocialIcon = styled.a`
   color: ${props => props.theme.textSecondary};
   font-size: 1.05rem;
   padding: 8px 9px;
-  border-radius: 12px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
   cursor: pointer;
-  border: 0.5px solid transparent;
+  border: 1px solid transparent;
 
   &:hover {
     color: ${props => props.theme.primary};
     background: ${props => props.theme.glassTinted};
-    backdrop-filter: ${props => props.theme.glassBackdrop};
-    -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
     border-color: ${props => props.theme.glassTintedBorder};
-    box-shadow: inset 0 1px 0 ${props => props.theme.glassTintedHighlight};
     transform: translateY(-2px);
   }
 `;

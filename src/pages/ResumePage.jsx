@@ -1,6 +1,6 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import styled, { keyframes, css } from 'styled-components';
+import styled from 'styled-components';
 import { FaDownload, FaGraduationCap, FaBriefcase, FaCode, FaChevronDown } from 'react-icons/fa';
 import { FaJsSquare, FaJava, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaPython, FaReact, FaDatabase } from 'react-icons/fa';
 import { SiTypescript, SiNodedotjs, SiMysql, SiYarn, SiSpringboot, SiDotnet, SiFastapi, SiSqlite, SiPostgresql, SiMongodb } from 'react-icons/si';
@@ -9,13 +9,12 @@ import { DiMsqlServer } from 'react-icons/di';
 import { RiTailwindCssFill } from 'react-icons/ri';
 import { PiFileJsxDuotone } from 'react-icons/pi';
 import resumePdf from '../assets/pdf/CV Alexandru Poenaru.pdf';
-import { ThemeContext } from '../styles/ThemeContext';
 
 /* ─── Skill Data ─────────────────────────────────────────────────────────────── */
 
 const SKILLS = {
   Languages: {
-    accent: '#6366F1',
+    accent: '#e26d5c',
     items: [
       { name: 'JavaScript', icon: <FaJsSquare />, level: 4 },
       { name: 'TypeScript', icon: <SiTypescript />, level: 4 },
@@ -27,7 +26,7 @@ const SKILLS = {
     ],
   },
   'Frameworks & Libraries': {
-    accent: '#06B6D4',
+    accent: '#c9cba3',
     items: [
       { name: 'Node.js', icon: <SiNodedotjs />, level: 4 },
       { name: 'Spring Boot', icon: <SiSpringboot />, level: 2 },
@@ -42,7 +41,7 @@ const SKILLS = {
     ],
   },
   Databases: {
-    accent: '#F97316',
+    accent: '#ffe1a8',
     items: [
       { name: 'MySQL', icon: <SiMysql />, level: 4 },
       { name: 'MS SQL Server', icon: <DiMsqlServer />, level: 3 },
@@ -53,7 +52,7 @@ const SKILLS = {
     ],
   },
   'DevOps & Tools': {
-    accent: '#10B981',
+    accent: '#e26d5c',
     items: [
       { name: 'Git', icon: <FaGitAlt />, level: 5 },
       { name: 'Docker', icon: <FaDocker />, level: 3 },
@@ -73,7 +72,6 @@ const ProficiencyDots = ({ level }) => (
 /* ─── ResumePage ─────────────────────────────────────────────────────────────── */
 
 const ResumePage = () => {
-  const { darkMode } = useContext(ThemeContext);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [openSkills, setOpenSkills] = useState({});
 
@@ -85,11 +83,9 @@ const ResumePage = () => {
   }, []);
 
   const toggleSkill = (cat) => {
-    if (!isMobile) return;
     setOpenSkills(prev => ({ ...prev, [cat]: !prev[cat] }));
   };
 
-  // On mobile: open only if explicitly toggled. On desktop: always open.
   const isSkillOpen = (cat) => !isMobile || !!openSkills[cat];
 
   useEffect(() => {
@@ -106,7 +102,7 @@ const ResumePage = () => {
     document.querySelectorAll('.animate-on-scroll').forEach(el => {
       if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('animate');
     });
-  }, [darkMode]);
+  }, []);
 
   return (
     <ResumeContainer id="resume">
@@ -240,8 +236,8 @@ const ResumePage = () => {
                     <SkillChevron $accent={accent} $open={open}><FaChevronDown /></SkillChevron>
                   </SkillCategoryHeader>
                   <SkillPillGrid $isOpen={open}>
-                    {items.map(({ name, icon, level }, itemIdx) => (
-                      <SkillPill key={name} $accent={accent} $idx={itemIdx} $isOpen={open}>
+                    {items.map(({ name, icon, level }) => (
+                      <SkillPill key={name} $accent={accent}>
                         <SkillIcon $accent={accent}>{icon}</SkillIcon>
                         <SkillPillName>{name}</SkillPillName>
                         <ProficiencyDots level={level} />
@@ -257,21 +253,6 @@ const ResumePage = () => {
     </ResumeContainer>
   );
 };
-
-/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
-
-const pillReveal = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.97);
-    filter: blur(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-`;
 
 /* ─── Layout ─────────────────────────────────────────────────────────────────── */
 
@@ -301,7 +282,7 @@ const PageTitle = styled.h1`
     bottom: -16px;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 1px;
+    border-radius: 0;
   }
 `;
 
@@ -316,42 +297,28 @@ const DownloadButton = styled.a`
   align-items: center;
   gap: 9px;
   padding: 13px 28px;
-  border-radius: 50px;
+  border-radius: 0;
   font-weight: 700;
   font-size: 0.95rem;
   text-decoration: none;
   cursor: pointer;
   color: ${props => props.theme.primary};
   background: ${props => props.theme.glassTinted};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassTintedBorder};
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
-    0 6px 24px ${props => props.theme.glow},
-    ${props => props.theme.glassShadow};
-  position: relative;
-  overflow: hidden;
+  border: 1px solid ${props => props.theme.glassTintedBorder};
+  box-shadow: 0 6px 24px ${props => props.theme.glow}, ${props => props.theme.glassShadow};
   transition: transform 0.25s ease, box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow:
-      inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
-      0 14px 36px ${props => props.theme.glowStrong},
-      0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 14px 36px ${props => props.theme.glowStrong}, 0 4px 12px rgba(0,0,0,0.2);
   }
 `;
 
 const ResumeContent = styled.div`
   background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  border-radius: 24px;
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-    ${props => props.theme.glassShadow};
+  border: 1px solid ${props => props.theme.glassBorder};
+  border-radius: 0;
+  box-shadow: ${props => props.theme.glassShadow};
   padding: 40px 32px;
 
   @media (max-width: 600px) { padding: 24px 16px; }
@@ -369,19 +336,17 @@ const SectionHeader = styled.div`
   gap: 14px;
   margin-bottom: 36px;
   padding-bottom: 16px;
-  border-bottom: 0.5px solid ${props => props.theme.glassBorder};
+  border-bottom: 1px solid ${props => props.theme.glassBorder};
 `;
 
 const SectionIcon = styled.div`
   width: 38px;
   height: 38px;
   background: ${props => props.theme.glassTinted};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassTintedBorder};
-  box-shadow: inset 0 1px 0 ${props => props.theme.glassTintedHighlight}, 0 4px 14px ${props => props.theme.glow};
+  border: 1px solid ${props => props.theme.glassTintedBorder};
+  box-shadow: 0 4px 14px ${props => props.theme.glow};
   color: ${props => props.theme.primary};
-  border-radius: 12px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -410,7 +375,7 @@ const Timeline = styled.div`
     bottom: 0;
     width: 2px;
     background: linear-gradient(to bottom, ${props => props.theme.primary}, ${props => props.theme.timeline});
-    border-radius: 2px;
+    border-radius: 0;
   }
 `;
 
@@ -437,12 +402,8 @@ const TimelineDot = styled.div`
   height: 14px;
   border-radius: 50%;
   background: ${props => props.theme.glassTinted};
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 0.5px solid ${props => props.theme.glassTintedBorder};
-  box-shadow:
-    inset 0 1px 0 ${props => props.theme.glassTintedHighlight},
-    0 0 14px ${props => props.theme.glow};
+  border: 1px solid ${props => props.theme.glassTintedBorder};
+  box-shadow: 0 0 14px ${props => props.theme.glow};
   z-index: 2;
 `;
 
@@ -457,22 +418,15 @@ const TimelineDate = styled.div`
 
 const TimelineCard = styled.div`
   background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  border-radius: 16px;
+  border: 1px solid ${props => props.theme.glassBorder};
+  border-radius: 0;
   padding: 18px 20px;
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-    ${props => props.theme.glassShadow};
+  box-shadow: ${props => props.theme.glassShadow};
   transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.25s ease;
 
   &:hover {
-    box-shadow:
-      inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-      0 12px 32px ${props => props.theme.shadowHover},
-      0 4px 12px rgba(0,0,0,0.08);
-    border-color: ${props => props.theme.glassTintedBorder};
+    box-shadow: 0 12px 32px ${props => props.theme.shadowHover}, 0 4px 12px rgba(0,0,0,0.2);
+    border-color: ${props => props.theme.primary};
     transform: translateX(4px);
   }
 
@@ -519,15 +473,11 @@ const SkillsGrid = styled.div`
 
 const SkillCategory = styled.div`
   background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
+  border: 1px solid ${props => props.theme.glassBorder};
   border-top: 2px solid ${props => props.$accent};
   padding: 22px;
-  border-radius: 18px;
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-    ${props => props.theme.glassShadow};
+  border-radius: 0;
+  box-shadow: ${props => props.theme.glassShadow};
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -537,13 +487,12 @@ const SkillCategory = styled.div`
     transform: translateY(0);
   }
 
-  &:hover {
-    box-shadow:
-      inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-      0 14px 36px ${props => props.$accent}30,
-      0 4px 12px rgba(0,0,0,0.08);
-    border-color: ${props => props.$accent}80;
-    transform: translateY(-5px);
+  @media (min-width: 769px) {
+    &:hover {
+      box-shadow: 0 14px 36px ${props => props.$accent}30, 0 4px 12px rgba(0,0,0,0.2);
+      border-color: ${props => props.$accent}80;
+      transform: translateY(-5px);
+    }
   }
 `;
 
@@ -558,7 +507,6 @@ const SkillCategoryHeader = styled.button`
   padding: 0;
   text-align: left;
   cursor: default;
-  pointer-events: none;
 
   h3 {
     margin: 0;
@@ -572,9 +520,8 @@ const SkillCategoryHeader = styled.button`
 
   @media (max-width: 768px) {
     cursor: pointer;
-    pointer-events: auto;
     margin-bottom: ${props => props.$isOpen ? '18px' : '0'};
-    transition: margin-bottom 0.25s ease;
+    transition: margin-bottom 0.2s ease;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
@@ -596,7 +543,7 @@ const SkillChevron = styled.span`
 const SkillAccentBar = styled.div`
   width: 3px;
   height: 16px;
-  border-radius: 2px;
+  border-radius: 0;
   background: ${props => props.$accent};
   flex-shrink: 0;
 `;
@@ -608,20 +555,9 @@ const SkillPillGrid = styled.div`
 
   @media (max-width: 768px) {
     overflow: hidden;
-
-    /* Closed: collapse smoothly */
-    max-height: ${props => props.$isOpen ? '1000px' : '0'};
+    max-height: ${props => props.$isOpen ? '600px' : '0'};
     opacity: ${props => props.$isOpen ? 1 : 0};
-    transition:
-      max-height ${props => props.$isOpen ? '0.45s' : '0.3s'} cubic-bezier(0.16, 1, 0.3, 1),
-      opacity    ${props => props.$isOpen ? '0.3s' : '0.2s'} ease;
-
-    /* When opening, re-trigger pill animations */
-    ${props => props.$isOpen && `
-      > * {
-        animation: none;
-      }
-    `}
+    transition: max-height 0.2s ease, opacity 0.15s ease;
   }
 `;
 
@@ -630,26 +566,15 @@ const SkillPill = styled.div`
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
-  border-radius: 50px;
-  background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  box-shadow: inset 0 1px 0 ${props => props.theme.glassHighlight};
+  border-radius: 0;
+  background: ${props => props.theme.cardBackground};
+  border: 1px solid ${props => props.theme.glassBorder};
   transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease;
 
   &:hover {
-    border-color: ${props => props.$accent}70;
-    box-shadow:
-      inset 0 1px 0 ${props => props.theme.glassHighlight},
-      0 6px 18px ${props => props.$accent}25;
+    border-color: ${props => props.$accent};
+    box-shadow: 0 4px 14px ${props => props.$accent}25;
     transform: translateX(5px);
-  }
-
-  @media (max-width: 768px) {
-    ${props => props.$isOpen && css`
-      animation: ${pillReveal} 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${props.$idx * 0.04}s both;
-    `}
   }
 `;
 

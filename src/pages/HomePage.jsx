@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { ThemeContext } from '../styles/ThemeContext';
+import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FaGithub, FaLinkedin, FaArrowDown } from 'react-icons/fa';
 
@@ -15,7 +14,7 @@ const ENDPOINTS = [
   {
     method: 'GET',
     url: 'https://api.alex.dev/portfolio/projects',
-    color: '#34D399',
+    color: '#c9cba3',
     response: `{
   "status": "success",
   "data": [
@@ -35,7 +34,7 @@ const ENDPOINTS = [
   {
     method: 'POST',
     url: 'https://api.alex.dev/portfolio/contact',
-    color: '#FB923C',
+    color: '#e26d5c',
     response: `{
   "status": "success",
   "message": "Message delivered",
@@ -46,7 +45,7 @@ const ENDPOINTS = [
   {
     method: 'GET',
     url: 'https://api.alex.dev/portfolio/skills',
-    color: '#34D399',
+    color: '#c9cba3',
     response: `{
   "status": "success",
   "languages": ["JavaScript", "TypeScript",
@@ -61,9 +60,9 @@ const ENDPOINTS = [
 /* ─── ApiTerminal Component ──────────────────────────────────────────────────── */
 
 const ApiTerminal = () => {
-  const [idx, setIdx] = useState(0);
-  const [phase, setPhase] = useState('typing'); // typing | response | done
-  const [typed, setTyped] = useState('');
+  const [idx, setIdx] = React.useState(0);
+  const [phase, setPhase] = React.useState('typing');
+  const [typed, setTyped] = React.useState('');
   const endpoint = ENDPOINTS[idx];
   const command = `curl -X ${endpoint.method} \\\n  "${endpoint.url}"`;
 
@@ -144,8 +143,6 @@ const ApiTerminal = () => {
 /* ─── HomePage ───────────────────────────────────────────────────────────────── */
 
 const HomePage = () => {
-  const { darkMode } = useContext(ThemeContext);
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('animate'); }),
@@ -160,7 +157,7 @@ const HomePage = () => {
     document.querySelectorAll('.animate-on-scroll').forEach(el => {
       if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('animate');
     });
-  }, [darkMode]);
+  }, []);
 
   const handleScrollClick = (e) => {
     e.preventDefault();
@@ -320,7 +317,6 @@ const cursorHide = keyframes`
   to { border-color: transparent; }
 `;
 
-
 const spinnerAnim = keyframes`
   0%   { content: '⠋'; }
   12%  { content: '⠙'; }
@@ -351,13 +347,13 @@ const bgBlob2 = keyframes`
   33%       { transform: translate(-50px, 40px) scale(1.06); }
   66%       { transform: translate(30px, -60px) scale(0.96); }
 `;
+
 const BgRoot = styled.div`
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   background: ${props => props.theme.body};
-  transition: background 0.4s ease;
 `;
 
 const GridDots = styled.div`
@@ -372,7 +368,6 @@ const AuroraBase = styled.div`
   border-radius: 50%;
   filter: blur(60px);
   will-change: transform;
-  transition: background 0.4s ease;
 `;
 
 const Aurora1 = styled(AuroraBase)`
@@ -427,7 +422,6 @@ const HeroOverlay = styled.div`
     ${props => props.theme.body} 100%
   );
   z-index: 1;
-  transition: background 0.4s ease;
 `;
 
 const HeroBottomFade = styled.div`
@@ -439,7 +433,6 @@ const HeroBottomFade = styled.div`
   background: linear-gradient(to bottom, transparent, ${props => props.theme.body});
   z-index: 5;
   pointer-events: none;
-  transition: background 0.4s ease;
 `;
 
 const HeroContent = styled.div`
@@ -517,26 +510,20 @@ const SocialLink = styled.a`
   align-items: center;
   gap: 8px;
   padding: 10px 22px;
-  border-radius: 50px;
+  border-radius: 0;
   color: ${props => props.theme.text};
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
   background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  box-shadow: inset 0 1.5px 0 ${props => props.theme.glassHighlight}, ${props => props.theme.glassShadow};
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  border: 1px solid ${props => props.theme.glassBorder};
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow:
-      inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-      0 12px 32px ${props => props.theme.glowStrong};
+    border-color: ${props => props.theme.primary};
+    box-shadow: 0 8px 24px ${props => props.theme.glow};
   }
 `;
 
@@ -596,7 +583,7 @@ const SectionTitle = styled.h2`
     bottom: -18px;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 1px;
+    border-radius: 0;
   }
 `;
 
@@ -623,12 +610,8 @@ const ProfileImageContainer = styled.div`
   flex-shrink: 0;
   padding: 3px;
   background: ${props => props.theme.glassTinted};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassTintedBorder};
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassTintedHighlight},
-    ${props => props.theme.glassShadow};
+  border: 1px solid ${props => props.theme.glassTintedBorder};
+  box-shadow: ${props => props.theme.glassShadow};
   opacity: 0;
   transform: translateY(20px) scale(0.95);
   transition: opacity 0.5s ease, transform 0.5s ease;
@@ -697,16 +680,11 @@ const TerminalIntroText = styled.div`
 const TerminalWrapper = styled.div`
   width: 100%;
   max-width: 780px;
-  background: linear-gradient(180deg, rgba(13,17,23,0.85) 0%, rgba(13,17,23,0.75) 100%);
-  backdrop-filter: blur(16px) saturate(1.6);
-  -webkit-backdrop-filter: blur(16px) saturate(1.6);
-  border-radius: 18px;
+  background: #2a1c1e;
+  border-radius: 0;
   overflow: hidden;
-  border: 0.5px solid rgba(255,255,255,0.12);
-  box-shadow:
-    inset 0 1.5px 0 rgba(255,255,255,0.14),
-    0 24px 64px rgba(0, 0, 0, 0.55),
-    0 6px 20px rgba(0,0,0,0.3);
+  border: 1px solid #c9cba3;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 6px 20px rgba(0,0,0,0.3);
   font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 `;
 
@@ -715,8 +693,8 @@ const TerminalHeader = styled.div`
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
-  background: rgba(22,27,34,0.60);
-  border-bottom: 0.5px solid rgba(255, 255, 255, 0.10);
+  background: rgba(40, 20, 22, 0.9);
+  border-bottom: 1px solid rgba(201, 203, 163, 0.3);
 `;
 
 const TrafficLights = styled.div`
@@ -735,7 +713,7 @@ const TrafficDot = styled.div`
 const TerminalLabel = styled.span`
   flex: 1;
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(201, 203, 163, 0.45);
   text-align: center;
 `;
 
@@ -744,18 +722,24 @@ const MethodBadge = styled.span`
   font-weight: 700;
   letter-spacing: 0.08em;
   padding: 3px 8px;
-  border-radius: 6px;
+  border-radius: 0;
   color: ${props => props.$color};
-  border: 1px solid ${props => props.$color}50;
-  background: ${props => props.$color}15;
+  border: 1px solid ${props => props.$color}80;
+  background: ${props => props.$color}18;
 `;
 
 const TerminalBody = styled.div`
   padding: 20px 20px 24px;
-  min-height: 220px;
+  height: 460px;
+  overflow: hidden;
   font-size: 0.8rem;
   line-height: 1.65;
-  color: #C9D1D9;
+  color: #ffe1a8;
+
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+    overflow-y: auto;
+  }
 `;
 
 const TerminalLine = styled.div`
@@ -767,14 +751,14 @@ const TerminalLine = styled.div`
 `;
 
 const Prompt = styled.span`
-  color: #34D399;
+  color: #c9cba3;
   font-weight: 700;
   flex-shrink: 0;
   margin-top: 1px;
 `;
 
 const CommandText = styled.span`
-  color: #E6EDF3;
+  color: #ffe1a8;
   white-space: pre-wrap;
 `;
 
@@ -782,14 +766,14 @@ const Caret = styled.span`
   display: inline-block;
   width: 8px;
   height: 1em;
-  background: #818CF8;
+  background: #e26d5c;
   vertical-align: text-bottom;
   margin-left: 2px;
   animation: ${cursorBlink} 1s step-end infinite;
 `;
 
 const LoadingLine = styled.div`
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(201, 203, 163, 0.5);
   font-size: 0.78rem;
   margin-top: 8px;
   animation: ${responseFadeIn} 0.3s ease;
@@ -806,12 +790,12 @@ const StatusLine = styled.div`
 `;
 
 const StatusOk = styled.span`
-  color: #34D399;
+  color: #c9cba3;
   font-weight: 700;
 `;
 
 const ContentType = styled.div`
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(201, 203, 163, 0.5);
   font-size: 0.75rem;
   margin-bottom: 12px;
   animation: ${responseFadeIn} 0.4s ease 0.05s both;
@@ -819,7 +803,7 @@ const ContentType = styled.div`
 
 const Divider = styled.div`
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(201, 203, 163, 0.2);
   margin-bottom: 12px;
 `;
 
@@ -827,12 +811,19 @@ const ResponseBlock = styled.div`
   animation: ${responseFadeIn} 0.5s ease 0.1s both;
   font-size: 0.78rem;
   line-height: 1.7;
+  white-space: pre;
+
+  @media (max-width: 480px) {
+    font-size: 0.62rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
 `;
 
-const JsonKey = styled.span`color: #818CF8;`;
-const JsonString = styled.span`color: #34D399;`;
-const JsonNumber = styled.span`color: #FB923C;`;
-const JsonPunct = styled.span`color: rgba(255,255,255,0.35);`;
+const JsonKey = styled.span`color: #c9cba3;`;
+const JsonString = styled.span`color: #ffe1a8;`;
+const JsonNumber = styled.span`color: #e26d5c;`;
+const JsonPunct = styled.span`color: rgba(255,225,168,0.35);`;
 
 /* ─── Projects ───────────────────────────────────────────────────────────────── */
 
@@ -850,14 +841,10 @@ const ProjectsGrid = styled.div`
 
 const ProjectCard = styled.div`
   background: ${props => props.theme.glass};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.theme.glassBorder};
-  border-radius: 22px;
+  border: 1px solid ${props => props.theme.glassBorder};
+  border-radius: 0;
   overflow: hidden;
-  box-shadow:
-    inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-    ${props => props.theme.glassShadow};
+  box-shadow: ${props => props.theme.glassShadow};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -876,19 +863,16 @@ const ProjectCard = styled.div`
 
   &:hover {
     transform: translateY(-6px);
-    box-shadow:
-      inset 0 1.5px 0 ${props => props.theme.glassHighlight},
-      0 20px 40px ${props => props.theme.shadowHover},
-      0 6px 16px rgba(0,0,0,0.10);
-    border-color: ${props => props.theme.glassTintedBorder};
+    box-shadow: 0 20px 40px ${props => props.theme.shadowHover}, 0 6px 16px rgba(0,0,0,0.25);
+    border-color: ${props => props.theme.primary};
   }
 `;
 
 const ProjectImageWrapper = styled.div`
   overflow: hidden;
   height: 220px;
-  background: rgba(255, 255, 255, 0.04);
-  border-bottom: 0.5px solid ${props => props.theme.glassBorder};
+  background: rgba(0, 10, 18, 0.5);
+  border-bottom: 1px solid ${props => props.theme.glassBorder};
 `;
 
 const ProjectImage = styled.img`
@@ -924,35 +908,22 @@ const ProjectButton = styled.a`
   align-items: center;
   gap: 7px;
   padding: 9px 18px;
-  border-radius: 50px;
+  border-radius: 0;
   font-size: 0.84rem;
   font-weight: 600;
   align-self: flex-start;
   text-decoration: none;
   cursor: ${props => props.$disabled ? 'default' : 'pointer'};
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.25s ease;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 
-  background: ${props => props.$disabled
-    ? props.theme.glass
-    : props.theme.glassTinted};
-  backdrop-filter: ${props => props.theme.glassBackdrop};
-  -webkit-backdrop-filter: ${props => props.theme.glassBackdrop};
-  border: 0.5px solid ${props => props.$disabled
-    ? props.theme.glassBorder
-    : props.theme.glassTintedBorder};
-  box-shadow: inset 0 1px 0 ${props => props.$disabled
-    ? props.theme.glassHighlight
-    : props.theme.glassTintedHighlight};
+  background: ${props => props.$disabled ? 'transparent' : props.theme.glassTinted};
+  border: 1px solid ${props => props.$disabled ? props.theme.glassBorder : props.theme.glassTintedBorder};
   color: ${props => props.$disabled ? props.theme.textSecondary : props.theme.primary};
 
   ${props => !props.$disabled && `
     &:hover {
       transform: translateY(-2px);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.35),
-        0 8px 24px rgba(79,70,229,0.28);
+      box-shadow: 0 8px 24px rgba(193,18,31,0.28);
     }
   `}
 `;

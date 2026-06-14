@@ -56,11 +56,6 @@ const GlobalStyles = createGlobalStyle`
     from { width: 0; }
     to { width: 48px; }
   }
-  @keyframes glassShimmer {
-    0%   { opacity: 0; transform: translateX(-100%) skewX(-15deg); }
-    50%  { opacity: 1; }
-    100% { opacity: 0; transform: translateX(200%) skewX(-15deg); }
-  }
 
   html {
     scroll-behavior: smooth;
@@ -94,7 +89,6 @@ const GlobalStyles = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
     background-color: ${props => props.theme.body};
     color: ${props => props.theme.text};
-    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
   ::selection {
@@ -131,10 +125,9 @@ const GlobalStyles = createGlobalStyle`
   }
   ::-webkit-scrollbar-thumb {
     background: ${props => props.theme.primary};
-    border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: ${props => props.theme.primaryDark};
+    background: ${props => props.theme.primaryLight};
   }
 `;
 
