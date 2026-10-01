@@ -1,256 +1,82 @@
-import { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import { FaGithub, FaLinkedin, FaBars, FaTimes } from 'react-icons/fa';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLanguage } from '../content/LanguageContext';
+import useSwapMotion from './useSwapMotion';
 
-const SECTIONS = ['hero', 'about', 'projects', 'resume', 'contact'];
+const sections = ['hero', 'projects', 'about', 'resume', 'contact'];
 
-const scrollToSection = (id) => {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const offset = el.getBoundingClientRect().top + window.pageYOffset - 80;
-  window.scrollTo({ top: offset, behavior: 'smooth' });
-};
-
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('hero');
-  const observerRef = useRef(null);
-
+export default function Navbar() {
+  const { language, text, toggleLanguage } = useLanguage();
+  const [active, setActive] = useState('hero');
+  const [open, setOpen] = useState(false);
+  const actions = useRef(null);
+  const menuButton = useRef(null);
+  const dropdown = useRef(null);
+  useSwapMotion(dropdown, open);
+  const links = sections.slice(1).map(id => [id, text.nav[id]]);
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        });
-      },
-      { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
-    );
-    SECTIONS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observerRef.current.observe(el);
+    const visible = new Set();
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) visible.add(entry.target.id);
+        else visible.delete(entry.target.id);
+      });
+      const current = sections.filter(id => visible.has(id)).pop();
+      if (current) setActive(current);
+    }, { rootMargin: '-90px 0px -50% 0px' });
+    sections.forEach(id => {
+      const section = document.getElementById(id);
+      if (section) observer.observe(section);
     });
-    return () => observerRef.current?.disconnect();
+    return () => observer.disconnect();
   }, []);
 
-  const handleNavClick = (e, id) => {
-    e.preventDefault();
-    setIsOpen(false);
-    scrollToSection(id);
-  };
-
-  const navLinks = [
-    { label: 'Home', id: 'hero' },
-    { label: 'Resume', id: 'resume' },
-    { label: 'Contact', id: 'contact' },
-  ];
-
+  useEffect(() => {
+    if (!open) return;
+    const closeOutside = event => {
+      if (!actions.current?.contains(event.target)) setOpen(false);
+    };
+    const closeWithEscape = event => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        menuButton.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeWithEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeWithEscape);
+    };
+  }, [open]);
   return (
-    <NavbarContainer $scrolled={scrolled}>
-      <NavbarWrapper>
-        <LogoButton onClick={(e) => handleNavClick(e, 'hero')}>
-          <LogoText>A.P.</LogoText>
-        </LogoButton>
-
-        <MenuButton onClick={() => setIsOpen(prev => !prev)} aria-label="Toggle menu">
-          {isOpen ? <FaTimes /> : <FaBars />}
-        </MenuButton>
-
-        <NavMenu $isOpen={isOpen}>
-          {navLinks.map(({ label, id }) => (
-            <NavItem key={id}>
-              <NavLinkA href={`#${id}`} $active={activeSection === id} onClick={(e) => handleNavClick(e, id)}>
-                {label}
-              </NavLinkA>
-            </NavItem>
+    <header className="site-header">
+      <div className="header-inner container">
+        <a className="wordmark" href="#hero" aria-label={text.nav.top}>
+          <span className="monogram" aria-hidden="true">ap<span>.</span></span><span className="wordmark-name">Alexandru Poenaru</span>
+        </a>
+        <div className="header-actions" ref={actions} onBlur={event => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+        }}>
+        <nav id="navigation" className="navigation" aria-label={text.nav.label}>
+          {links.map(([id, label]) => (
+            <a key={id} href={'#' + id} aria-current={active === id ? 'location' : undefined}>{label}<span className="nav-dot" aria-hidden="true" /></a>
           ))}
-        </NavMenu>
-
-        <SocialIcons>
-          <SocialIcon href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><FaGithub /></SocialIcon>
-          <SocialIcon href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><FaLinkedin /></SocialIcon>
-        </SocialIcons>
-      </NavbarWrapper>
-
-      <NavMobileDropdown $isOpen={isOpen}>
-        {navLinks.map(({ label, id }) => (
-          <MobileNavLink key={id} href={`#${id}`} $active={activeSection === id} onClick={(e) => { e.preventDefault(); setIsOpen(false); scrollToSection(id); }}>
-            {label}
-          </MobileNavLink>
-        ))}
-      </NavMobileDropdown>
-    </NavbarContainer>
+        </nav>
+        <button className="language-switch" data-language={language} onClick={toggleLanguage} aria-label={text.nav.switch} title={text.nav.switch}>
+          <span lang="en" aria-hidden="true">EN</span><span lang="nl" aria-hidden="true">NL</span>
+        </button>
+        <button ref={menuButton} className="menu-icon" aria-label={text.nav.dropdown} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(current => !current)}>
+          <span aria-hidden="true" /><span aria-hidden="true" /><span aria-hidden="true" />
+        </button>
+        <nav ref={dropdown} id="mobile-navigation" className="mobile-navigation" aria-label={text.nav.label} hidden={!open}>
+          {[[sections[0], text.nav.home], ...links].map(([id, label], index) => (
+            <a key={id} href={'#' + id} aria-current={active === id ? 'location' : undefined} onClick={() => { setActive(id); setOpen(false); }}>
+              <span className="meta" aria-hidden="true">0{index + 1}</span>{label}<span aria-hidden="true">↗</span>
+            </a>
+          ))}
+        </nav>
+        </div>
+      </div>
+    </header>
   );
-};
-
-const NavbarContainer = styled.nav`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  padding: ${props => props.$scrolled ? '12px 0' : '18px 0'};
-  background: ${props => props.$scrolled ? props.theme.glass : 'transparent'};
-  border-bottom: ${props => props.$scrolled
-    ? `1px solid ${props.theme.glassBorder}`
-    : '1px solid transparent'};
-  box-shadow: ${props => props.$scrolled ? props.theme.glassShadow : 'none'};
-  transition: padding 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-`;
-
-const NavbarWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-`;
-
-const LogoButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-`;
-
-const LogoText = styled.span`
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: ${props => props.theme.primary};
-  text-shadow: 0 0 20px ${props => props.theme.glow};
-  transition: color 0.3s ease, text-shadow 0.3s ease;
-  font-family: 'Satoshi', sans-serif;
-`;
-
-const MenuButton = styled.button`
-  display: none;
-  background: ${props => props.theme.glass};
-  border: 1px solid ${props => props.theme.glassBorder};
-  color: ${props => props.theme.text};
-  font-size: 1.1rem;
-  cursor: pointer;
-  padding: 8px 10px;
-  border-radius: 0;
-  line-height: 1;
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
-
-  &:active { transform: scale(0.94); }
-
-  @media (max-width: 768px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-`;
-
-const NavMenu = styled.ul`
-  display: flex;
-  align-items: center;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  gap: 4px;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const NavItem = styled.li``;
-
-const NavLinkA = styled.a`
-  color: ${props => props.$active ? props.theme.primary : props.theme.text};
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  letter-spacing: 0.02em;
-  padding: 7px 14px;
-  border-radius: 0;
-  display: inline-block;
-  position: relative;
-  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
-  cursor: pointer;
-  background: ${props => props.$active ? props.theme.glassTinted : 'transparent'};
-  border: 1px solid ${props => props.$active ? props.theme.glassTintedBorder : 'transparent'};
-
-  ${props => !props.$active && `
-    &:hover {
-      color: ${props.theme.primary};
-      background: transparent;
-      border-color: ${props.theme.glassTintedBorder};
-    }
-  `}
-`;
-
-const NavMobileDropdown = styled.div`
-  display: none;
-
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: ${props => props.$isOpen ? '12px 16px 16px' : '0 16px'};
-    max-height: ${props => props.$isOpen ? '240px' : '0'};
-    overflow: hidden;
-    transition: max-height 0.28s cubic-bezier(0.16, 1, 0.3, 1), padding 0.28s ease;
-    border-top: ${props => props.$isOpen ? `1px solid ${props.theme.glassBorder}` : 'none'};
-  }
-`;
-
-const MobileNavLink = styled.a`
-  display: block;
-  padding: 11px 32px;
-  border-radius: 0;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-align: center;
-  min-width: 160px;
-  color: ${props => props.$active ? props.theme.primary : props.theme.text};
-  background: ${props => props.$active ? props.theme.glassTinted : props.theme.glass};
-  border: 1px solid ${props => props.$active ? props.theme.glassTintedBorder : props.theme.glassBorder};
-  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
-
-  &:active { transform: scale(0.97); }
-`;
-
-const SocialIcons = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const SocialIcon = styled.a`
-  color: ${props => props.theme.textSecondary};
-  font-size: 1.05rem;
-  padding: 8px 9px;
-  border-radius: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
-  cursor: pointer;
-  border: 1px solid transparent;
-
-  &:hover {
-    color: ${props => props.theme.primary};
-    background: ${props => props.theme.glassTinted};
-    border-color: ${props => props.theme.glassTintedBorder};
-    transform: translateY(-2px);
-  }
-`;
-
-export default Navbar;
+}

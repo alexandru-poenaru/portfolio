@@ -7,9 +7,13 @@
 
 # testing
 /coverage
+/.preview
 
 # production
 /build
+
+# Satoshi allows self-hosting, but not redistribution through a public repository.
+/src/assets/fonts/Satoshi-*.woff2
 
 # misc
 .DS_Store

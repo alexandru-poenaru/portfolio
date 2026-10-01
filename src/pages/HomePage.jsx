@@ -1,931 +1,135 @@
-import React, { useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
-import { FaGithub, FaLinkedin, FaArrowDown } from 'react-icons/fa';
+import React, { useEffect, useRef, useState } from 'react';
+import { FaGithub } from 'react-icons/fa';
+import { useLanguage } from '../content/LanguageContext';
+import useSwapMotion from '../components/useSwapMotion';
+import helpdesk from '../assets/images/helpdesk.webp';
+import kingdomino from '../assets/images/kingdomino.webp';
+import kottask from '../assets/images/kottask.webp';
+import dashboard from '../assets/images/dashboard.webp';
+import alex from '../assets/images/alex_new.webp';
 
-import helpdesk from '../assets/images/helpdesk.png';
-import kingdomino from '../assets/images/kingdomino.jpg';
-import kottask from '../assets/images/kottask.png';
-import dashboard from '../assets/images/dashboard.png';
-import alex from '../assets/images/alex.jpg';
-
-/* ─── API Terminal Data ──────────────────────────────────────────────────────── */
-
-const ENDPOINTS = [
-  {
-    method: 'GET',
-    url: 'https://api.alex.dev/portfolio/projects',
-    color: '#c9cba3',
-    response: `{
-  "status": "success",
-  "data": [
-    {
-      "name": "KotTask",
-      "tech": ["React", "Node.js", "TypeScript"],
-      "status": "live"
-    },
-    {
-      "name": "AI Privacy Engine",
-      "tech": ["Python", "FastAPI", "NLP"],
-      "status": "live"
-    }
-  ]
-}`,
-  },
-  {
-    method: 'POST',
-    url: 'https://api.alex.dev/portfolio/contact',
-    color: '#e26d5c',
-    response: `{
-  "status": "success",
-  "message": "Message delivered",
-  "timestamp": "2026-05-29T10:42:00Z",
-  "recipient": "Alexandru Poenaru"
-}`,
-  },
-  {
-    method: 'GET',
-    url: 'https://api.alex.dev/portfolio/skills',
-    color: '#c9cba3',
-    response: `{
-  "status": "success",
-  "languages": ["JavaScript", "TypeScript",
-                "Python", "Java"],
-  "frameworks": ["React", "Node.js", "FastAPI",
-                 "Spring Boot"],
-  "databases": ["PostgreSQL", "MySQL", "DuckDB"]
-}`,
-  },
+const symbols = ['↗', '{ }', '≡'];
+const projectMedia = [
+  { image: kottask, tech: ['React', 'Node.js', 'TypeScript'] },
+  { image: dashboard, tech: ['React', 'Node.js', 'TypeScript', 'Java'] },
+  { image: kingdomino, tech: ['Java'] },
+  { image: helpdesk, tech: ['C#'] },
 ];
 
-/* ─── ApiTerminal Component ──────────────────────────────────────────────────── */
-
-const ApiTerminal = () => {
-  const [idx, setIdx] = React.useState(0);
-  const [phase, setPhase] = React.useState('typing');
-  const [typed, setTyped] = React.useState('');
-  const endpoint = ENDPOINTS[idx];
-  const command = `curl -X ${endpoint.method} \\\n  "${endpoint.url}"`;
-
-  useEffect(() => {
-    setPhase('typing');
-    setTyped('');
-  }, [idx]);
-
-  useEffect(() => {
-    if (phase !== 'typing') return;
-    if (typed.length < command.length) {
-      const t = setTimeout(() => setTyped(command.slice(0, typed.length + 1)), 28);
-      return () => clearTimeout(t);
-    }
-    const t = setTimeout(() => setPhase('response'), 900);
-    return () => clearTimeout(t);
-  }, [phase, typed, command]);
-
-  useEffect(() => {
-    if (phase !== 'response') return;
-    const t = setTimeout(() => setPhase('done'), 200);
-    return () => clearTimeout(t);
-  }, [phase]);
-
-  useEffect(() => {
-    const t = setTimeout(() => setIdx(i => (i + 1) % ENDPOINTS.length), 8000);
-    return () => clearTimeout(t);
-  }, [idx]);
-
-  const syntaxHighlight = (json) =>
-    json.split('\n').map((line, i) => {
-      const parts = line.split(/("[\w\s]+"(?=:)|"[^"]*"|[\d.]+(?=[,\n}])|[{}[\],])/g);
-      return (
-        <div key={i}>
-          {parts.map((part, j) => {
-            if (/^"[\w\s]+"$/.test(part) && line.includes(`${part}:`)) return <JsonKey key={j}>{part}</JsonKey>;
-            if (/^"/.test(part)) return <JsonString key={j}>{part}</JsonString>;
-            if (/^\d/.test(part)) return <JsonNumber key={j}>{part}</JsonNumber>;
-            if (/^[{}[\],]$/.test(part)) return <JsonPunct key={j}>{part}</JsonPunct>;
-            return <span key={j}>{part}</span>;
-          })}
-        </div>
-      );
-    });
-
+function SystemSketch() {
+  const { text, language } = useLanguage();
+  const copy = text.sketch;
+  const [selected, setSelected] = useState(1);
+  const layer = copy.layers[selected];
+  const description = useRef(null);
+  useSwapMotion(description, selected + language);
   return (
-    <TerminalWrapper>
-      <TerminalHeader>
-        <TrafficLights>
-          <TrafficDot $color="#FF5F57" />
-          <TrafficDot $color="#FFBD2E" />
-          <TrafficDot $color="#28C840" />
-        </TrafficLights>
-        <TerminalLabel>api.alex.dev — terminal</TerminalLabel>
-        <MethodBadge $color={endpoint.color}>{endpoint.method}</MethodBadge>
-      </TerminalHeader>
-      <TerminalBody>
-        <TerminalLine>
-          <Prompt>$</Prompt>
-          <CommandText>{typed}<Caret /></CommandText>
-        </TerminalLine>
-        {phase === 'response' && (
-          <LoadingLine><Spinner>⠋</Spinner> Waiting for response...</LoadingLine>
-        )}
-        {phase === 'done' && (
-          <>
-            <StatusLine><StatusOk>HTTP/1.1 200 OK</StatusOk></StatusLine>
-            <ContentType>Content-Type: application/json</ContentType>
-            <Divider />
-            <ResponseBlock>{syntaxHighlight(endpoint.response)}</ResponseBlock>
-          </>
-        )}
-      </TerminalBody>
-    </TerminalWrapper>
+    <div className="system-sketch" role="group" aria-label={copy.aria}>
+      <div className="sketch-heading meta"><span>{copy.heading}</span><span>{copy.instruction} ↙</span></div>
+      <div className="system-map">
+        <span className="map-coordinate meta" aria-hidden="true">{copy.figure}</span>
+        <svg className="system-lines" viewBox="0 0 440 270" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M110 76 H265 Q295 76 295 106 V140" /><path d="M295 140 V198 Q295 220 265 220 H145" />
+          <circle cx="195" cy="76" r="4" /><circle cx="208" cy="220" r="4" />
+        </svg>
+        {copy.layers.map((item, index) => (
+          <button key={index} className={'system-node node-' + index} aria-pressed={selected === index} aria-controls="layer-description" onClick={() => setSelected(index)}>
+            <span className="node-symbol" aria-hidden="true">{symbols[index]}</span><span>{item.name}</span><span className="node-number" aria-hidden="true">0{index + 1}</span>
+          </button>
+        ))}
+        <span className="map-caption meta" aria-hidden="true">{copy.caption}</span>
+      </div>
+      <div ref={description} id="layer-description" className="layer-description" aria-live="polite" aria-atomic="true">
+        <span className="meta accent">{layer.label}</span><h2>{layer.title}</h2><p>{layer.description}</p>
+      </div>
+    </div>
   );
-};
+}
 
-/* ─── HomePage ───────────────────────────────────────────────────────────────── */
-
-const HomePage = () => {
+function ProjectIndex() {
+  const { text, language } = useLanguage();
+  const copy = text.work;
+  const [selected, setSelected] = useState(0);
+  const project = copy.projects[selected];
+  const media = projectMedia[selected];
+  const indexRef = useRef(null);
+  const previewRef = useRef(null);
+  useSwapMotion(previewRef, selected + language);
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('animate'); }),
-      { threshold: 0.15 }
-    );
-    const elements = document.querySelectorAll('.animate-on-scroll');
-    elements.forEach(el => observer.observe(el));
-    return () => elements.forEach(el => observer.unobserve(el));
+    // Warm small previews as the visitor approaches the index, not at startup.
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      projectMedia.forEach(item => {
+        const image = new Image();
+        image.decoding = 'async';
+        image.src = item.image;
+      });
+      observer.disconnect();
+    }, { rootMargin: '300px' });
+    if (indexRef.current) observer.observe(indexRef.current);
+    return () => observer.disconnect();
   }, []);
+  return (
+    <section id="projects" className="section container" aria-labelledby="work-title" tabIndex={-1}>
+      <div className="section-heading">
+        <div><span className="eyebrow">{copy.eyebrow}</span><h2 id="work-title">{copy.title}<span className="accent">.</span></h2></div>
+        <span className="meta section-aside">{copy.aside}</span>
+      </div>
+      <div ref={indexRef} className="project-index">
+        <div className="project-list" role="group" aria-label={copy.select}>
+          {copy.projects.map((item, index) => (
+            <button key={index} className="project-row" aria-pressed={selected === index} aria-controls="project-preview" onClick={() => setSelected(index)}>
+              <span className="project-number meta">0{index + 1}</span><span className="project-name"><strong>{item.name}</strong><span>{item.category}</span></span><span className="project-arrow" aria-hidden="true">{selected === index ? '↗' : '+'}</span>
+            </button>
+          ))}
+        </div>
+        <article ref={previewRef} id="project-preview" className="project-preview" aria-label={project.name}>
+          <div className="preview-image"><img src={media.image} alt={project.alt} loading="lazy" decoding="async" width="1280" height="720" /></div>
+          <div className="preview-details" aria-live="polite" aria-atomic="true">
+            <div className="preview-meta"><span className="meta">0{selected + 1} / {project.name}</span><span className="meta">{project.category}</span></div>
+            <p>{project.description}</p>
+            <div className="project-bottom"><ul className="tech-list" aria-label={copy.technologies}>{media.tech.map(tech => <li key={tech}>{tech}</li>)}</ul>
+              <span className="repository-unavailable" role="group" aria-label={copy.repository}><FaGithub aria-hidden="true" />{copy.unavailable}</span>
+            </div>
+            {selected === 1 && <span className="project-status meta">{copy.inProgress}</span>}
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
 
-  useEffect(() => {
-    document.querySelectorAll('.animate-on-scroll').forEach(el => {
-      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('animate');
-    });
-  }, []);
-
-  const handleScrollClick = (e) => {
-    e.preventDefault();
-    const el = document.getElementById('about');
-    if (!el) return;
-    window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
-  };
-
+export default function HomePage() {
+  const { text } = useLanguage();
+  const hero = text.hero;
+  const about = text.about;
   return (
     <>
-      <FullWidthHeroContainer>
-        <HeroSection id="hero">
-          <AnimatedHeroBg />
-          <HeroOverlay />
-          <HeroContent>
-            <TypewriterContainer>
-              <HeroTitle>Hello, I'm <HighlightSpan>Alexandru Poenaru</HighlightSpan></HeroTitle>
-              <TypewriterText>Student Full-Stack Development · Incoming Master's Student</TypewriterText>
-            </TypewriterContainer>
-            <AnimatedDescription>
-              Full-stack developer who loves building clean interfaces, but lives for the logic, structure,
-              and architecture that makes them work.
-            </AnimatedDescription>
-            <HeroActions>
-              <SocialLink href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer"><FaGithub /> GitHub</SocialLink>
-              <SocialLink href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer"><FaLinkedin /> LinkedIn</SocialLink>
-            </HeroActions>
-            <ScrollDownButton href="#about" onClick={handleScrollClick}>
-              <FaArrowDown />
-              <span>Scroll</span>
-            </ScrollDownButton>
-          </HeroContent>
-        </HeroSection>
-        <HeroBottomFade />
-      </FullWidthHeroContainer>
-
-      <HomeContainer>
-        <Section id="about">
-          <SectionTitle>About Me</SectionTitle>
-          <AboutContent>
-            <ProfileImageContainer className="animate-on-scroll">
-              <ProfileImage src={alex} alt="Alexandru Poenaru" />
-            </ProfileImageContainer>
-            <AboutTextContent>
-              <p>
-                Hi! I'm Alex, a 21 year old IT student based in Tielt, Belgium. My relationship with technology
-                started at 10, when I got into robotics. Soldering components onto a motherboard in just
-                the right order, and watching something actually work as a result. No code, just patience
-                and precision. It was the best thing in the world to me at the time.
-              </p>
-              <p>
-                A couple of years later I discovered programming, and everything clicked into place. I
-                realized the software was where the real power was. You could build anything, with no physical
-                limits, just logic. So I shifted my focus to development, and that decision has shaped
-                everything since.
-              </p>
-              <p>
-                I enjoy working across the full stack. Frontend is satisfying when the details come together
-                and something looks and feels right. But backend is where I genuinely love spending time.
-                The structure, the data flow, the architecture decisions that determine how well something
-                actually scales. That is where I feel most in my element.
-              </p>
-              <p>
-                I am currently finishing my Bachelor of Applied IT at HOGENT, specializing in Full Stack Development.
-                I am always looking for challenges that push me further, and for people who care as much
-                about building things well as I do.
-              </p>
-            </AboutTextContent>
-          </AboutContent>
-
-          <TerminalSection className="animate-on-scroll">
-            <TerminalIntro>
-              <TerminalIntroLabel>Live API Explorer</TerminalIntroLabel>
-              <TerminalIntroText>A peek at the APIs powering this portfolio</TerminalIntroText>
-            </TerminalIntro>
-            <ApiTerminal />
-          </TerminalSection>
-        </Section>
-
-        <Section id="projects">
-          <SectionTitle>Projects</SectionTitle>
-          <ProjectsGrid>
-            <ProjectCard className="animate-on-scroll">
-              <ProjectImageWrapper>
-                <ProjectImage src={helpdesk} alt="Helpdesk Project" loading="lazy" />
-              </ProjectImageWrapper>
-              <ProjectContent>
-                <ProjectDescription>
-                  A ticket system for the helpdesk of my internship company (2023), written in C#.
-                </ProjectDescription>
-                <ProjectButton href="https://github.com/alexandru-poenaru/helpdesk-sintandries" target="_blank" rel="noopener noreferrer"><FaGithub /> GitHub Repo</ProjectButton>
-              </ProjectContent>
-            </ProjectCard>
-
-            <ProjectCard className="animate-on-scroll">
-              <ProjectImageWrapper>
-                <ProjectImage src={kingdomino} alt="Kingdomino Project" loading="lazy" />
-              </ProjectImageWrapper>
-              <ProjectContent>
-                <ProjectDescription>
-                  The board game KingDomino playable by 2–4 players, written in Java.
-                </ProjectDescription>
-                <ProjectButton href="https://github.com/alexandru-poenaru/kingdomino" target="_blank" rel="noopener noreferrer"><FaGithub /> GitHub Repo</ProjectButton>
-              </ProjectContent>
-            </ProjectCard>
-
-            <ProjectCard className="animate-on-scroll">
-              <ProjectImageWrapper>
-                <ProjectImage src={kottask} alt="KotTask Project" loading="lazy" />
-              </ProjectImageWrapper>
-              <ProjectContent>
-                <ProjectDescription>
-                  A TODO-app with integrated calendar — assign tasks to yourself and others. Built with React, Node.js, TypeScript.
-                </ProjectDescription>
-                <ProjectButton href="https://github.com/alexandru-poenaru/kottask" target="_blank" rel="noopener noreferrer"><FaGithub /> GitHub Repo</ProjectButton>
-              </ProjectContent>
-            </ProjectCard>
-
-            <ProjectCard className="animate-on-scroll">
-              <ProjectImageWrapper>
-                <ProjectImage src={dashboard} alt="Dashboard Project" loading="lazy" />
-              </ProjectImageWrapper>
-              <ProjectContent>
-                <ProjectDescription>
-                  Production KPI Dashboard with machine maintenance overview. React + Node.js + TypeScript + Java (WIP).
-                </ProjectDescription>
-                <ProjectButton as="span" $disabled>
-                  Unavailable
-                </ProjectButton>
-              </ProjectContent>
-            </ProjectCard>
-          </ProjectsGrid>
-        </Section>
-      </HomeContainer>
+      <section id="hero" className="hero container" aria-labelledby="hero-title" tabIndex={-1}>
+        <div className="hero-topline meta"><span>{hero.role}</span><span className="location"><span className="small-cross" aria-hidden="true">+</span> {hero.location}</span></div>
+        <div className="hero-grid">
+          <div className="hero-intro">
+            <h1 id="hero-title">Alexandru<br />Poenaru<span className="accent">.</span></h1>
+            <p className="hero-statement">{hero.statement[0]}<br />{hero.statement[1]}</p>
+            <p className="hero-description">{hero.description}</p>
+            <a className="primary-link" href="#projects">{hero.explore} <span aria-hidden="true">↓</span></a>
+          </div>
+          <SystemSketch />
+        </div>
+        <div className="hero-bottom"><span className="meta">{hero.currently}</span><p>{hero.course}<br /><strong>{hero.degree}</strong></p><a className="text-link" href="#about">{hero.about} <span aria-hidden="true">↘</span></a></div>
+      </section>
+      <ProjectIndex />
+      <section id="about" className="section about-section container" aria-labelledby="about-title" tabIndex={-1}>
+        <div className="section-heading"><div><span className="eyebrow">{about.eyebrow}</span><h2 id="about-title">{about.title}<span className="accent">.</span></h2></div><span className="meta section-aside">{about.aside}</span></div>
+        <div className="about-grid">
+          <figure className="portrait"><img src={alex} alt={about.portrait} width="800" height="800" loading="lazy" decoding="async" /><figcaption className="meta">{about.caption}</figcaption></figure>
+          <div className="about-copy">
+            <p className="about-lead">{about.lead[0]}<br />{about.lead[1]}</p>
+            {about.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+            <div className="about-links"><a className="text-link" href="https://github.com/alexandru-poenaru" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a className="text-link" href="https://www.linkedin.com/in/alexandru-poenaru/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div>
+          </div>
+        </div>
+      </section>
     </>
   );
-};
-
-/* ─── Keyframes ──────────────────────────────────────────────────────────────── */
-
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-`;
-
-const typewriter = keyframes`
-  from { max-width: 0; }
-  to   { max-width: 100vw; }
-`;
-
-const cursorBlink = keyframes`
-  from, to { opacity: 1; }
-  50%       { opacity: 0; }
-`;
-
-const cursorHide = keyframes`
-  to { border-color: transparent; }
-`;
-
-const spinnerAnim = keyframes`
-  0%   { content: '⠋'; }
-  12%  { content: '⠙'; }
-  25%  { content: '⠹'; }
-  37%  { content: '⠸'; }
-  50%  { content: '⠼'; }
-  62%  { content: '⠴'; }
-  75%  { content: '⠦'; }
-  87%  { content: '⠧'; }
-  100% { content: '⠇'; }
-`;
-
-const responseFadeIn = keyframes`
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-`;
-
-/* ─── AnimatedHeroBg ────────────────────────────────────────────────────────── */
-
-const bgBlob1 = keyframes`
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25%       { transform: translate(40px, -50px) scale(1.05); }
-  50%       { transform: translate(80px, 15px) scale(0.97); }
-  75%       { transform: translate(25px, -30px) scale(1.02); }
-`;
-const bgBlob2 = keyframes`
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(-50px, 40px) scale(1.06); }
-  66%       { transform: translate(30px, -60px) scale(0.96); }
-`;
-
-const BgRoot = styled.div`
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  background: ${props => props.theme.body};
-`;
-
-const GridDots = styled.div`
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, ${props => props.theme.border} 1px, transparent 1px);
-  background-size: 52px 52px;
-`;
-
-const AuroraBase = styled.div`
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  will-change: transform;
-`;
-
-const Aurora1 = styled(AuroraBase)`
-  width: 640px; height: 500px;
-  top: -150px; left: -150px;
-  background: radial-gradient(ellipse, ${props => props.theme.glow} 0%, transparent 65%);
-  animation: ${bgBlob1} 42s ease-in-out infinite;
-`;
-const Aurora2 = styled(AuroraBase)`
-  width: 560px; height: 440px;
-  bottom: -120px; right: -100px;
-  background: radial-gradient(ellipse, ${props => props.theme.glow} 0%, transparent 65%);
-  animation: ${bgBlob2} 50s ease-in-out infinite;
-`;
-
-const AnimatedHeroBg = () => (
-  <BgRoot>
-    <GridDots />
-    <Aurora1 />
-    <Aurora2 />
-  </BgRoot>
-);
-
-/* ─── Hero ───────────────────────────────────────────────────────────────────── */
-
-const FullWidthHeroContainer = styled.div`
-  width: 100%;
-  position: relative;
-`;
-
-const HeroSection = styled.section`
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-
-  @media (max-width: 768px) {
-    align-items: flex-start;
-    padding-top: 22vh;
-  }
-`;
-
-const HeroOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    ${props => props.theme.body}55 55%,
-    ${props => props.theme.body} 100%
-  );
-  z-index: 1;
-`;
-
-const HeroBottomFade = styled.div`
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 120px;
-  background: linear-gradient(to bottom, transparent, ${props => props.theme.body});
-  z-index: 5;
-  pointer-events: none;
-`;
-
-const HeroContent = styled.div`
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  padding: 0 24px;
-  max-width: 820px;
-  animation: ${fadeIn} 0.8s ease-out both;
-`;
-
-const TypewriterContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1.2rem;
-`;
-
-const HeroTitle = styled.h1`
-  font-size: clamp(2.2rem, 5.5vw, 3.6rem);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  color: ${props => props.theme.text};
-  margin: 0 0 0.8rem;
-  line-height: 1.1;
-`;
-
-const HighlightSpan = styled.span`
-  color: ${props => props.theme.text};
-`;
-
-const TypewriterText = styled.h2`
-  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
-  font-weight: 500;
-  margin: 0;
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid ${props => props.theme.primary};
-  color: ${props => props.theme.primary};
-  animation:
-    ${typewriter} 3.2s steps(40, end) 0.6s forwards,
-    ${cursorBlink} 0.8s 0.6s 5,
-    ${cursorHide} 0.05s 4.65s forwards;
-  max-width: 0;
-  padding-right: 4px;
-
-  @media (max-width: 480px) {
-    font-size: 0.78rem;
-  }
-`;
-
-const AnimatedDescription = styled.p`
-  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
-  max-width: 580px;
-  margin: 0 auto 2rem;
-  color: ${props => props.theme.textSecondary};
-  opacity: 0;
-  animation: ${fadeIn} 0.8s ease-out 2.2s forwards;
-  line-height: 1.7;
-`;
-
-const HeroActions = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 2.5rem;
-  opacity: 0;
-  animation: ${fadeIn} 0.8s ease-out 2.8s forwards;
-  flex-wrap: wrap;
-`;
-
-const SocialLink = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 22px;
-  border-radius: 0;
-  color: ${props => props.theme.text};
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  background: ${props => props.theme.glass};
-  border: 1px solid ${props => props.theme.glassBorder};
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-3px);
-    border-color: ${props => props.theme.primary};
-    box-shadow: 0 8px 24px ${props => props.theme.glow};
-  }
-`;
-
-const ScrollDownButton = styled.a`
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  color: ${props => props.theme.textSecondary};
-  text-decoration: none;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 600;
-  opacity: 0;
-  animation: ${fadeIn} 0.8s ease-out 3.4s forwards;
-  transition: color 0.3s;
-  cursor: pointer;
-
-  svg {
-    font-size: 1.1rem;
-  }
-
-  &:hover { color: ${props => props.theme.primary}; }
-`;
-
-/* ─── Sections ───────────────────────────────────────────────────────────────── */
-
-const HomeContainer = styled.div`
-  width: 100%;
-  max-width: 100%;
-  padding: 0 24px;
-`;
-
-const Section = styled.section`
-  padding: 96px 0;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-`;
-
-const SectionTitle = styled.h2`
-  font-size: clamp(1.7rem, 3vw, 2.4rem);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  text-align: center;
-  margin-bottom: 64px;
-  color: ${props => props.theme.text};
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    width: 40px;
-    height: 3px;
-    background: ${props => props.theme.primary};
-    bottom: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 0;
-  }
-`;
-
-/* ─── About ──────────────────────────────────────────────────────────────────── */
-
-const AboutContent = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-`;
-
-const ProfileImageContainer = styled.div`
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  padding: 3px;
-  background: ${props => props.theme.glassTinted};
-  border: 1px solid ${props => props.theme.glassTintedBorder};
-  box-shadow: ${props => props.theme.glassShadow};
-  opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-
-  &.animate {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-`;
-
-const ProfileImage = styled.img`
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-`;
-
-const AboutTextContent = styled.div`
-  p {
-    font-size: 1rem;
-    line-height: 1.75;
-    margin: 0 0 1rem;
-    color: ${props => props.theme.textSecondary};
-
-    &:last-child { margin-bottom: 0; }
-  }
-`;
-
-/* ─── Terminal ───────────────────────────────────────────────────────────────── */
-
-const TerminalSection = styled.div`
-  margin-top: 72px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-
-  &.animate {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-const TerminalIntro = styled.div`
-  text-align: center;
-  margin-bottom: 24px;
-`;
-
-const TerminalIntroLabel = styled.div`
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: ${props => props.theme.primary};
-  margin-bottom: 6px;
-`;
-
-const TerminalIntroText = styled.div`
-  font-size: 0.9rem;
-  color: ${props => props.theme.textSecondary};
-`;
-
-const TerminalWrapper = styled.div`
-  width: 100%;
-  max-width: 780px;
-  background: #2a1c1e;
-  border-radius: 0;
-  overflow: hidden;
-  border: 1px solid #c9cba3;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 6px 20px rgba(0,0,0,0.3);
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-`;
-
-const TerminalHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: rgba(40, 20, 22, 0.9);
-  border-bottom: 1px solid rgba(201, 203, 163, 0.3);
-`;
-
-const TrafficLights = styled.div`
-  display: flex;
-  gap: 6px;
-`;
-
-const TrafficDot = styled.div`
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: ${props => props.$color};
-  opacity: 0.9;
-`;
-
-const TerminalLabel = styled.span`
-  flex: 1;
-  font-size: 0.72rem;
-  color: rgba(201, 203, 163, 0.45);
-  text-align: center;
-`;
-
-const MethodBadge = styled.span`
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 3px 8px;
-  border-radius: 0;
-  color: ${props => props.$color};
-  border: 1px solid ${props => props.$color}80;
-  background: ${props => props.$color}18;
-`;
-
-const TerminalBody = styled.div`
-  padding: 20px 20px 24px;
-  height: 460px;
-  overflow: hidden;
-  font-size: 0.8rem;
-  line-height: 1.65;
-  color: #ffe1a8;
-
-  @media (max-width: 480px) {
-    font-size: 0.65rem;
-    overflow-y: auto;
-  }
-`;
-
-const TerminalLine = styled.div`
-  display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
-  white-space: pre-wrap;
-  word-break: break-all;
-`;
-
-const Prompt = styled.span`
-  color: #c9cba3;
-  font-weight: 700;
-  flex-shrink: 0;
-  margin-top: 1px;
-`;
-
-const CommandText = styled.span`
-  color: #ffe1a8;
-  white-space: pre-wrap;
-`;
-
-const Caret = styled.span`
-  display: inline-block;
-  width: 8px;
-  height: 1em;
-  background: #e26d5c;
-  vertical-align: text-bottom;
-  margin-left: 2px;
-  animation: ${cursorBlink} 1s step-end infinite;
-`;
-
-const LoadingLine = styled.div`
-  color: rgba(201, 203, 163, 0.5);
-  font-size: 0.78rem;
-  margin-top: 8px;
-  animation: ${responseFadeIn} 0.3s ease;
-`;
-
-const Spinner = styled.span`
-  display: inline-block;
-  animation: ${spinnerAnim} 0.8s linear infinite;
-`;
-
-const StatusLine = styled.div`
-  margin-top: 12px;
-  animation: ${responseFadeIn} 0.4s ease;
-`;
-
-const StatusOk = styled.span`
-  color: #c9cba3;
-  font-weight: 700;
-`;
-
-const ContentType = styled.div`
-  color: rgba(201, 203, 163, 0.5);
-  font-size: 0.75rem;
-  margin-bottom: 12px;
-  animation: ${responseFadeIn} 0.4s ease 0.05s both;
-`;
-
-const Divider = styled.div`
-  height: 1px;
-  background: rgba(201, 203, 163, 0.2);
-  margin-bottom: 12px;
-`;
-
-const ResponseBlock = styled.div`
-  animation: ${responseFadeIn} 0.5s ease 0.1s both;
-  font-size: 0.78rem;
-  line-height: 1.7;
-  white-space: pre;
-
-  @media (max-width: 480px) {
-    font-size: 0.62rem;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-`;
-
-const JsonKey = styled.span`color: #c9cba3;`;
-const JsonString = styled.span`color: #ffe1a8;`;
-const JsonNumber = styled.span`color: #e26d5c;`;
-const JsonPunct = styled.span`color: rgba(255,225,168,0.35);`;
-
-/* ─── Projects ───────────────────────────────────────────────────────────────── */
-
-const ProjectsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
-  max-width: 1100px;
-  margin: 0 auto;
-
-  @media (min-width: 900px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-`;
-
-const ProjectCard = styled.div`
-  background: ${props => props.theme.glass};
-  border: 1px solid ${props => props.theme.glassBorder};
-  border-radius: 0;
-  overflow: hidden;
-  box-shadow: ${props => props.theme.glassShadow};
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.5s ease,
-    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.4s ease,
-    border-color 0.3s ease;
-
-  &.animate {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px ${props => props.theme.shadowHover}, 0 6px 16px rgba(0,0,0,0.25);
-    border-color: ${props => props.theme.primary};
-  }
-`;
-
-const ProjectImageWrapper = styled.div`
-  overflow: hidden;
-  height: 220px;
-  background: rgba(0, 10, 18, 0.5);
-  border-bottom: 1px solid ${props => props.theme.glassBorder};
-`;
-
-const ProjectImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 16px;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-
-  ${ProjectCard}:hover & {
-    transform: scale(1.01);
-  }
-`;
-
-const ProjectContent = styled.div`
-  padding: 22px 24px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  justify-content: space-between;
-  gap: 16px;
-`;
-
-const ProjectDescription = styled.p`
-  font-size: 0.92rem;
-  color: ${props => props.theme.textSecondary};
-  margin: 0;
-  line-height: 1.65;
-`;
-
-const ProjectButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 18px;
-  border-radius: 0;
-  font-size: 0.84rem;
-  font-weight: 600;
-  align-self: flex-start;
-  text-decoration: none;
-  cursor: ${props => props.$disabled ? 'default' : 'pointer'};
-  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-
-  background: ${props => props.$disabled ? 'transparent' : props.theme.glassTinted};
-  border: 1px solid ${props => props.$disabled ? props.theme.glassBorder : props.theme.glassTintedBorder};
-  color: ${props => props.$disabled ? props.theme.textSecondary : props.theme.primary};
-
-  ${props => !props.$disabled && `
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(193,18,31,0.28);
-    }
-  `}
-`;
-
-export default HomePage;
+}
